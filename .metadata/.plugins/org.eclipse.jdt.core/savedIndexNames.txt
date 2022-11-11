@@ -1,0 +1,4 @@
+INDEX VERSION 1.131+D:\project\Cravings\spring_boot_cravings\.metadata\.plugins\org.eclipse.jdt.core
+1865797976.index
+4219872271.index
+85035587.index

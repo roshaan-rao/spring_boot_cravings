@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -40,14 +40,19 @@ public class JwtUserDetailsService implements UserDetailsService {
 			}
 			
 			
-			return new org.springframework.security.core.userdetails.User(user.getEmail()+"", user.getPassword()+"", getAuthority(user));
+			//return new org.springframework.security.core.userdetails.User(user.getEmail()+"", user.getPassword()+"",);
+			//return new org.springframework.security.core.userdetails.User(user.getEmail()+"", user.getPassword()+"", getAuthority(user));
+			return new User(user.getEmail()+"", user.getPassword()+"",	new ArrayList<>());
 		}
 
 	 
 	 private Set<SimpleGrantedAuthority> getAuthority(CommonUsers user) {
+		 System.out.println(user+"user");
 	        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
 	        user.getRoles().forEach(role -> {
-	            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+	        	
+	        	//System.out.println("role.getName()"+role.getName());
+	            authorities.add(new SimpleGrantedAuthority(role.getName()));
 	        });
 	        return authorities;
 	    }

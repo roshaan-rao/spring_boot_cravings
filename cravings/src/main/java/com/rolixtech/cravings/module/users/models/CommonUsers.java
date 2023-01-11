@@ -4,6 +4,7 @@ package com.rolixtech.cravings.module.users.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -19,6 +20,11 @@ public class CommonUsers {
 	private String password;
 	private String mobile;
 	private long categoryId;
+	private int isDeleted;
+	private Date deletedOn;
+	private Long deletedBy;
+	private String profileImgUrl;
+	
 	private int isActive;
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -123,6 +129,7 @@ public class CommonUsers {
 	
 	
   public Set<CommonRole> getRoles() {
+	  System.out.println("ROLE"+roles);
         return roles;
     }
 
@@ -132,20 +139,97 @@ public class CommonUsers {
 
 
 
-
-	@Override
-	public String toString() {
-		return "CommonUsers [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
-				+ ", password=" + password + ", mobile=" + mobile + ", categoryId=" + categoryId + ", isActive="
-				+ isActive + ", roles=" + roles + "]";
+	public int getIsDeleted() {
+		return isDeleted;
 	}
 
+	public void setIsDeleted(int isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	public Date getDeletedOn() {
+		return deletedOn;
+	}
+
+	public void setDeletedOn(Date deletedOn) {
+		this.deletedOn = deletedOn;
+	}
+
+	public long getDeletedBy() {
+		return deletedBy;
+	}
+
+	public void setDeletedBy(long deletedBy) {
+		this.deletedBy = deletedBy;
+	}
+
+	
+
+
+	public CommonUsers(String firstName, String lastName, String email, String password, String mobile, long categoryId,
+			int isDeleted, Date deletedOn, long deletedBy, int isActive, Set<CommonRole> roles,
+			List<CommonUsersAddress> addresses) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.password = password;
+		this.mobile = mobile;
+		this.categoryId = categoryId;
+		this.isDeleted = isDeleted;
+		this.deletedOn = deletedOn;
+		this.deletedBy = deletedBy;
+		this.isActive = isActive;
+		this.roles = roles;
+		this.addresses = addresses;
+	}
+
+	public CommonUsers(long id, String firstName, String lastName, String email, String password, String mobile,
+			long categoryId, int isDeleted, Date deletedOn, long deletedBy, int isActive, Set<CommonRole> roles,
+			List<CommonUsersAddress> addresses) {
+		super();
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.password = password;
+		this.mobile = mobile;
+		this.categoryId = categoryId;
+		this.isDeleted = isDeleted;
+		this.deletedOn = deletedOn;
+		this.deletedBy = deletedBy;
+		this.isActive = isActive;
+		this.roles = roles;
+		this.addresses = addresses;
+	}
+	
+	
+	
+
+	public CommonUsers() {
+		super();
+	}
 
 	public String getUsername() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	public String getProfileImgUrl() {
+		return profileImgUrl;
+	}
+
+	public void setProfileImgUrl(String profileImgUrl) {
+		this.profileImgUrl = profileImgUrl;
+	}
+
+	public void setDeletedBy(Long deletedBy) {
+		this.deletedBy = deletedBy;
+	}
+
+	
+
+	
 	
 	
 	

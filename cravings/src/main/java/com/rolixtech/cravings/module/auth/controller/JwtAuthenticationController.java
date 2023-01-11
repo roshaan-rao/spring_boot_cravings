@@ -8,15 +8,23 @@ import com.rolixtech.cravings.module.auth.model.JwtRequest;
 import com.rolixtech.cravings.module.auth.model.JwtResponse;
 import com.rolixtech.cravings.module.auth.model.ResponseEntityOutput;
 import com.rolixtech.cravings.module.generic.services.GenericUtility;
+import com.rolixtech.cravings.module.resturant.dao.CommonUsersResturantsDao;
+import com.rolixtech.cravings.module.resturant.model.CommonUsersResturants;
 import com.rolixtech.cravings.module.users.dao.CommonUsersDao;
+import com.rolixtech.cravings.module.users.models.CommonRole;
 import com.rolixtech.cravings.module.users.models.CommonUsers;
 //import com.rolixtech.cravings.module.auth.model.;
 import com.rolixtech.cravings.module.auth.config.JwtUserDetailsService;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -42,93 +50,95 @@ public class JwtAuthenticationController {
 	
 	@Autowired
 	private CommonUsersDao UsersDao;
+	
+	@Autowired
+	private CommonUsersResturantsDao UsersResturantsDao;
+	
+	@Autowired
+	private GenericUtility utility;
 
 	public static final String CONTROLLER_URL = GenericUtility.APPLICATION_CONTEXT + "/authentication";
 	
 	
 	
-//	public ResponseEntity<?> createAuthenticationTokeno(@RequestBody JwtRequest authenticationRequest) throws Exception {
-//
-//		final Authentication authentication = authenticate(authenticationRequest.getUsername(),
-//        		authenticationRequest.getPassword());
-//				
-//				
-////				authenticationManager.authenticate(
-////                new UsernamePasswordAuthenticationToken(
-////                		authenticationRequest.getUsername(),
-////                		authenticationRequest.getPassword()
-////                )
-////        );
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        final String token = jwtTokenUtil.generateToken(authentication);
-//        
-//        CommonUsers Users=UsersDao.findByEmail(authenticationRequest.getUsername());
-//        List<String> authorities = authentication.getAuthorities().stream()
-//                .map(GrantedAuthority::getAuthority)
-//                .collect(Collectors.toList());
-//        return ResponseEntity.ok(new JwtResponse(token, Users.getId(), Users.getFirstName()+" "+Users.getLastName(), Users.getEmail(), authorities));
-//	}
-//
-////	@RequestMapping(value = "/register", method = RequestMethod.POST)
-////	public ResponseEntity<?> saveUser(@RequestBody UserDto user) throws Exception {
-////		return ResponseEntity.ok(userDetailsService.save(user));
-////	}
-//
-//	
-//	private Authentication authenticate1(String username, String password) throws Exception{
-//		Authentication authentication=null;
-//		//try {
-////			System.out.println("YOOOOOOO"+authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password)));
-//			//authentication= authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-////		} catch (DisabledException e) {
-////			throw new Exception("USER_DISABLED", e);
-////		} catch (BadCredentialsException e) {
-////			throw new Exception("INVALID_CREDENTIALS", e);
-////		}
-//			
-//		  try {
-//	            this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-//	            authentication= authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-//	        } catch (BadCredentialsException e) {
-//	            //Here is the error
-//	            throw new Exception("Incorrect username or password", e);
-//	        }	
-//			
-//		return authentication;
-//	}
 	
-	
-	
-	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = CONTROLLER_URL, method = RequestMethod.POST)
-	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
-		System.out.println(authenticationRequest.getUsername()+ " - "+ authenticationRequest.getPassword());
+	public ResponseEntity<?> createAuthenticationToken(String email, String password, String portal) throws Exception {
+		//System.out.println(authenticationRequest.getUsername()+ " - "+ authenticationRequest.getPassword());
 		
 		
-		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+		authenticate(email, password);
 		
 		final Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                		authenticationRequest.getUsername(),
-                		authenticationRequest.getPassword()
-                )
-        ); 
+                new UsernamePasswordAuthenticationToken(email,password)); 
 				
 				
 				
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        final String token = jwtTokenUtil.generateToken(authentication);
+       
 		
-		final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-		CommonUsers User=UsersDao.findByEmail(authenticationRequest.getUsername());
-	
+		final UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+		 final String token = jwtTokenUtil.generateToken(userDetails);
+		CommonUsers User=UsersDao.findByEmailAndIsDeleted(email,0);
+
+        
+        ResponseEntityOutput response=new ResponseEntityOutput();
+        
+        List<Map> RowOutput=new ArrayList<>();
+        Map Row=new HashMap<>();
+        Row.put("token", token);
+        Row.put("userId",  User.getId());
+        Row.put("userName", User.getFirstName()+" "+User.getLastName());
+        Row.put("userEmail", User.getEmail());
+        Row.put("profileImage", User.getProfileImgUrl());
+       
+        CommonUsersResturants resturant=UsersResturantsDao.findByUserId(User.getId());
+        if(resturant!=null) {
+        	Row.put("resturantId", resturant.getResturantId());
+        }else {
+        	Row.put("resturantId",0);
+        }
+        
+       
+        
+        Set<CommonRole> role= User.getRoles();
+        List<CommonRole> list = new ArrayList<CommonRole>(role);
+        CommonRole obj = list.get(0);
+        System.out.println("Role"+obj.getId());
+        System.out.println("PORTAL"+portal);
+        
+        
+       
+    	if(utility.parseLong(obj.getId())!=utility.parseLong(portal)) {
+    		 Map Row2=new HashMap<>();
+				//RowOutput.add(Row2);
+		    	response.CODE="2";
+				response.USER_MESSAGE="User Not Allowed For This Protal";
+				response.SYSTEM_MESSAGE="Role Does'nt Matched";
+    		
+        }else {
+        	if(obj!=null) {
+        		Row.put("roleId", obj.getId());
+        		Row.put("roleLabel",obj.getName());
+        		response.CODE="1";
+        		response.USER_MESSAGE="Logged In";
+        		response.SYSTEM_MESSAGE="Credientials Matched";
+        		RowOutput.add(Row);
+            }else{
+            	Map Row2=new HashMap<>(); 
+				//RowOutput.add(Row2);
+		    	response.CODE="2";
+				response.USER_MESSAGE="User Not Allowed For This Protal";
+				response.SYSTEM_MESSAGE="";
+            }
+        	
+        	
+        }
 		
-        CommonUsers Users=UsersDao.findByEmail(authenticationRequest.getUsername());
-        List<String> authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(new JwtResponse(token, Users.getId(), Users.getFirstName()+" "+Users.getLastName(), Users.getEmail(), authorities));
-	
+    	response.DATA=RowOutput;		
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+      
 	}
 
 	private void authenticate(String username, String password) throws Exception {

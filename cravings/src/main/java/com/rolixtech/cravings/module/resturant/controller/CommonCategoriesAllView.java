@@ -1,4 +1,4 @@
-package com.rolixtech.cravings.module.users.controller;
+package com.rolixtech.cravings.module.resturant.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,53 +21,22 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rolixtech.cravings.module.auth.model.JwtRequest;
 import com.rolixtech.cravings.module.auth.model.ResponseEntityOutput;
 import com.rolixtech.cravings.module.generic.services.GenericUtility;
+import com.rolixtech.cravings.module.resturant.services.CommonCategoriesService;
 import com.rolixtech.cravings.module.users.dao.CommonUsersDao;
 import com.rolixtech.cravings.module.users.services.CommonUsersService;
 @RestController
 @CrossOrigin()
-public class CommonUsersController {
+public class CommonCategoriesAllView {
    
 	
-	public static final String CONTROLLER_URL = GenericUtility.APPLICATION_CONTEXT + "/user";
+	public static final String CONTROLLER_URL = GenericUtility.APPLICATION_CONTEXT + "/generic/commonCategories";
 	
 	
 	@Autowired
-	private CommonUsersService UsersService;
-	 
-		
-	
-    @PostMapping(CONTROLLER_URL+"/register")
-	public ResponseEntity<?> Register(String firstName,String lastName,String mobile,String email,String password,String completeAddress,
-			Long countryId,Long provinceId,Long cityId,String postalCode,Double lat,Double lng,Double accuracy)  { 
-			
-			ResponseEntityOutput response=new ResponseEntityOutput();
-			Map map=new HashMap<>();
-			
-			try {
-				
-				response.CODE="1";
-				response.USER_MESSAGE="";
-				response.SYSTEM_MESSAGE="Document deleted";
-				UsersService.registerNewUserAccount(firstName, lastName, email, mobile, password,completeAddress, countryId, provinceId, cityId, postalCode, 0.0, 0.0, 0.0);
-			
-			}
-
-			catch (Exception e) {
-				// TODO: handle exception
-				e.printStackTrace();
-				response.CODE="2";
-				response.USER_MESSAGE="Error";
-				response.SYSTEM_MESSAGE=e.getMessage();
-				
-			}
-			
-			return ResponseEntity.ok(response);
-	}
-    
+	private CommonCategoriesService CategoriesService;
     
     @GetMapping(CONTROLLER_URL+"/view")
-    @PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<?> View(Long id,String logReason)  { 
+	public ResponseEntity<?> View()  { 
 			
 			ResponseEntityOutput response=new ResponseEntityOutput();
 			Map map=new HashMap<>();
@@ -77,7 +46,7 @@ public class CommonUsersController {
 				response.CODE="1";
 				response.USER_MESSAGE="";
 				response.SYSTEM_MESSAGE="";
-				response.DATA=UsersService.findAllUsersAccounts();
+				response.DATA=CategoriesService.getAll();
 			
 			}
 

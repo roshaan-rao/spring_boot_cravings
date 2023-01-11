@@ -1,4 +1,4 @@
-package com.rolixtech.cravings.module.users.models;
+package com.rolixtech.cravings.module.generic.model;
 
 import java.util.Date;
 
@@ -8,7 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class CommonCities {
+public class CommonCountries {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -48,7 +48,7 @@ public class CommonCities {
 
 	@Override
 	public String toString() {
-		return "CommonCities [id=" + id + ", label=" + label + ", isActive=" + isActive + "]";
+		return "CommonCountires [id=" + id + ", label=" + label + ", isActive=" + isActive + "]";
 	}
 
 

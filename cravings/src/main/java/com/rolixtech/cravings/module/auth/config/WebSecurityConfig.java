@@ -46,6 +46,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public static final String ALLOWED_URL1 = GenericUtility.APPLICATION_CONTEXT + "/authentication";
 	
 	public static final String ALLOWED_USER_URL2 = GenericUtility.APPLICATION_CONTEXT + "/user/register";
+	
+	public static final String ALLOWED_Categories_URL1 = GenericUtility.APPLICATION_CONTEXT + "/categories/view";
+	
+	
+	
+
+	
+	public static final String ALLOWED_GENERIC_URL1 = GenericUtility.APPLICATION_CONTEXT + "/generic/**";
+	
+	public static final String ALLOWED_CUSTOMER_URL1 = GenericUtility.APPLICATION_CONTEXT + "/customer/register";
+	
+	public static final String ALLOWED_CUSTOMER_URL2 = GenericUtility.APPLICATION_CONTEXT + "/customer/popular-resturants/view";
+	
+	public static final String ALLOWED_CUSTOMER_URL3 = GenericUtility.APPLICATION_CONTEXT + "/customer/resturants/search/view";
+	
+	public static final String ALLOWED_CUSTOMER_URL4 = GenericUtility.APPLICATION_CONTEXT + "/customer/resturants/view";
+	
+	
+	public static final String ALLOWED_CUSTOMER_URL5 = GenericUtility.APPLICATION_CONTEXT + "/customer/resturants/products/view";
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -94,13 +113,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// We don't need CSRF for this example
 		httpSecurity.csrf().disable()
 				// dont authenticate this particular request
-				.authorizeRequests().antMatchers(ALLOWED_URL1,ALLOWED_USER_URL2).permitAll().
+				.authorizeRequests().antMatchers(ALLOWED_URL1,ALLOWED_USER_URL2,ALLOWED_Categories_URL1,ALLOWED_GENERIC_URL1,ALLOWED_CUSTOMER_URL1,ALLOWED_CUSTOMER_URL2,ALLOWED_CUSTOMER_URL3,ALLOWED_CUSTOMER_URL4,ALLOWED_CUSTOMER_URL5).permitAll().
 				// all other requests need to be authenticated
 						anyRequest().authenticated().and()
 				// make sure we use stateless session; session won't be used to
 				// store user's state.		
 				.exceptionHandling().
-//				authenticationEntryPoint(JwtAuthenticationEntryPoint).
+				authenticationEntryPoint(JwtAuthenticationEntryPoint).
 //		        accessDeniedHandler(accessDeniedHandler()).
 		        				
 						and().sessionManagement()

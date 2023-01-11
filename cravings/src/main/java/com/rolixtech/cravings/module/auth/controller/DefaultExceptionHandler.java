@@ -27,8 +27,8 @@ public class DefaultExceptionHandler {
     public @ResponseBody ResponseEntityOutput
     handleException(Exception ex)
     {
-    	System.out.println("ex"+ex);
+    	
     	List<Map> resultRes=new ArrayList<Map>();
-        return new ResponseEntityOutput("2", ex+"",ex.getMessage()+"", ex+"",resultRes);
+        return new ResponseEntityOutput("2", ex+"",ex.getMessage(), ex.getLocalizedMessage()+"",resultRes);
     }
 }

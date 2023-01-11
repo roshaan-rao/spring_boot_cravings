@@ -12,11 +12,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 import org.springframework.stereotype.Repository;
 
-import com.rolixtech.cravings.module.users.models.CommonCities;
+import com.rolixtech.cravings.module.generic.model.CommonCities;
+import com.rolixtech.cravings.module.generic.model.CommonCountries;
 
 @Repository
 public interface CommonCitiesDao extends JpaRepository<CommonCities, Long>  {
 
-	
+	CommonCities findById(long id);
+
+	List<CommonCities> findAllByProvinceId(long countryId);
 
 }

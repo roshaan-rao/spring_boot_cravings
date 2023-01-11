@@ -18,7 +18,7 @@ import com.rolixtech.cravings.module.users.models.CommonUsers;
 @Repository
 public interface CommonRoleDao extends JpaRepository<CommonRole, Long>  {
 
-	
+	CommonRole findById(long Id);
 
 	CommonRole findByName(String username);
 

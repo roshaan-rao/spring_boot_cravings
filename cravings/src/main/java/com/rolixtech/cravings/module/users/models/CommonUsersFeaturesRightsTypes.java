@@ -8,7 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class CommonCountries {
+public class CommonUsersFeaturesRightsTypes {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -48,7 +48,7 @@ public class CommonCountries {
 
 	@Override
 	public String toString() {
-		return "CommonCountires [id=" + id + ", label=" + label + ", isActive=" + isActive + "]";
+		return "CommonCities [id=" + id + ", label=" + label + ", isActive=" + isActive + "]";
 	}
 
 

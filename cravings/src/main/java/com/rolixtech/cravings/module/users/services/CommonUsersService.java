@@ -300,6 +300,14 @@ public class CommonUsersService {
 		return Label;
 	}
 	
+	public void resetPassword(long userId, String newPassword) {
+		CommonUsers user = UsersDao.findById(userId);
+		if(user!=null) {
+			user.setPassword(bcryptEncoder.encode(newPassword));
+			UsersDao.save(user);
+		}
+	}
+	
 	
 	
 	

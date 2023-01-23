@@ -85,17 +85,16 @@ public class CommonUsersResturantsService {
 		for(int i=0; i<PromotionalBanners.size(); i++) {
 			if(PromotionalBanners.get(i).getEndDate().after(currentDate) && PromotionalBanners.get(i).getIsActive()==1) {
 				List<CommonResturantsPromotionalBannersDetail> PromotionalBannersDetails = ResturantsPromotionalBannersDetailsDao.findByPromotionalBannerId(PromotionalBanners.get(i).getId());
-				Map Row=new HashMap<>();
-				for(int j=0; j<PromotionalBannersDetails.size(); j++) {
-					Row.put("id", PromotionalBannersDetails.get(i).getPromotionalBannerId());
-					Row.put("resturantId", PromotionalBannersDetails.get(i).getResturantId());
-					Row.put("fileName", PromotionalBannersDetails.get(i).getImageUrl());
-					list.add(Row);
+				if(PromotionalBannersDetails.isEmpty()) {
+					PromotionalBannersDetails.stream().forEach(
+					PromotionalBannerDetail->{Map Row=new HashMap<>();
+					Row.put("id", PromotionalBannerDetail.getPromotionalBannerId());
+					Row.put("resturantId", PromotionalBannerDetail.getResturantId());
+					Row.put("fileName", PromotionalBannerDetail.getImageUrl());
+					list.add(Row);});
 				}
 			}
-			
 		}
-		
 		return list;
 	}
 

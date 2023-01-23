@@ -92,22 +92,20 @@ public class JwtAuthenticationController {
         Row.put("userName", User.getFirstName()+" "+User.getLastName());
         Row.put("userEmail", User.getEmail());
         Row.put("profileImage", User.getProfileImgUrl());
-       
-        CommonUsersResturants resturant=UsersResturantsDao.findByUserId(User.getId());
-        if(resturant!=null) {
-        	Row.put("resturantId", resturant.getResturantId());
-        }else {
-        	Row.put("resturantId",0);
-        }
-        
+        Row.put("mobileNumber", User.getMobile());
        
         
         Set<CommonRole> role= User.getRoles();
         List<CommonRole> list = new ArrayList<CommonRole>(role);
         CommonRole obj = list.get(0);
-        System.out.println("Role"+obj.getId());
-        System.out.println("PORTAL"+portal);
         
+        CommonUsersResturants resturant=UsersResturantsDao.findByUserId(User.getId());
+        if(resturant!=null) {
+        	Row.put("resturantId", resturant.getResturantId());
+        }else {
+        	
+        	Row.put("resturantId",0);
+        } 
         
        
     	if(utility.parseLong(obj.getId())!=utility.parseLong(portal)) {
@@ -119,13 +117,33 @@ public class JwtAuthenticationController {
     		
         }else {
         	if(obj!=null) {
-        		Row.put("roleId", obj.getId());
-        		Row.put("roleLabel",obj.getName());
-        		response.CODE="1";
-        		response.USER_MESSAGE="Logged In";
-        		response.SYSTEM_MESSAGE="Credientials Matched";
-        		RowOutput.add(Row);
-            }else{
+        		if(portal.equals("2")) {
+        				
+        				if(resturant==null) {
+        					response.CODE="2";
+                    		response.USER_MESSAGE="No Resturant is associated with user.";
+                    		response.SYSTEM_MESSAGE="No Resturant is associated with user.";
+                    		
+        				}else {
+        					Row.put("roleId", obj.getId());
+                    		Row.put("roleLabel",obj.getName());
+                    		response.CODE="1";
+                    		response.USER_MESSAGE="Logged In";
+                    		response.SYSTEM_MESSAGE="Credientials Matched";
+                    		RowOutput.add(Row);
+        				}
+        			
+            		
+        		}else {
+        			Row.put("roleId", obj.getId());
+            		Row.put("roleLabel",obj.getName());
+            		response.CODE="1";
+            		response.USER_MESSAGE="Logged In";
+            		response.SYSTEM_MESSAGE="Credientials Matched";
+            		RowOutput.add(Row);
+        		}
+        		
+            }else {
             	Map Row2=new HashMap<>(); 
 				//RowOutput.add(Row2);
 		    	response.CODE="2";

@@ -53,5 +53,29 @@ public class CommonCategoriesService {
 		}
 		return label;
 	}
+	
+	public void getAAAAAll(){
+		
+//		List<Map> list=new ArrayList<>();
+//		List<CommonCategories> categories=CategoriesDao.findAll();
+//		if(!categories.isEmpty()) {
+//			categories.stream().forEach(
+//				category->{
+//						Map Row=new HashMap<>();
+//						Row.put("id", category.getId());
+//						Row.put("label", category.getLabel());
+//						Row.put("categoryImg", category.getCategoryImgUrl());
+//						Row.put("directory", category.getDirectoryUrl());
+//						list.add(Row);
+//				}
+//			
+//			);
+//		}
+//		
+		
+		
+//		return list;
+		
+	}
 
 }

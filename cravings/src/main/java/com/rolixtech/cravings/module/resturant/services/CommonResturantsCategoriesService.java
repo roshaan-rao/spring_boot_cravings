@@ -34,7 +34,7 @@ public class CommonResturantsCategoriesService {
 	public List<Map> getAll(long recordId,long resturantId){
 		
 		List<Map> list=new ArrayList<>();
-		List<CommonResturantsCategories> categories=ResturantsCategoriesDao.findAllByIsDeleted(0);
+		List<CommonResturantsCategories> categories=new ArrayList<>();
 		if(recordId!=0) {
 			CommonResturantsCategories catObj=ResturantsCategoriesDao.findByIdAndIsDeleted(recordId,0);
 			categories.add(catObj);
@@ -181,6 +181,21 @@ public class CommonResturantsCategoriesService {
 	    	label=Status.getLabel();
 	    }
 	    return label;
+	}
+
+
+
+	public Long  getCategoryByResturantCatoryId(long resturantCatoryId) {
+		Long categoryId=0l;
+		CommonResturantsCategories ResturantsCategories=null;
+		if(resturantCatoryId!=0) {
+			 ResturantsCategories=ResturantsCategoriesDao.findById(resturantCatoryId);
+			 if(ResturantsCategories!=null) {
+				 categoryId= ResturantsCategories.getCategoryId();
+			 }
+		}
+		
+		return categoryId;
 	}
 	
 	

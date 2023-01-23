@@ -63,6 +63,35 @@ public class CommonCategoriesAllView {
 			return ResponseEntity.ok(response);
 	}
     
+//    @GetMapping(CONTROLLER_URL+"/get")
+//	public ResponseEntity<?> View()  { 
+//			
+//			ResponseEntityOutput response=new ResponseEntityOutput();
+//			Map map=new HashMap<>();
+//			
+//			try {
+//				
+//				response.CODE="1";
+//				response.USER_MESSAGE="";
+//				response.SYSTEM_MESSAGE="";
+//				response.DATA=CategoriesService.getAll();
+//			
+//			}
+//
+//			catch (Exception e) {
+//				// TODO: handle exception
+//				e.printStackTrace();
+//				response.CODE="2";
+//				response.USER_MESSAGE="Error";
+//				response.SYSTEM_MESSAGE=e.toString();
+//				
+//			}
+//			
+//			
+//			return ResponseEntity.ok(response);
+//	}
+    
+    
     
    
     

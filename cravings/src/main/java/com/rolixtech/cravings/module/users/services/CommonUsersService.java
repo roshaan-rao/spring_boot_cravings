@@ -86,7 +86,7 @@ public class CommonUsersService {
 	    	if (profileImg != null ) {
 	    		if (!profileImg.getOriginalFilename().equals("")) {
 				
-					String OldFile=Utility.getFileDirectoryPath()+File.separator+"common"+File.separator+user.getProfileImgUrl();
+					String OldFile=Utility.getSecureFileDirectoryPath()+File.separator+"common"+File.separator+user.getProfileImgUrl();
 					File f = new File(OldFile); 
 					
 					if(f.delete()) {
@@ -98,7 +98,7 @@ public class CommonUsersService {
 					 TargetFileName = "profile_Img_"+"user_"+user.getId()+"_"+ Utility.getUniqueId()
 							
 							+ profileImg.getOriginalFilename().substring(profileImg.getOriginalFilename().lastIndexOf("."));
-					Path copyLocation = Paths.get(StringUtils.cleanPath(Utility.getFileDirectoryPath()+File.separator+"common"+File.separator+TargetFileName));
+					Path copyLocation = Paths.get(StringUtils.cleanPath(Utility.getSecureFileDirectoryPath()+File.separator+"common"+File.separator+TargetFileName));
 					Files.copy(profileImg.getInputStream(), copyLocation);
 					
 					user.setProfileImgUrl(TargetFileName);
@@ -114,7 +114,15 @@ public class CommonUsersService {
 	    
 	    user.setFirstName(firstName);
 	    user.setLastName(lastName);
-	    user.setPassword(bcryptEncoder.encode(password));
+	    if(recordId!=0) {
+	    	if(!password.equals("")) {
+	    		user.setPassword(bcryptEncoder.encode(password));
+	    	}
+	    	
+	    }else {
+	    	user.setPassword(bcryptEncoder.encode(password));
+	    }
+	    
 	    user.setEmail(email);;
 	    user.setMobile(mobile);
 	    user.setCategoryId(1);
@@ -131,7 +139,7 @@ public class CommonUsersService {
 				 TargetFileName = "profile_Img_"+"user_"+user.getId()+"_"+ Utility.getUniqueId()
 						
 						+ profileImg.getOriginalFilename().substring(profileImg.getOriginalFilename().lastIndexOf("."));
-				Path copyLocation = Paths.get(StringUtils.cleanPath(Utility.getFileDirectoryPath()+File.separator+"common"+File.separator+TargetFileName));
+				Path copyLocation = Paths.get(StringUtils.cleanPath(Utility.getSecureFileDirectoryPath()+File.separator+"common"+File.separator+TargetFileName));
 				Files.copy(profileImg.getInputStream(), copyLocation);
 				
 				user.setProfileImgUrl(TargetFileName);
@@ -175,9 +183,13 @@ public class CommonUsersService {
 	    CommonUsers user = new CommonUsers();
 	    
 	    String[] FulName=name.split(" ");
-	    
 	    user.setFirstName(FulName[0]);
-	    user.setLastName(FulName[1]);
+	    if(FulName.length>1) {
+	    	user.setLastName(FulName[1]);
+	    }
+	    
+	    
+	    
 	    user.setPassword(bcryptEncoder.encode(password));
 	    user.setEmail(email);;
 	    user.setMobile(mobile);

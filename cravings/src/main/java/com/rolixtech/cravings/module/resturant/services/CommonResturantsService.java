@@ -107,6 +107,12 @@ public class CommonResturantsService {
 						Row.put("contactNo", resturant.getContactNo());
 						Row.put("email", resturant.getEmail());
 						Row.put("rating", resturant.getRating());
+						Row.put("totalNumberOfRatings", resturant.getRating());
+						Row.put("foodCategory", getMostlyAddedProductsCatgoryByResturant(resturant.getId()));
+						Row.put("deliveryTime", "30 min");
+						Row.put("distance", "1.5km away");
+						Row.put("minOrderPrice", "Rs.250");						
+						
 						if(resturant.getIsActive()==0) {
 							Row.put("isActive", resturant.getIsActive());
 							Row.put("isActiveLabel", "In-Active");
@@ -168,6 +174,11 @@ public class CommonResturantsService {
 						Row.put("contactNo", resturant.getContactNo());
 						Row.put("email", resturant.getEmail());
 						Row.put("rating", resturant.getRating());
+						Row.put("totalNumberOfRatings", resturant.getRating());
+						Row.put("foodCategory", "Pakistani");
+						Row.put("deliveryTime", "30 min");
+						Row.put("distance", "1.5km away");
+						Row.put("minOrderPrice", "Rs.250");	
 						if(resturant.getIsActive()==0) {
 							Row.put("isActive", resturant.getIsActive());
 							Row.put("isActiveLabel", "In-Active");
@@ -209,6 +220,24 @@ public class CommonResturantsService {
 		
 	}
 	
+	
+	public String findLogoImgById(long resturantId) {
+		String label="";
+		CommonResturants Resturant=ResturantsDao.findById(resturantId);
+		if(Resturant!=null) {
+			label=Resturant.getLogoImgUrl();
+		}
+		return label;
+	}
+	
+	public String findBannerImgById(long resturantId) {
+		String label="";
+		CommonResturants Resturant=ResturantsDao.findById(resturantId);
+		if(Resturant!=null) {
+			label=Resturant.getBannerImgUrl();
+		}
+		return label;
+	}
 	
 	public String findLabelById(long resturantId) {
 		String label="";
@@ -271,7 +300,7 @@ public class CommonResturantsService {
 					String TargetFileName = "logo_"+"Restr_"+Resturants.getId()+"_"+ utility.getUniqueId()
 							
 							+ logoImg.getOriginalFilename().substring(logoImg.getOriginalFilename().lastIndexOf("."));
-					Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getFileDirectoryPath()+File.separator+"common"+File.separator+TargetFileName));
+					Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getOpenFileDirectoryPath()+File.separator+TargetFileName));
 					
 					Files.copy(logoImg.getInputStream(), copyLocation);
 					
@@ -288,7 +317,7 @@ public class CommonResturantsService {
 					String TargetFileName = "profile_"+"Restr_"+Resturants.getId()+"_"+ utility.getUniqueId()
 							
 							+ profileImg.getOriginalFilename().substring(profileImg.getOriginalFilename().lastIndexOf("."));
-					Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getFileDirectoryPath()+File.separator+"common"+File.separator+TargetFileName));
+					Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getOpenFileDirectoryPath()+File.separator+TargetFileName));
 					
 					Files.copy(profileImg.getInputStream(), copyLocation);
 					
@@ -305,7 +334,7 @@ public class CommonResturantsService {
 					String TargetFileName = "banner_"+"Restr_"+Resturants.getId()+"_"+ utility.getUniqueId()
 							
 							+ bannerImg.getOriginalFilename().substring(bannerImg.getOriginalFilename().lastIndexOf("."));
-					Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getFileDirectoryPath()+File.separator+"common"+File.separator+TargetFileName));
+					Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getOpenFileDirectoryPath()+File.separator+TargetFileName));
 					
 					Files.copy(bannerImg.getInputStream(), copyLocation);
 					
@@ -320,7 +349,7 @@ public class CommonResturantsService {
 			
 			if (logoImg != null && !logoImg.getOriginalFilename().equals("")) {
 				
-				String OldFile=utility.getFileDirectoryPath()+File.separator+"common"+File.separator+Resturants.getLogoImgUrl();
+				String OldFile=utility.getOpenFileDirectoryPath()+File.separator+"common"+File.separator+Resturants.getLogoImgUrl();
 				File f = new File(OldFile); 
 				
 				if(f.delete()) {
@@ -332,7 +361,7 @@ public class CommonResturantsService {
 				String TargetFileName = "logo_"+"Restr_"+Resturants.getId()+"_"+ utility.getUniqueId()
 						
 						+ logoImg.getOriginalFilename().substring(logoImg.getOriginalFilename().lastIndexOf("."));
-				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getFileDirectoryPath()+File.separator+"common"+File.separator+TargetFileName));
+				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getOpenFileDirectoryPath()+File.separator+TargetFileName));
 				
 				Files.copy(logoImg.getInputStream(), copyLocation);
 				
@@ -343,7 +372,7 @@ public class CommonResturantsService {
 			
 			if (profileImg != null && !profileImg.getOriginalFilename().equals("")) {
 				
-				String OldFile=utility.getFileDirectoryPath()+File.separator+"common"+File.separator+Resturants.getProfileImgUrl();
+				String OldFile=utility.getOpenFileDirectoryPath()+File.separator+Resturants.getProfileImgUrl();
 				File f = new File(OldFile); 
 				
 				if(f.delete()) {
@@ -355,7 +384,7 @@ public class CommonResturantsService {
 				String TargetFileName = "profile_"+"Restr_"+Resturants.getId()+"_"+ utility.getUniqueId()
 						
 						+ profileImg.getOriginalFilename().substring(profileImg.getOriginalFilename().lastIndexOf("."));
-				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getFileDirectoryPath()+File.separator+"common"+File.separator+TargetFileName));
+				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getOpenFileDirectoryPath()+File.separator+TargetFileName));
 				
 				Files.copy(profileImg.getInputStream(), copyLocation);
 				
@@ -365,7 +394,7 @@ public class CommonResturantsService {
 			}
 			if (bannerImg != null && !bannerImg.getOriginalFilename().equals("")) {
 				
-				String OldFile=utility.getFileDirectoryPath()+File.separator+"common"+File.separator+Resturants.getBannerImgUrl();
+				String OldFile=utility.getOpenFileDirectoryPath()+File.separator+Resturants.getBannerImgUrl();
 				File f = new File(OldFile); 
 				if(f.delete()) {
 					System.out.println("File Delteted");
@@ -375,7 +404,7 @@ public class CommonResturantsService {
 				String TargetFileName = "banner_"+"Restr_"+Resturants.getId()+"_"+ utility.getUniqueId()
 						
 						+ bannerImg.getOriginalFilename().substring(bannerImg.getOriginalFilename().lastIndexOf("."));
-				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getFileDirectoryPath()+File.separator+"common"+File.separator+TargetFileName));
+				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getOpenFileDirectoryPath()+File.separator+TargetFileName));
 				
 				Files.copy(bannerImg.getInputStream(), copyLocation);
 				
@@ -436,6 +465,11 @@ public class CommonResturantsService {
 						Row.put("contactNo", resturant.getContactNo());
 						Row.put("email", resturant.getEmail());
 						Row.put("rating", resturant.getRating());
+						Row.put("totalNumberOfRatings", resturant.getRating());
+						Row.put("foodCategory", "Pakistani");
+						Row.put("deliveryTime", "30 min");
+						Row.put("distance", "1.5km away");
+						Row.put("minOrderPrice", "Rs.250");	
 						if(resturant.getIsActive()==0) {
 							Row.put("isActive", resturant.getIsActive());
 							Row.put("isActiveLabel", "In-Active");
@@ -487,6 +521,11 @@ public class CommonResturantsService {
 				Row.put("logoImgUrl", resturant.getLogoImgUrl());
 				Row.put("profileImgUrl", resturant.getProfileImgUrl());
 				Row.put("bannerImgUrl", resturant.getBannerImgUrl());
+				Row.put("totalNumberOfRatings", resturant.getRating());
+				Row.put("foodCategory", "Pakistani");
+				Row.put("deliveryTime", "30 min");
+				Row.put("distance", "1.5km away");
+				Row.put("minOrderPrice", "Rs.250");	
 				CommonResturantsTimings Timings= ResturantsTimingsService.getResturantTimingForToday(resturant.getId());
 				if(Timings==null) {
 					Row.put("restuarntOpeningStatus",1);
@@ -564,6 +603,7 @@ public class CommonResturantsService {
 					Row.put("profileImgUrl", resturant.getProfileImgUrl());
 					Row.put("bannerImgUrl", resturant.getBannerImgUrl());
 					Row.put("rating", resturant.getRating());
+					
 					if(resturant.getIsActive()==0) {
 						Row.put("isActive", resturant.getIsActive());
 						Row.put("isActiveLabel", "In-Active");
@@ -662,7 +702,7 @@ public class CommonResturantsService {
 					String TargetFileName = "logo_"+"Restr_"+Resturants.getId()+"_"+ utility.getUniqueId()
 							
 							+ logoImg.getOriginalFilename().substring(logoImg.getOriginalFilename().lastIndexOf("."));
-					Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getFileDirectoryPath()+File.separator+"common"+File.separator+TargetFileName));
+					Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getOpenFileDirectoryPath()+File.separator+TargetFileName));
 					Files.copy(logoImg.getInputStream(), copyLocation);
 					
 					Resturants.setLogoImgUrl(TargetFileName);
@@ -676,7 +716,7 @@ public class CommonResturantsService {
 					String TargetFileName = "profile_"+"Restr_"+Resturants.getId()+"_"+ utility.getUniqueId()
 							
 							+ profileImg.getOriginalFilename().substring(profileImg.getOriginalFilename().lastIndexOf("."));
-					Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getFileDirectoryPath()+File.separator+"common"+File.separator+TargetFileName));
+					Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getOpenFileDirectoryPath()+File.separator+TargetFileName));
 					
 					Files.copy(profileImg.getInputStream(), copyLocation);
 					
@@ -691,7 +731,7 @@ public class CommonResturantsService {
 					String TargetFileName = "banner_"+"Restr_"+Resturants.getId()+"_"+ utility.getUniqueId()
 							
 							+ bannerImg.getOriginalFilename().substring(bannerImg.getOriginalFilename().lastIndexOf("."));
-					Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getFileDirectoryPath()+File.separator+"common"+File.separator+TargetFileName));
+					Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getOpenFileDirectoryPath()+File.separator+TargetFileName));
 					
 					Files.copy(bannerImg.getInputStream(), copyLocation);
 					
@@ -707,7 +747,7 @@ public class CommonResturantsService {
 			
 			if (logoImg != null && !logoImg.getOriginalFilename().equals("")) {
 				
-				String OldFile=utility.getFileDirectoryPath()+File.separator+"common"+File.separator+Resturants.getLogoImgUrl();
+				String OldFile=utility.getOpenFileDirectoryPath()+File.separator+Resturants.getLogoImgUrl();
 				File f = new File(OldFile); 
 				
 				if(f.delete()) {
@@ -719,7 +759,7 @@ public class CommonResturantsService {
 				String TargetFileName = "logo_"+"Restr_"+Resturants.getId()+"_"+ utility.getUniqueId()
 						
 						+ logoImg.getOriginalFilename().substring(logoImg.getOriginalFilename().lastIndexOf("."));
-				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getFileDirectoryPath()+File.separator+"common"+File.separator+TargetFileName));
+				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getOpenFileDirectoryPath()+File.separator+TargetFileName));
 				
 				Files.copy(logoImg.getInputStream(), copyLocation);
 				
@@ -731,7 +771,7 @@ public class CommonResturantsService {
 			
 			if (profileImg != null && !profileImg.getOriginalFilename().equals("")) {
 				
-				String OldFile=utility.getFileDirectoryPath()+File.separator+"common"+File.separator+Resturants.getProfileImgUrl();
+				String OldFile=utility.getOpenFileDirectoryPath()+File.separator+Resturants.getProfileImgUrl();
 				File f = new File(OldFile); 
 				
 				if(f.delete()) {
@@ -743,7 +783,7 @@ public class CommonResturantsService {
 				String TargetFileName = "profile_"+"Restr_"+Resturants.getId()+"_"+ utility.getUniqueId()
 						
 						+ profileImg.getOriginalFilename().substring(profileImg.getOriginalFilename().lastIndexOf("."));
-				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getFileDirectoryPath()+File.separator+"common"+File.separator+TargetFileName));
+				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getOpenFileDirectoryPath()+File.separator+TargetFileName));
 				
 				Files.copy(profileImg.getInputStream(), copyLocation);
 				
@@ -755,7 +795,7 @@ public class CommonResturantsService {
 			
 			if (bannerImg != null && !bannerImg.getOriginalFilename().equals("")) {
 				
-				String OldFile=utility.getFileDirectoryPath()+File.separator+"common"+File.separator+Resturants.getBannerImgUrl();
+				String OldFile=utility.getOpenFileDirectoryPath()+File.separator+Resturants.getBannerImgUrl();
 				File f = new File(OldFile); 
 				if(f.delete()) {
 					System.out.println("File Delteted");
@@ -765,7 +805,7 @@ public class CommonResturantsService {
 				String TargetFileName = "banner_"+"Restr_"+Resturants.getId()+"_"+ utility.getUniqueId()
 						
 						+ bannerImg.getOriginalFilename().substring(bannerImg.getOriginalFilename().lastIndexOf("."));
-				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getFileDirectoryPath()+File.separator+"common"+File.separator+TargetFileName));
+				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getOpenFileDirectoryPath()+File.separator+TargetFileName));
 				
 				Files.copy(bannerImg.getInputStream(), copyLocation);
 				
@@ -813,6 +853,11 @@ public class CommonResturantsService {
 							Row.put("email", resturant.getEmail());
 							
 							Row.put("rating", resturant.getRating());
+							Row.put("totalNumberOfRatings", resturant.getRating());
+							Row.put("foodCategory", "Pakistani");
+							Row.put("deliveryTime", "30 min");
+							Row.put("distance", "1.5km away");
+							Row.put("minOrderPrice", "Rs.250");	
 							if(resturant.getIsActive()==0) {
 								Row.put("isActive", resturant.getIsActive());
 								Row.put("isActiveLabel", "In-Active");
@@ -836,6 +881,22 @@ public class CommonResturantsService {
 		
 		
 		return list;
+		
+	}
+	
+	
+	public String getMostlyAddedProductsCatgoryByResturant(long resturantId) {
+		
+		String purpose="";
+		if(ProductsService.getMostlyAddedResturantCatoryIdByResturantID(resturantId)!=null) {
+			purpose=ProductsService.getMostlyAddedResturantCatoryIdByResturantID(resturantId);
+		}
+		
+				
+				
+		
+		
+		return purpose;
 		
 	}
 

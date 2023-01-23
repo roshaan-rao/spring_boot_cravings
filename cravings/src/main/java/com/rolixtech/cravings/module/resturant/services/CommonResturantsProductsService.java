@@ -59,6 +59,10 @@ public class CommonResturantsProductsService {
 	private CommonResturantsCategoriesService ResturantsCategoriesService;
 	
 	
+	@Autowired
+	private CommonResturantsProductsGroupTypesService ProductsGroupTypesService;
+	
+	
 	public List<CommonResturantsProducts> findAllByLabelContaining(String keyword) {
 		
 		List<CommonResturantsProducts> ResturantsProduct=ResturantsProductsDao.findByLabelContaining(keyword);
@@ -79,82 +83,10 @@ public class CommonResturantsProductsService {
 		return label;
 	}
 
-	@Transactional
-	public void saveProductV2(long recordId,String label,long resturantId,long resturantCategoryId) throws Exception {
-	
-		CommonResturantsProducts Product=null;
-		if(recordId==0) {
-			Product=new CommonResturantsProducts();
-		}else {
-			Product=ResturantsProductsDao.findByIdAndIsDeleted(recordId,0);
-		}
-		
-		Product.setLabel(label);
-		
-		Product.setResturantId(resturantId);
-		
-		Product.setRating(5.0);
-		Product.setIsActive(1);
-		
-		ResturantsProductsDao.save(Product);
-		
-		String restrauntDirectory=ResturantsService.findResturantDirectoryById(resturantId);
-		// specify an abstract pathname in the File object 
-//		if(recordId==0) {
-//			
-//			if (productImgUrl != null && !productImgUrl.getOriginalFilename().equals("")) {
-//				String TargetFileName = "product_"+Product.getId()+"_"+ utility.getUniqueId()
-//						
-//						+ productImgUrl.getOriginalFilename().substring(productImgUrl.getOriginalFilename().lastIndexOf("."));
-//				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getFileDirectoryPath()+restrauntDirectory+File.separator+TargetFileName));
-//				Files.copy(productImgUrl.getInputStream(), copyLocation);
-//				
-//				Product.setProductImgUrl(TargetFileName);
-//				
-//			} else {
-//				throw new Exception("Please select a valid file");
-//			}	
-//			
-//			
-//		}else {
-//			
-//			
-//			if (productImgUrl != null && !productImgUrl.getOriginalFilename().equals("")) {
-//				
-//				String OldFile=utility.getFileDirectoryPath()+restrauntDirectory+File.separator+Product.getProductImgUrl();
-//				File f = new File(OldFile); 
-//				
-//				if(f.delete()) {
-//					System.out.println("File Delteted");
-//				}else {
-//					System.out.println("File Could not be Delteted");
-//				}
-//				
-//				String TargetFileName = "product_"+Product.getId()+"_"+ utility.getUniqueId()
-//						
-//						+ productImgUrl.getOriginalFilename().substring(productImgUrl.getOriginalFilename().lastIndexOf("."));
-//				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getFileDirectoryPath()+restrauntDirectory+File.separator+TargetFileName));
-//				Files.copy(productImgUrl.getInputStream(), copyLocation);
-//				
-//				Product.setProductImgUrl(TargetFileName);
-//				
-//				
-//			} else {
-//				throw new Exception("Please select a valid file");
-//			}
-//			
-//			
-//		}
-		
-		ResturantsProductsDao.save(Product);
-//		ProductsAddOnService.SaveProductsAddOn(Product.getId(), productAddOnId);
-//		ProductsExtrasService.SaveProductsExtras(Product.getId(), extraProductId);
-		
-	}
 	
 	@Transactional
 	public void saveProduct(long recordId,String label,String description,long resturantId,double salesTax,double salesTaxPercentage,double grossAmount,double netAmount,double discount,
-			double rate,int isTimingEnable,Date availabilityFrom,Date availabilityTo,int isAvailable,MultipartFile productImgUrl,long resturantCategoryId,int isExtra,Long productAddOnId[],Long extraProductId[]) throws Exception {
+			double rate,int isTimingEnable,Date availabilityFrom,Date availabilityTo,int isAvailable,MultipartFile productImgUrl,long resturantCategoryId,int isExtra) throws Exception {
 	
 		CommonResturantsProducts Product=null;
 		if(recordId==0) {
@@ -193,7 +125,7 @@ public class CommonResturantsProductsService {
 				String TargetFileName = "product_"+Product.getId()+"_"+ utility.getUniqueId()
 						
 						+ productImgUrl.getOriginalFilename().substring(productImgUrl.getOriginalFilename().lastIndexOf("."));
-				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getFileDirectoryPath()+File.separator+TargetFileName));
+				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getOpenFileDirectoryPath()+File.separator+TargetFileName));
 				Files.copy(productImgUrl.getInputStream(), copyLocation);
 				
 				Product.setProductImgUrl(TargetFileName);
@@ -206,7 +138,7 @@ public class CommonResturantsProductsService {
 			
 			if (productImgUrl != null && !productImgUrl.getOriginalFilename().equals("")) {
 				
-				String OldFile=utility.getFileDirectoryPath()+File.separator+Product.getProductImgUrl();
+				String OldFile=utility.getOpenFileDirectoryPath()+File.separator+Product.getProductImgUrl();
 				File f = new File(OldFile); 
 				
 				if(f.delete()) {
@@ -218,7 +150,7 @@ public class CommonResturantsProductsService {
 				String TargetFileName = "product_"+Product.getId()+"_"+ utility.getUniqueId()
 						
 						+ productImgUrl.getOriginalFilename().substring(productImgUrl.getOriginalFilename().lastIndexOf("."));
-				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getFileDirectoryPath()+File.separator+TargetFileName));
+				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getOpenFileDirectoryPath()+File.separator+TargetFileName));
 				Files.copy(productImgUrl.getInputStream(), copyLocation);
 				
 				Product.setProductImgUrl(TargetFileName);
@@ -230,8 +162,7 @@ public class CommonResturantsProductsService {
 		}
 		
 		ResturantsProductsDao.save(Product);
-		ProductsAddOnService.SaveProductsAddOn(Product.getId(), productAddOnId);
-		ProductsExtrasService.SaveProductsExtras(Product.getId(), extraProductId);
+		
 		
 	}
 	
@@ -258,7 +189,7 @@ public class CommonResturantsProductsService {
 						Map Row=new HashMap<>();
 						Row.put("id", Product.getId());
 						Row.put("productAddOns",ProductsAddOnService.getProductsAddOn(Product.getId()));
-						Row.put("productExtras",ProductsExtrasService.getProductsExtras(Product.getId()));
+						
 						Row.put("label",Product.getLabel());
 						Row.put("description", Product.getDescription());
 						Row.put("resturantId", Product.getResturantId());
@@ -419,14 +350,14 @@ public class CommonResturantsProductsService {
 							
 							Row.put("availabilityTo", DateUtils.addHours(Product.getAvailabilityTo(), 5).getTime());
 							
-//							try { 
-//								Row.put("availabilityToDisplay", utility.millisecondstoTime(DateUtils.addHours(Product.getAvailabilityTo(), 5).getTime()));
-//							} catch (ParseException e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//								Row.put("availabilityToDisplay", "00:00:00");
-//								
-//							}
+							try { 
+								Row.put("availabilityToDisplay", utility.millisecondstoTime(DateUtils.addHours(Product.getAvailabilityTo(), 5).getTime()));
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								Row.put("availabilityToDisplay", "00:00:00");
+								
+							}
 							
 //							Row.put("availabilityFrom", DateUtils.addHours(Product.getAvailabilityFrom(), 5).getTime());
 //							
@@ -485,22 +416,22 @@ public class CommonResturantsProductsService {
 	}
 	
 	
-	public List<Map> addOnDropDownView(long resturantId) {
+	public List<Map> dropDownView(long resturantId) {
 
 		
 		List<Map> list=new ArrayList<>();
 	
 		List<CommonResturantsProducts> Products=new ArrayList<>();
+		
+		Products=ResturantsProductsDao.findAllByResturantIdAndIsExtraAndIsDeleted(resturantId,0,0);
 				
-		Products=ResturantsProductsDao.findAllByResturantIdAndIsExtraAndIsDeleted(resturantId,0,0);	
 		if(!Products.isEmpty()) {
 			Products.stream().forEach(
-				Product->{
-					
+				Product->{	
 				
 					Map Row=new HashMap<>();
 					Row.put("id", Product.getId());
-					Row.put("label",Product.getLabel());
+					Row.put("label",Product.getLabel());						
 					list.add(Row);
 				}
 				
@@ -512,30 +443,62 @@ public class CommonResturantsProductsService {
 	}
 	
 	
-	public List<Map> extrasDropDownView(long resturantId) {
+	public List<Map> addOnDropDownView(long resturantId) {
 
-		
-		List<Map> list=new ArrayList<>();
+		List<Map> listAllProducts=new ArrayList<>();
+		List<Map> listProducts=new ArrayList<>();
 	
 		List<CommonResturantsProducts> Products=new ArrayList<>();
 				
-		Products=ResturantsProductsDao.findAllByResturantIdAndIsExtraAndIsDeleted(resturantId,1,0);	
+		Products=ResturantsProductsDao.findAllByResturantIdAndIsExtraAndIsDeleted(resturantId,0,0);	
 		if(!Products.isEmpty()) {
 			Products.stream().forEach(
 				Product->{
-					
 				
 					Map Row=new HashMap<>();
-					Row.put("id", Product.getId());
-					Row.put("label",Product.getLabel());
-					list.add(Row);
+					Row.put("productId", Product.getId());
+					Row.put("productLabel","Normal - "+Product.getLabel());
+					Row.put("price",Product.getGrossAmount());
+					listProducts.add(Row);
 				}
 				
 			);
+			listAllProducts.addAll(listProducts);
 		}
 		
-		return list;
+		List<Map> listExtraProducts=new ArrayList<>();
 		
+		List<CommonResturantsProducts> ExtraProducts=new ArrayList<>();
+		ExtraProducts=ResturantsProductsDao.findAllByResturantIdAndIsExtraAndIsDeleted(resturantId,1,0);	
+		if(!ExtraProducts.isEmpty()) {
+			ExtraProducts.stream().forEach(
+				Product->{
+					Map Row=new HashMap<>();
+					Row.put("id", Product.getId());
+					Row.put("label","Extra - "+Product.getLabel());
+					Row.put("price",Product.getGrossAmount());
+					listExtraProducts.add(Row);
+				}
+				
+			);
+			
+			listAllProducts.addAll(listExtraProducts);
+		}
+		
+		
+		
+		return listAllProducts;
+		
+	}
+	
+	
+	public List<Map> addOnProductsGroupsTypesDropDownView() {
+
+		
+		List<Map> list=new ArrayList<>();
+		
+		list=ProductsGroupTypesService.getAll();
+		return list;
 	}
 
 	@Transactional
@@ -578,7 +541,6 @@ public class CommonResturantsProductsService {
 						Map Row=new HashMap<>();
 						Row.put("id", Product.getId());
 						Row.put("productAddOns",ProductsAddOnService.getProductsAddOn(Product.getId()));
-						Row.put("productExtras",ProductsExtrasService.getProductsExtras(Product.getId()));
 						Row.put("label",Product.getLabel());
 						Row.put("description", Product.getDescription());
 						Row.put("resturantId", Product.getResturantId());
@@ -661,6 +623,237 @@ public class CommonResturantsProductsService {
 	}
 
 	
+
+
+	public String getMostlyAddedResturantCatoryIdByResturantID(long resturantId) {
+		String purpose="";
+		if(utility.parseLong(ResturantsProductsDao.findResturantCategoryIdByResturantIdAndIsDeleted(resturantId,0))!=0) {
+			long resturantCatoryId=utility.parseLong(ResturantsProductsDao.findResturantCategoryIdByResturantIdAndIsDeleted(resturantId,0));
+			if(resturantCatoryId!=0) {
+				long categoryId=utility.parseLong(ResturantsCategoriesService.getCategoryByResturantCatoryId(resturantCatoryId));
+				if(categoryId!=0) {
+					purpose=CategoriesService.findLabelById(categoryId);
+				}
+			}
+		}
+		return purpose;
+	}
+	
+	
+	public List<Map> viewSingleProduct(long recordId) {
+
+		
+		List<Map> list=new ArrayList<>();
+	
+		List<CommonResturantsProducts> Products=new ArrayList<>();
+		if(recordId!=0) {
+			CommonResturantsProducts Product=ResturantsProductsDao.findByIdAndIsActiveAndIsDeleted(recordId,1,0);
+			Products.add(Product);
+			
+		}		
+				
+				
+		if(!Products.isEmpty()) {
+			Products.stream().forEach(
+					Product->{	
+					
+						Map Row=new HashMap<>();
+						Row.put("id", Product.getId());
+						Row.put("productAddOns",ProductsAddOnService.getProductsAddOn(Product.getId()));
+						Row.put("label",Product.getLabel());
+						Row.put("description", Product.getDescription());
+						Row.put("resturantId", Product.getResturantId());
+						Row.put("salesTax", Product.getSalesTax());
+						Row.put("salesTaxPercentage", Product.getSalesTaxPercentage());
+						Row.put("grossAmount", Product.getGrossAmount());
+						Row.put("netAmount", Product.getNetAmount());
+						Row.put("discount", Product.getDiscount());
+						Row.put("rate", Product.getRate());
+						
+						
+						if(Product.getIsTimingEnable()==0) {
+							Row.put("isTimingEnable", Product.getIsActive());
+							Row.put("isTimingEnableLable", "No");
+							Row.put("availabilityFrom", "");
+							Row.put("availabilityTo", "");
+							
+						}else {
+							Row.put("isTimingEnable", Product.getIsActive());
+							Row.put("isTimingEnableLable", "Yes");
+							
+							System.out.println(Product.getAvailabilityFrom());
+							
+							Row.put("availabilityFrom", DateUtils.addHours(Product.getAvailabilityFrom(), 5).getTime());
+							
+							try { 
+								Row.put("availabilityFromDisplay", utility.millisecondstoTime(DateUtils.addHours(Product.getAvailabilityFrom(), 5).getTime()));
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								Row.put("availabilityFromDisplay", "00:00:00");
+								
+							}
+							
+							Row.put("availabilityTo", DateUtils.addHours(Product.getAvailabilityTo(), 5).getTime());
+							
+//						
+						}
+						
+						
+						
+						Row.put("isAvailable", Product.getIsAvailable());
+						if(Product.getIsActive()==0) {
+							Row.put("isActive", Product.getIsActive());
+							Row.put("isActiveLabel", "In-Active");
+						}else {
+							Row.put("isActive", Product.getIsActive());
+							Row.put("isActiveLabel", "Active");
+						}
+						Row.put("productImgUrl", Product.getProductImgUrl());
+						Row.put("rating", Product.getRating());
+						Row.put("resturantCategoryId", Product.getResturantCategoryId());
+						Row.put("resturantCategoryLabel", ResturantsCategoriesService.findLabelById(Product.getResturantCategoryId()));
+						if(Product.getIsExtra()==0) {
+							Row.put("isExtraLabel","No");
+							Row.put("isExtra",Product.getIsExtra());
+						}else {
+							Row.put("isExtraLabel","Yes");
+							Row.put("isExtra",Product.getIsExtra());
+							 
+							
+						}						
+						list.add(Row);
+				}
+				
+			);
+		}
+		
+		return list;
+		
+	}
+	
+	
+	
+	@Transactional
+	public void saveOrder(long recordId,String label,String description,long resturantId,double salesTax,double salesTaxPercentage,double grossAmount,double netAmount,double discount,
+			double rate,int isTimingEnable,Date availabilityFrom,Date availabilityTo,int isAvailable,MultipartFile productImgUrl,long resturantCategoryId,int isExtra) throws Exception {
+	
+		CommonResturantsProducts Product=null;
+		if(recordId==0) {
+			Product=new CommonResturantsProducts();
+		}else {
+			Product=ResturantsProductsDao.findByIdAndIsDeleted(recordId,0);
+		}
+		
+		Product.setLabel(label);
+		Product.setDescription(description);
+		Product.setResturantId(resturantId);
+		Product.setSalesTax(salesTax);
+		Product.setSalesTaxPercentage(salesTaxPercentage);
+		Product.setGrossAmount(grossAmount);
+		Product.setNetAmount(netAmount);
+		Product.setIsTimingEnable(isTimingEnable);
+		if(isTimingEnable==1) {
+			Product.setAvailabilityFrom(availabilityFrom);
+			Product.setAvailabilityTo(availabilityTo);
+		}
+		
+		Product.setDiscount(discount);
+		Product.setRate(rate);
+		Product.setRating(5.0);
+		Product.setIsActive(1);
+		Product.setIsAvailable(isAvailable);
+		Product.setResturantCategoryId(resturantCategoryId);
+		Product.setIsExtra(isExtra);
+		ResturantsProductsDao.save(Product);
+		
+		
+		// specify an abstract pathname in the File object 
+		if(recordId==0) {
+			
+			if (productImgUrl != null && !productImgUrl.getOriginalFilename().equals("")) {
+				String TargetFileName = "product_"+Product.getId()+"_"+ utility.getUniqueId()
+						
+						+ productImgUrl.getOriginalFilename().substring(productImgUrl.getOriginalFilename().lastIndexOf("."));
+				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getOpenFileDirectoryPath()+File.separator+TargetFileName));
+				Files.copy(productImgUrl.getInputStream(), copyLocation);
+				
+				Product.setProductImgUrl(TargetFileName);
+				
+			}	
+			
+			
+		}else {
+			
+			
+			if (productImgUrl != null && !productImgUrl.getOriginalFilename().equals("")) {
+				
+				String OldFile=utility.getOpenFileDirectoryPath()+File.separator+Product.getProductImgUrl();
+				File f = new File(OldFile); 
+				
+				if(f.delete()) {
+					System.out.println("File Delteted");
+				}else {
+					System.out.println("File Could not be Delteted");
+				}
+				
+				String TargetFileName = "product_"+Product.getId()+"_"+ utility.getUniqueId()
+						
+						+ productImgUrl.getOriginalFilename().substring(productImgUrl.getOriginalFilename().lastIndexOf("."));
+				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getOpenFileDirectoryPath()+File.separator+TargetFileName));
+				Files.copy(productImgUrl.getInputStream(), copyLocation);
+				
+				Product.setProductImgUrl(TargetFileName);
+				
+				
+			} 
+			
+			
+		}
+		
+		ResturantsProductsDao.save(Product);
+		
+		
+	}
+	
+	
+	
+	@Transactional
+	public void saveAddOnProduct(long recordId,long productId,String groupTitle,long groupTypeId,long selectionTypeId,int  minSelection,int maxSelection,long addOnProductId[],double[] price) throws Exception {
+	
+		if(addOnProductId!=null) {
+			
+				ProductsAddOnService.SaveProductsAddOn(recordId,productId, groupTitle,groupTypeId,selectionTypeId,minSelection,maxSelection,addOnProductId,price);
+			
+		}
+		
+	}
+	
+	
+	@Transactional
+	public List<Map> viewAddOnProducts(long id,long resturantId) throws Exception {
+		List<Map> list=new ArrayList<>();
+		if(id!=0) {
+			
+			list=ProductsAddOnService.getProductAddOnGroup(id);
+			
+		}else {
+			List<Long> productIds=new ArrayList<>();
+			productIds=ResturantsProductsDao.findAllByResturantIdAndIsExtraAndIsActiveAndIsDeleted(resturantId,0,1,0);
+			if(!productIds.isEmpty()) {
+				list=ProductsAddOnService.getAllProductAddOnGroup(productIds);
+			}
+		}
+		return list;
+		
+	}
+	
+	@Transactional
+	public void deleteAddOn(long recordId) {
+		if(recordId!=0) {
+			ProductsAddOnService.deleteProductAddOnGroup(recordId);
+		}
+	} 
 
 	
 

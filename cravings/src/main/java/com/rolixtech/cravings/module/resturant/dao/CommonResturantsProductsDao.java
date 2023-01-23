@@ -3,6 +3,7 @@ package com.rolixtech.cravings.module.resturant.dao;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.rolixtech.cravings.module.resturant.model.CommonResturantsProducts;
@@ -31,5 +32,11 @@ public interface CommonResturantsProductsDao extends JpaRepository<CommonRestura
 
 	List<CommonResturantsProducts> findAllByResturantIdAndResturantCategoryIdAndIsExtraAndIsActiveAndIsDeleted(
 			long resturantId, long resturantCategoryId, int i, int j, int k);
+
+	@Query(value="select distinct id from common_resturants_products where resturant_id=?1 and is_extra=?2 and is_active=?3 and is_deleted=?4",nativeQuery = true)
+	List<Long> findAllByResturantIdAndIsExtraAndIsActiveAndIsDeleted(long resturantId, int i, int j, int k);
+
+	@Query(value="SELECT resturant_category_id ,count(id) as maxCount FROM common_resturants_products where resturant_id=?1 and is_deleted=?2  group by resturant_category_id order by maxCount desc limit 1",nativeQuery = true)
+	Long findResturantCategoryIdByResturantIdAndIsDeleted(long resturantId,long isDeleted);
 
 }

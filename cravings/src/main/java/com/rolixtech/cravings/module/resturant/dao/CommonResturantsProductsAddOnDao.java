@@ -16,6 +16,19 @@ public interface CommonResturantsProductsAddOnDao extends JpaRepository<CommonRe
 
 	List<CommonResturantsProductsAddOn> findAllByProductId(long productId);
 
+	List<CommonResturantsProductsAddOn> findAllById(long id);
+
+	List<CommonResturantsProductsAddOn> findAllByProductIdIn(List<Long> productId);
+	
+	
+	CommonResturantsProductsAddOn findById(long recordId);
+
+	List<CommonResturantsProductsAddOn> findAllByProductIdInAndIsDeleted(List<Long> productId, int i);
+
+	List<CommonResturantsProductsAddOn> findAllByProductIdAndIsDeleted(long productId, int i);
+
+	List<CommonResturantsProductsAddOn> findAllByIdAndIsDeleted(long id, int i);
+
 	
 
 }

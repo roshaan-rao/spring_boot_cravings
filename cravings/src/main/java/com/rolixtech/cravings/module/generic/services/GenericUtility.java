@@ -28,7 +28,9 @@ public class GenericUtility  {
 	@Autowired
 	private CommonUsersDao UsersDao;
 	
-	public long getUserIDByToken(String token) {
+	
+	
+	public   long getUserIDByToken(String token) {
 		long UserID=0;
 		if(token!=null) {
 			CommonUsers user= UsersDao.findByEmailAndIsDeleted(util.getUsernameFromToken(token.substring(7)),0);
@@ -46,7 +48,7 @@ public class GenericUtility  {
 		return UniqueNumber;
 	}
 	
-	public static String getFileDirectoryPath() {
+	public static String getSecureFileDirectoryPath() {
 		String path="";
 		if(getOperatingSystemName()==1) {
 			path="D:\\";
@@ -61,6 +63,21 @@ public class GenericUtility  {
 	}
 	
 	
+	public static String getOpenFileDirectoryPath() {
+		String path="";
+		if(getOperatingSystemName()==1) {
+			path="D:\\";
+		
+		}else {
+			
+			path="/opt/apache-tomcat-8.5.84/webapps/ROOT/resturants_images";
+			
+		}
+
+		return path;
+	}
+	
+		
 	
 	public static int getOperatingSystemName() { 
 	     

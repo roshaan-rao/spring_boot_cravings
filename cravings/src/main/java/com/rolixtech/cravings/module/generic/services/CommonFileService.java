@@ -30,7 +30,7 @@ public class CommonFileService {
         Path filePath;
 		Resource resource = null ;
 		try {
-			filePath = Paths.get(StringUtils.cleanPath(GenericUtility.getFileDirectoryPath() + File.separator + "common" + File.separator + fileName));
+			filePath = Paths.get(StringUtils.cleanPath(GenericUtility.getSecureFileDirectoryPath() + File.separator + "common" + File.separator + fileName));
 			 resource = new UrlResource(filePath.toUri());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

@@ -261,7 +261,66 @@ public class CommonResturantsCustomerController {
    			return ResponseEntity.ok(response);
    	}
     
-   
+    @PostMapping(CONTROLLER_URL+"/resturants/product-single/view")
+   	public ResponseEntity<?> viewSingleProduct(Long productId)  { 
+       		
+       	
+   			ResponseEntityOutput response=new ResponseEntityOutput();
+   			Map map=new HashMap<>();
+   			
+   			try {
+   				
+   				response.CODE="1";
+   				response.USER_MESSAGE="";
+   				response.SYSTEM_MESSAGE="Success";
+   				response.DATA=ResturantsProductsService.viewSingleProduct(utility.parseLong(productId));	
+   				
+   			
+   			}
+
+   			catch (Exception e) {
+   				// TODO: handle exception
+   				e.printStackTrace();
+   				response.CODE="2";
+   				response.USER_MESSAGE="Error";
+   				response.SYSTEM_MESSAGE=e.toString();
+   				
+   			}
+   			
+   			
+   			return ResponseEntity.ok(response);
+   	}
+    
+    @PostMapping(CONTROLLER_URL+"/resturants/order/save")
+   	public ResponseEntity<?> saveOrder(Long productId)  { 
+       		
+       	
+   			ResponseEntityOutput response=new ResponseEntityOutput();
+   			Map map=new HashMap<>();
+   			
+   			try {
+   				
+   				response.CODE="1";
+   				response.USER_MESSAGE="";
+   				response.SYSTEM_MESSAGE="Success";
+   				response.DATA=ResturantsProductsService.viewSingleProduct(utility.parseLong(productId));	
+   				
+   			
+   			}
+
+   			catch (Exception e) {
+   				// TODO: handle exception
+   				e.printStackTrace();
+   				response.CODE="2";
+   				response.USER_MESSAGE="Error";
+   				response.SYSTEM_MESSAGE=e.toString();
+   				
+   			}
+   			
+   			
+   			return ResponseEntity.ok(response);
+   	}
+    
 	 
 	 
 }

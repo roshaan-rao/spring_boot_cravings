@@ -79,7 +79,7 @@ public class CommonController {
 		
 		ResponseEntityOutput jresponse=new ResponseEntityOutput();
 		try {
-			InputStream in = new FileInputStream(util.getFileDirectoryPath()+ File.separator + "common" + File.separator+fileName);
+			InputStream in = new FileInputStream(util.getSecureFileDirectoryPath()+ File.separator + "common" + File.separator+fileName);
 			response.setContentType(MediaType.ALL_VALUE);
 		    IOUtils.copy(in, response.getOutputStream());
 			
@@ -103,7 +103,7 @@ public class CommonController {
 		ResponseEntityOutput jresponse=new ResponseEntityOutput();
 		try {
 			String restrauntDirectory="Restr_"+resturantId;
-			InputStream in = new FileInputStream(util.getFileDirectoryPath()+File.separator+restrauntDirectory+File.separator+fileName);
+			InputStream in = new FileInputStream(util.getSecureFileDirectoryPath()+File.separator+restrauntDirectory+File.separator+fileName);
 			response.setContentType(MediaType.ALL_VALUE);
 		    IOUtils.copy(in, response.getOutputStream());
 			

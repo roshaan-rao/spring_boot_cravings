@@ -68,6 +68,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	public static final String ALLOWED_CUSTOMER_URL6 = GenericUtility.APPLICATION_CONTEXT + "/customer/resturants/product-single/view";
 	
+	public static final String ALLOWED_CUSTOMER_URL7 = GenericUtility.APPLICATION_CONTEXT + "/customer/resturants/prmotional-banners/view";
+	
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		// configure AuthenticationManager so that it knows from where to load
@@ -115,7 +117,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// We don't need CSRF for this example
 		httpSecurity.csrf().disable()
 				// dont authenticate this particular request
-				.authorizeRequests().antMatchers(ALLOWED_URL1,ALLOWED_USER_URL2,ALLOWED_Categories_URL1,ALLOWED_GENERIC_URL1,ALLOWED_CUSTOMER_URL1,ALLOWED_CUSTOMER_URL2,ALLOWED_CUSTOMER_URL3,ALLOWED_CUSTOMER_URL4,ALLOWED_CUSTOMER_URL5,ALLOWED_CUSTOMER_URL6).permitAll().
+				.authorizeRequests().antMatchers(ALLOWED_URL1,ALLOWED_USER_URL2,ALLOWED_Categories_URL1,ALLOWED_GENERIC_URL1,ALLOWED_CUSTOMER_URL1,ALLOWED_CUSTOMER_URL2,ALLOWED_CUSTOMER_URL3,ALLOWED_CUSTOMER_URL4,ALLOWED_CUSTOMER_URL5,ALLOWED_CUSTOMER_URL6, ALLOWED_CUSTOMER_URL7).permitAll().
 				// all other requests need to be authenticated
 						anyRequest().authenticated().and()
 				// make sure we use stateless session; session won't be used to

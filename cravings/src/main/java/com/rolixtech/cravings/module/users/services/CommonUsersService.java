@@ -312,6 +312,29 @@ public class CommonUsersService {
 		return Label;
 	}
 	
+	public void setNewPassword(long userId, String newPassword) {
+		CommonUsers user = UsersDao.findById(userId);
+		if(user!=null) {
+			user.setPassword(bcryptEncoder.encode(newPassword));
+			UsersDao.save(user);
+		}
+	}
+	
+	public List<Map> userProfile(long userId) {
+		List purposeList=new ArrayList<>();
+		CommonUsers user = UsersDao.findById(userId);
+		if(user!=null) {
+			Map Row=new HashMap();
+			Row.put("id",user.getId());
+			Row.put("user_name", user.getFirstName() +" "+user.getLastName());
+			Row.put("profile_image_url", user.getProfileImgUrl());
+			Row.put("email", user.getEmail());
+			Row.put("mobile_no", user.getMobile());
+			purposeList.add(Row);
+		}
+		return purposeList;
+	}
+	
 	
 	
 	

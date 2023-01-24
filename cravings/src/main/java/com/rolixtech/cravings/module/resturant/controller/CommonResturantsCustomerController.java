@@ -29,6 +29,7 @@ import com.rolixtech.cravings.module.resturant.services.CommonResturantsCategori
 import com.rolixtech.cravings.module.resturant.services.CommonResturantsProductsService;
 import com.rolixtech.cravings.module.resturant.services.CommonResturantsService;
 import com.rolixtech.cravings.module.resturant.services.CommonUsersFavProductsService;
+import com.rolixtech.cravings.module.resturant.services.CommonUsersResturantsService;
 import com.rolixtech.cravings.module.users.dao.CommonUsersDao;
 import com.rolixtech.cravings.module.users.services.CommonUsersService;
 @RestController
@@ -56,6 +57,10 @@ public class CommonResturantsCustomerController {
 	
 	@Autowired
 	private CustomerOrdersService OrdersService;
+
+	@Autowired
+	private CommonUsersResturantsService UsersResturantsService;
+
 	
 	@Autowired
 	private GenericUtility utility;
@@ -323,6 +328,33 @@ public class CommonResturantsCustomerController {
    			}
    			
    			
+   			return ResponseEntity.ok(response);
+   	}
+    
+    @PostMapping(CONTROLLER_URL+"/resturants/prmotional-banners/view")
+   	public ResponseEntity<?> viewPromotionalBanners()  { 
+       		
+       	
+   			ResponseEntityOutput response=new ResponseEntityOutput();
+   			Map map=new HashMap<>();
+   			
+   			try {
+   				
+   				response.CODE="1";
+   				response.USER_MESSAGE="";
+   				response.SYSTEM_MESSAGE="Success";
+   				response.DATA=UsersResturantsService.bannersView();	
+   				
+   			
+   			}
+
+   			catch (Exception e) {
+   				// TODO: handle exception
+   				e.printStackTrace();
+   				response.CODE="2";
+   				response.USER_MESSAGE="Error";
+   				response.SYSTEM_MESSAGE=e.toString();
+   			}
    			return ResponseEntity.ok(response);
    	}
     

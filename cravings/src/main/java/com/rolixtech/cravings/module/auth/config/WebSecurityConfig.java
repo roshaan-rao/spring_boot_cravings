@@ -68,7 +68,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	public static final String ALLOWED_CUSTOMER_URL6 = GenericUtility.APPLICATION_CONTEXT + "/customer/resturants/product-single/view";
 	
-	public static final String ALLOWED_CUSTOMER_URL7 = GenericUtility.APPLICATION_CONTEXT + "/customer/resturants/prmotional-banners/view";
+	public static final String ALLOWED_CUSTOMER_URL7 = GenericUtility.APPLICATION_CONTEXT + "/customer/resturants/promotional-banners/view";
 	
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {

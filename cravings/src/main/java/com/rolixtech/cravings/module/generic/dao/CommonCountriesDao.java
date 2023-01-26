@@ -1,4 +1,4 @@
-package com.rolixtech.cravings.module.users.dao;
+package com.rolixtech.cravings.module.generic.dao;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,15 +12,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 import org.springframework.stereotype.Repository;
 
-import com.rolixtech.cravings.module.generic.model.CommonProvinces;
+import com.rolixtech.cravings.module.generic.model.CommonCountries;
 
 @Repository
-public interface CommonProvincesDao extends JpaRepository<CommonProvinces, Long>  {
+public interface CommonCountriesDao extends JpaRepository<CommonCountries, Long>  {
 
-	CommonProvinces findById(long id);
-
-	
-
-	List<CommonProvinces> findAllByCountryId(long countryId);
+	CommonCountries findById(long id);
 
 }

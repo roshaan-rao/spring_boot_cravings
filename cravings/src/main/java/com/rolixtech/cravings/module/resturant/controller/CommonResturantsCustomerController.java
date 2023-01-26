@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rolixtech.cravings.module.auth.model.JwtRequest;
 import com.rolixtech.cravings.module.auth.model.ResponseEntityOutput;
 import com.rolixtech.cravings.module.generic.services.GenericUtility;
+import com.rolixtech.cravings.module.order.model.CustomerOrder;
+import com.rolixtech.cravings.module.order.services.CustomerOrdersService;
 import com.rolixtech.cravings.module.resturant.services.CommonCategoriesService;
 import com.rolixtech.cravings.module.resturant.services.CommonResturantsCategoriesService;
 import com.rolixtech.cravings.module.resturant.services.CommonResturantsProductsService;
@@ -54,7 +56,11 @@ public class CommonResturantsCustomerController {
 	private CommonResturantsCategoriesService ResturantsCategoriesService;
 	
 	@Autowired
+	private CustomerOrdersService OrdersService;
+
+	@Autowired
 	private CommonUsersResturantsService UsersResturantsService;
+
 	
 	@Autowired
 	private GenericUtility utility;
@@ -100,6 +106,35 @@ public class CommonResturantsCustomerController {
    				response.USER_MESSAGE="";
    				response.SYSTEM_MESSAGE="";
    				response.DATA=ResturantsService.getAllByResturantNameORProductsName(keyword,searchType);
+   			
+   			}
+
+   			catch (Exception e) {
+   				// TODO: handle exception
+   				e.printStackTrace();
+   				response.CODE="2";
+   				response.USER_MESSAGE="Error";
+   				response.SYSTEM_MESSAGE=e.toString();
+   				
+   			}
+   			
+   			
+   			return ResponseEntity.ok(response);
+   	}
+    
+    
+    @PostMapping(CONTROLLER_URL+"/resturants/common-categories-wise/view")
+   	public ResponseEntity<?> View(long categoryId)  { 
+   			
+   			ResponseEntityOutput response=new ResponseEntityOutput();
+   			Map map=new HashMap<>();
+   			
+   			try {
+   				
+   				response.CODE="1";
+   				response.USER_MESSAGE="";
+   				response.SYSTEM_MESSAGE="";
+   				response.DATA=ResturantsService.getAllResturantsByCategoryWise(categoryId);
    			
    			}
 
@@ -207,7 +242,7 @@ public class CommonResturantsCustomerController {
    	}
     
     @PostMapping(CONTROLLER_URL+"/fav-products/save")
-   	public ResponseEntity<?> Save(Long productId,@RequestHeader("authorization") String token)  { 
+   	public ResponseEntity<?> Save(Long productId,Integer actionId,@RequestHeader("authorization") String token)  { 
     	long UserId=utility.getUserIDByToken(token);
    			ResponseEntityOutput response=new ResponseEntityOutput();
    			Map map=new HashMap<>();
@@ -217,7 +252,7 @@ public class CommonResturantsCustomerController {
    				response.CODE="1";
    				response.USER_MESSAGE="";
    				response.SYSTEM_MESSAGE="Saved";
-   				FavProductsService.addProductToUsersFav(productId.longValue(),UserId);	
+   				FavProductsService.addProductToUsersFav(productId.longValue(),UserId,utility.parseInt(actionId));	
    				
    			
    			}
@@ -266,7 +301,7 @@ public class CommonResturantsCustomerController {
    	}
     
     @PostMapping(CONTROLLER_URL+"/resturants/product-single/view")
-   	public ResponseEntity<?> viewSingleProduct(Long productId)  { 
+   	public ResponseEntity<?> viewSingleProduct(Long productId,@RequestParam(required = false) Long userId)  { 
        		
        	
    			ResponseEntityOutput response=new ResponseEntityOutput();
@@ -277,7 +312,7 @@ public class CommonResturantsCustomerController {
    				response.CODE="1";
    				response.USER_MESSAGE="";
    				response.SYSTEM_MESSAGE="Success";
-   				response.DATA=ResturantsProductsService.viewSingleProduct(utility.parseLong(productId));	
+   				response.DATA=ResturantsProductsService.viewSingleProduct(utility.parseLong(productId),utility.parseLong(userId));	
    				
    			
    			}
@@ -295,8 +330,8 @@ public class CommonResturantsCustomerController {
    			return ResponseEntity.ok(response);
    	}
     
-    @PostMapping(CONTROLLER_URL+"/resturants/order/save")
-   	public ResponseEntity<?> saveOrder(Long productId)  { 
+    @PostMapping(CONTROLLER_URL+"/most-popular/products/view")
+   	public ResponseEntity<?> viewMostPopularOrder(int limit)  { 
        		
        	
    			ResponseEntityOutput response=new ResponseEntityOutput();
@@ -307,7 +342,7 @@ public class CommonResturantsCustomerController {
    				response.CODE="1";
    				response.USER_MESSAGE="";
    				response.SYSTEM_MESSAGE="Success";
-   				response.DATA=ResturantsProductsService.viewSingleProduct(utility.parseLong(productId));	
+   				response.DATA=OrdersService.getMostPopularProducts(limit);	
    				
    			
    			}

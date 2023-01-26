@@ -1,11 +1,13 @@
 package com.rolixtech.cravings.module.generic.services;
 
+import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -35,7 +37,7 @@ public class GenericUtility  {
 	@Autowired
 	private CommonUsersDao UsersDao;
 	
-	
+
 	
 	public   long getUserIDByToken(String token) {
 		long UserID=0;
@@ -345,7 +347,6 @@ public class GenericUtility  {
         return (rad * 180.0 / Math.PI);
       }
       
-      
 //	  public static void main(String[] args) {
 //    	  String result = GenericUtility.sendSms("92300xxxxxxx","Hello this is a test with a 5 note and an ampersand(&) symbol");
 //    	  System.out.println(result);
@@ -397,5 +398,27 @@ public class GenericUtility  {
 				return null;
 			}
 		}
-	
+      public static String createRandomCode(int codeLength){   
+    	     char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVYZ1234567890".toCharArray();
+    	        StringBuilder sb = new StringBuilder();
+    	        Random random = new SecureRandom();
+    	        for (int i = 0; i < codeLength; i++) {
+    	            char c = chars[random.nextInt(chars.length)];
+    	            sb.append(c);
+    	        }
+    	        String output = sb.toString();
+    	        
+    	        return output ;
+    }
+      
+      
+     /***
+      *@return Date in  "dd/MM/yyyy"
+      * */ 
+      public static String getDisplayDateddMMYYYY(Date val) {
+    	  
+    	  SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    	  String date = simpleDateFormat.format(val);
+    	 return date;
+      }
 }

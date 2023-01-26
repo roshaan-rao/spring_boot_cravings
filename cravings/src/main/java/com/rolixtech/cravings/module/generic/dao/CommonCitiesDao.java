@@ -1,4 +1,4 @@
-package com.rolixtech.cravings.module.users.dao;
+package com.rolixtech.cravings.module.generic.dao;
 
 import java.util.List;
 import java.util.Optional;

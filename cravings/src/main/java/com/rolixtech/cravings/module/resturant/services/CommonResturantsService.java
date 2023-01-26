@@ -82,6 +82,67 @@ public class CommonResturantsService {
 	@Autowired
 	private GenericUtility utility;
 	
+	
+	
+	public List<Map> getAllResturantsByCategoryWise(long categoryId){
+		
+		List<Map> list=new ArrayList<>();			
+		List<CommonResturants> Resturants=ResturantsDao.findAllByCommonCategoryIdWise(categoryId);	
+				
+		if(!Resturants.isEmpty()) {
+			Resturants.stream().forEach(
+					resturant->{
+						Map Row=new HashMap<>();
+						Row.put("id", resturant.getId());
+						Row.put("label", resturant.getLabel());
+						Row.put("directory", resturant.getDirectoryUrl());
+						Row.put("address", resturant.getAddress());
+						Row.put("countryId", resturant.getCountryId());
+						Row.put("countryLabel",CountriesService.findLabelById(resturant.getCountryId()));
+						Row.put("provinceId", resturant.getProvinceId());
+						Row.put("provinceLabel",ProvincesService.findLabelById(resturant.getProvinceId()));
+						Row.put("cityId", resturant.getCityId());
+						Row.put("cityLabel",CitiesService.findLabelById(resturant.getCityId()));
+						Row.put("latitude", resturant.getLatitude());
+						Row.put("longitude", resturant.getLongitude());
+						Row.put("accuracy", resturant.getAccuracy());
+						Row.put("logoImgUrl", resturant.getLogoImgUrl());
+						Row.put("profileImgUrl", resturant.getProfileImgUrl());
+						Row.put("bannerImgUrl", resturant.getBannerImgUrl());
+						Row.put("contactNo", resturant.getContactNo());
+						Row.put("email", resturant.getEmail());
+						Row.put("rating", resturant.getRating());
+						Row.put("totalNumberOfRatings", resturant.getRating());
+						Row.put("foodCategory", getMostlyAddedProductsCatgoryByResturant(resturant.getId()));
+						Row.put("deliveryTime", "30 min");
+						Row.put("distance", "1.5km away");
+						Row.put("minOrderPrice", "Rs.250");						
+						
+						if(resturant.getIsActive()==0) {
+							Row.put("isActive", resturant.getIsActive());
+							Row.put("isActiveLabel", "In-Active");
+						}else {
+							Row.put("isActive", resturant.getIsActive());
+							Row.put("isActiveLabel", "Active");
+						}
+						
+						Row.put("status", resturant.getStatus());
+						Row.put("statusLabel", StatusService.findLabelById(resturant.getStatus()));
+						Row.put("users",UsersResturantsService.getUsersOfResturant(resturant.getId()));
+						List<Map> ResturantsTimings=ResturantsTimingsService.getResturantTimings((resturant.getId()));
+						Row.put("resturantTimings", ResturantsTimings);
+						list.add(Row);
+					}
+				
+				);
+		}
+		
+		return list;
+		
+	}
+	
+	
+	
 	public List<Map> getAllPopularResturantsByLatLngLimit(double lat,double lng,int limit){
 		
 		List<Map> list=new ArrayList<>();
@@ -219,6 +280,7 @@ public class CommonResturantsService {
 							Row.put("resturantId", product.getResturantId());
 							Row.put("resturantLabel", findLabelById(product.getResturantId()));
 							Row.put("discount", product.getDiscount());
+							Row.put("productImgUrl", product.getProductImgUrl());
 							Row.put("rate", product.getRate());
 							Row.put("rating", product.getRating());
 							list.add(Row);

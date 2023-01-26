@@ -11,7 +11,7 @@ import com.rolixtech.cravings.module.resturant.model.CommonResturantsCategories;
 public interface CommonResturantsCategoriesDao extends JpaRepository<CommonResturantsCategories, Long>  {
 
 	void deleteAllByResturantId(long resturantId);
-
+ 
 	CommonResturantsCategories findById(long resturant);
 
 	List<CommonResturantsCategories> findAllByResturantId(long resturantId);

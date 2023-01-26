@@ -59,7 +59,7 @@ public class CommonUsersFavProducts {
 	}
 
 
-
+ 
 
 	public CommonUsersFavProducts(long userId, long productId) {
 		super();

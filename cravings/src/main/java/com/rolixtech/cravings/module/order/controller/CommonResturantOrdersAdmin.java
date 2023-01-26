@@ -53,7 +53,7 @@ public class CommonResturantOrdersAdmin {
 	
     
     
-    @RequestMapping(value=CONTROLLER_URL+"/active/view" )
+    @GetMapping(value=CONTROLLER_URL+"/active/view" )
    	public ResponseEntity<?> ActiveAllView(@RequestHeader("authorization") String token)  { 
        	    long UserId=utility.getUserIDByToken(token);
    			ResponseEntityOutput response=new ResponseEntityOutput();
@@ -82,7 +82,7 @@ public class CommonResturantOrdersAdmin {
    			return ResponseEntity.ok(response);
    	}
     
-    @RequestMapping(value=CONTROLLER_URL+"/active-order-summary/view" ) 
+    @PostMapping(value=CONTROLLER_URL+"/active-order-summary/view" ) 
    	public ResponseEntity<?> ActiveAllViewDetail(Long recordId,@RequestHeader("authorization") String token)  { 
        	    long UserId=utility.getUserIDByToken(token);
    			ResponseEntityOutput response=new ResponseEntityOutput();
@@ -141,8 +141,8 @@ public class CommonResturantOrdersAdmin {
 			return ResponseEntity.ok(response);
 	}
     
-    @GetMapping(value=CONTROLLER_URL+"/change-active/status" )
-	public ResponseEntity<?> detailedView(@RequestHeader("authorization") String token)  { 
+    @PostMapping(value=CONTROLLER_URL+"/change-active/status" )
+	public ResponseEntity<?> detailedView(long recordId,long statusId,@RequestHeader("authorization") String token)  { 
     	    long UserId=utility.getUserIDByToken(token);
 			ResponseEntityOutput response=new ResponseEntityOutput();
 			Map map=new HashMap<>();
@@ -151,9 +151,9 @@ public class CommonResturantOrdersAdmin {
 				
 
 				response.CODE="1";
-				response.USER_MESSAGE="Success";
+				response.USER_MESSAGE="Updated";
 				response.SYSTEM_MESSAGE="";
-				response.DATA= OrdersService.getAllActiveOrders();
+				OrdersService.changeOrderStatus(recordId,statusId);
 			
 			}
 

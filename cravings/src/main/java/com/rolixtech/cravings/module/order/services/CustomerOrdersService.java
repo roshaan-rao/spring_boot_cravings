@@ -97,6 +97,9 @@ public class CustomerOrdersService {
 			double totalGst=orderr.getTotalGst();
 			String orderType=orderr.getOrderType();
 			long userId=orderr.getUserId();
+			double subtotal=orderr.getSubtotal();
+			double discount=orderr.getDiscount();
+			double deliveryFee=orderr.getDeliveryFee();
 			
 			CustomerOrder Order=new CustomerOrder();
 			Order.setResturantId(resturantId);
@@ -104,8 +107,12 @@ public class CustomerOrdersService {
 			Order.setOrderNumber(orderType);
 			Order.setTotalAmount(totalAmount);
 			Order.setTotalGst(totalGst);
+			Order.setDeliveryFee(deliveryFee);
+			Order.setDiscount(discount);
+			Order.setSubtotal(subtotal);
 			Order.setUserId(userId);
 			Order.setCreatedOn(new Date());
+			Order.setOrderStatusId(1);
 			OrderDao.save(Order);
 			
 			OrderAddressPOJO address=orderr.getAddress();
@@ -204,7 +211,9 @@ public class CustomerOrdersService {
 						Row.put("createdOn", order.getCreatedOn());
 						Row.put("orderStatusId", order.getOrderStatusId());
 						Row.put("orderStatusLabel", OrderStatusService.findLabelById(order.getOrderStatusId()));
-						
+						Row.put("subtotal", order.getSubtotal());
+						Row.put("discount", order.getDiscount());
+						Row.put("deliveryFee", order.getDeliveryFee());
 						
 						CustomerOrderAddress Address=OrderAddressDao.findByOrderId(orderId);
 						if(Address!=null) {	
@@ -225,6 +234,7 @@ public class CustomerOrdersService {
 									Map Rowproduct=new HashMap<>();
 									Rowproduct.put("price", OrderProduct.getPrice());
 									Rowproduct.put("productId", OrderProduct.getProductId());
+									Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
 									Rowproduct.put("quantity", OrderProduct.getQuantity());
 									
 									
@@ -236,6 +246,7 @@ public class CustomerOrdersService {
 													Map RowproductRequiredAddon=new HashMap<>();
 													RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
 													RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
+													RowproductRequiredAddon.put("label",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
 													requiredAddOnsList.add(RowproductRequiredAddon);
 													
 													
@@ -252,6 +263,7 @@ public class CustomerOrdersService {
 													Map RowproductOptionalAddon=new HashMap<>();
 													RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
 													RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
+													RowproductOptionalAddon.put("label",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
 													optionalAddOnsList.add(RowproductOptionalAddon);
 													
 													
@@ -299,7 +311,9 @@ public class CustomerOrdersService {
 						Row.put("orderstatus", order.getOrderStatusId());
 						Row.put("orderStatusId", order.getOrderStatusId());
 						Row.put("orderStatusLabel", OrderStatusService.findLabelById(order.getOrderStatusId()));
-						
+						Row.put("subtotal", order.getSubtotal());
+						Row.put("discount", order.getDiscount());
+						Row.put("deliveryFee", order.getDeliveryFee());
 						String products = "";
 						List<CustomerOrderProducts> OrderProducts=OrderProductsDao.findAllByOrderId(orderId);
 						if(!OrderProducts.isEmpty()) {
@@ -334,7 +348,7 @@ public class CustomerOrdersService {
 	public List<Map> getUserActiveOrder(long userId){
 		
 		List<Map> list=new ArrayList<>();
-		List<CustomerOrder> orders=OrderDao.findAllByUserIdAndOrderStatusId(userId,1l);
+		List<CustomerOrder> orders=OrderDao.findAllByUserIdAndOrderStatusId(userId,2l);
 		if(!orders.isEmpty()) {
 			orders.stream().forEach(
 				order->{
@@ -349,7 +363,9 @@ public class CustomerOrdersService {
 						Row.put("createdOn", order.getCreatedOn());
 						Row.put("orderStatusId", order.getOrderStatusId());
 						Row.put("orderStatusLabel", OrderStatusService.findLabelById(order.getOrderStatusId()));
-						
+						Row.put("subtotal", order.getSubtotal());
+						Row.put("discount", order.getDiscount());
+						Row.put("deliveryFee", order.getDeliveryFee());
 						
 						String products = "";
 						List<CustomerOrderProducts> OrderProducts=OrderProductsDao.findAllByOrderId(orderId);
@@ -385,7 +401,7 @@ public class CustomerOrdersService {
 	public List<Map> getUserActiveOrdersSummary(long orderIdd){
 		
 		List<Map> list=new ArrayList<>();
-		CustomerOrder order=OrderDao.findByUserIdAndOrderStatusId(orderIdd,0);
+		CustomerOrder order=OrderDao.findByUserIdAndOrderStatusId(orderIdd,2l);
 		if(order!=null) {
 					
 			long orderId=order.getId();
@@ -401,7 +417,9 @@ public class CustomerOrdersService {
 			Row.put("createdOn", order.getCreatedOn());
 			Row.put("orderStatusId", order.getOrderStatusId());
 			Row.put("orderStatusLabel", OrderStatusService.findLabelById(order.getOrderStatusId()));
-			
+			Row.put("subtotal", order.getSubtotal());
+			Row.put("discount", order.getDiscount());
+			Row.put("deliveryFee", order.getDeliveryFee());
 			
 			CustomerOrderAddress Address=OrderAddressDao.findByOrderId(orderId);
 			if(Address!=null) {	
@@ -501,6 +519,9 @@ public class CustomerOrdersService {
 						Row.put("createdOn", order.getCreatedOn());
 						Row.put("orderStatusId", order.getOrderStatusId());
 						Row.put("orderStatusLabel", OrderStatusService.findLabelById(order.getOrderStatusId()));
+						Row.put("subtotal", order.getSubtotal());
+						Row.put("discount", order.getDiscount());
+						Row.put("deliveryFee", order.getDeliveryFee());
 						CustomerOrderAddress Address=OrderAddressDao.findByOrderId(orderId);
 						if(Address!=null) {	
 							Row.put("cityName", Address.getCityName());
@@ -521,7 +542,7 @@ public class CustomerOrdersService {
 									Rowproduct.put("price", OrderProduct.getPrice());
 									Rowproduct.put("productId", OrderProduct.getProductId());
 									Rowproduct.put("quantity", OrderProduct.getQuantity());
-									
+									Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
 									
 									List<Map> requiredAddOnsList=new ArrayList<>();
 									List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
@@ -531,6 +552,7 @@ public class CustomerOrdersService {
 													Map RowproductRequiredAddon=new HashMap<>();
 													RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
 													RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
+													RowproductRequiredAddon.put("label",ResturantsProductsService.findLabelById(requiredAddOn.getProductId()));
 													requiredAddOnsList.add(RowproductRequiredAddon);
 													
 													
@@ -547,6 +569,7 @@ public class CustomerOrdersService {
 													Map RowproductOptionalAddon=new HashMap<>();
 													RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
 													RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
+													RowproductOptionalAddon.put("label",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
 													optionalAddOnsList.add(RowproductOptionalAddon);
 													
 													
@@ -578,7 +601,7 @@ public class CustomerOrdersService {
 	public List<Map> getAllActiveOrders() {
 		List<Map> list=new ArrayList<>();
 		
-		List<CustomerOrder> orders=OrderDao.findAllByOrderStatusIdGreaterThan(0l);
+		List<CustomerOrder> orders=OrderDao.findAllByOrderStatusIdGreaterThan(1l);
 		if(!orders.isEmpty()) {
 			orders.stream().forEach(
 				order->{
@@ -596,6 +619,9 @@ public class CustomerOrdersService {
 						Row.put("createdOn", order.getCreatedOn());
 						Row.put("orderStatusId", order.getOrderStatusId());
 						Row.put("orderStatusLabel", OrderStatusService.findLabelById(order.getOrderStatusId()));
+						Row.put("subtotal", order.getSubtotal());
+						Row.put("discount", order.getDiscount());
+						Row.put("deliveryFee", order.getDeliveryFee());
 						CustomerOrderAddress Address=OrderAddressDao.findByOrderId(orderId);
 						if(Address!=null) {	
 							Row.put("cityName", Address.getCityName());
@@ -616,7 +642,7 @@ public class CustomerOrdersService {
 									Rowproduct.put("price", OrderProduct.getPrice());
 									Rowproduct.put("productId", OrderProduct.getProductId());
 									Rowproduct.put("quantity", OrderProduct.getQuantity());
-									
+									Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
 									
 									List<Map> requiredAddOnsList=new ArrayList<>();
 									List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
@@ -626,6 +652,7 @@ public class CustomerOrdersService {
 													Map RowproductRequiredAddon=new HashMap<>();
 													RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
 													RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
+													RowproductRequiredAddon.put("label",ResturantsProductsService.findLabelById(requiredAddOn.getProductId()));
 													requiredAddOnsList.add(RowproductRequiredAddon);
 													
 													
@@ -642,6 +669,7 @@ public class CustomerOrdersService {
 													Map RowproductOptionalAddon=new HashMap<>();
 													RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
 													RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
+													RowproductOptionalAddon.put("label",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
 													optionalAddOnsList.add(RowproductOptionalAddon);
 													
 													
@@ -672,7 +700,7 @@ public class CustomerOrdersService {
 	public List<Map> getActiveOrdersByOrderIdAdmin(long orderId) {
 		List<Map> list=new ArrayList<>();
 		
-		CustomerOrder order=OrderDao.findAllByIdAndOrderStatusIdGreaterThan(orderId,0);
+		CustomerOrder order=OrderDao.findAllByIdAndOrderStatusIdGreaterThan(orderId,1l);
 		if(order!=null) {
 			
 					
@@ -689,6 +717,9 @@ public class CustomerOrdersService {
 				Row.put("createdOn", order.getCreatedOn());
 				Row.put("orderStatusId", order.getOrderStatusId());
 				Row.put("orderStatusLabel", OrderStatusService.findLabelById(order.getOrderStatusId()));
+				Row.put("subtotal", order.getSubtotal());
+				Row.put("discount", order.getDiscount());
+				Row.put("deliveryFee", order.getDeliveryFee());
 				CustomerOrderAddress Address=OrderAddressDao.findByOrderId(orderId);
 				if(Address!=null) {	
 					Row.put("cityName", Address.getCityName());
@@ -709,7 +740,7 @@ public class CustomerOrdersService {
 							Rowproduct.put("price", OrderProduct.getPrice());
 							Rowproduct.put("productId", OrderProduct.getProductId());
 							Rowproduct.put("quantity", OrderProduct.getQuantity());
-							
+							Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
 							
 							List<Map> requiredAddOnsList=new ArrayList<>();
 							List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
@@ -719,6 +750,7 @@ public class CustomerOrdersService {
 											Map RowproductRequiredAddon=new HashMap<>();
 											RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
 											RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
+											RowproductRequiredAddon.put("productLabel",ResturantsProductsService.findLabelById(requiredAddOn.getProductId()));
 											requiredAddOnsList.add(RowproductRequiredAddon);
 											
 											
@@ -735,6 +767,7 @@ public class CustomerOrdersService {
 											Map RowproductOptionalAddon=new HashMap<>();
 											RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
 											RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
+											RowproductOptionalAddon.put("productLabel",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
 											optionalAddOnsList.add(RowproductOptionalAddon);
 											
 											

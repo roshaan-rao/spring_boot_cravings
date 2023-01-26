@@ -62,6 +62,9 @@ public class CommonResturantsProductsService {
 	@Autowired
 	private CommonResturantsProductsGroupTypesService ProductsGroupTypesService;
 	
+	@Autowired
+	private CommonUsersFavProductsService FavProductsService;
+	
 	
 	public List<CommonResturantsProducts> findAllByLabelContaining(String keyword) {
 		
@@ -640,15 +643,18 @@ public class CommonResturantsProductsService {
 	}
 	
 	
-	public List<Map> viewSingleProduct(long recordId) {
+	public List<Map> viewSingleProduct(long recordId,long userId) {
 
-		
+		 
 		List<Map> list=new ArrayList<>();
 	
 		List<CommonResturantsProducts> Products=new ArrayList<>();
 		if(recordId!=0) {
 			CommonResturantsProducts Product=ResturantsProductsDao.findByIdAndIsActiveAndIsDeleted(recordId,1,0);
-			Products.add(Product);
+			if(Product!=null) {
+				Products.add(Product);
+			}
+			
 			
 		}		
 				
@@ -658,6 +664,7 @@ public class CommonResturantsProductsService {
 					Product->{	
 					
 						Map Row=new HashMap<>();
+						Row.put("isLiked", FavProductsService.isProductLiked(Product.getId(), userId));
 						Row.put("id", Product.getId());
 						Row.put("productAddOns",ProductsAddOnService.getProductsAddOn(Product.getId()));
 						Row.put("label",Product.getLabel());

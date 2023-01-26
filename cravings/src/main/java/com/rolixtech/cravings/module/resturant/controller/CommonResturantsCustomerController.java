@@ -122,6 +122,35 @@ public class CommonResturantsCustomerController {
    			return ResponseEntity.ok(response);
    	}
     
+    
+    @PostMapping(CONTROLLER_URL+"/resturants/common-categories-wise/view")
+   	public ResponseEntity<?> View(long categoryId)  { 
+   			
+   			ResponseEntityOutput response=new ResponseEntityOutput();
+   			Map map=new HashMap<>();
+   			
+   			try {
+   				
+   				response.CODE="1";
+   				response.USER_MESSAGE="";
+   				response.SYSTEM_MESSAGE="";
+   				response.DATA=ResturantsService.getAllResturantsByCategoryWise(categoryId);
+   			
+   			}
+
+   			catch (Exception e) {
+   				// TODO: handle exception
+   				e.printStackTrace();
+   				response.CODE="2";
+   				response.USER_MESSAGE="Error";
+   				response.SYSTEM_MESSAGE=e.toString();
+   				
+   			}
+   			
+   			
+   			return ResponseEntity.ok(response);
+   	}
+    
     @PostMapping(CONTROLLER_URL+"/resturants/view")
    	public ResponseEntity<?> ViewOneOrAll(String resturantId)  { 
        		
@@ -213,7 +242,7 @@ public class CommonResturantsCustomerController {
    	}
     
     @PostMapping(CONTROLLER_URL+"/fav-products/save")
-   	public ResponseEntity<?> Save(Long productId,@RequestHeader("authorization") String token)  { 
+   	public ResponseEntity<?> Save(Long productId,Integer actionId,@RequestHeader("authorization") String token)  { 
     	long UserId=utility.getUserIDByToken(token);
    			ResponseEntityOutput response=new ResponseEntityOutput();
    			Map map=new HashMap<>();
@@ -223,7 +252,7 @@ public class CommonResturantsCustomerController {
    				response.CODE="1";
    				response.USER_MESSAGE="";
    				response.SYSTEM_MESSAGE="Saved";
-   				FavProductsService.addProductToUsersFav(productId.longValue(),UserId);	
+   				FavProductsService.addProductToUsersFav(productId.longValue(),UserId,utility.parseInt(actionId));	
    				
    			
    			}
@@ -272,7 +301,7 @@ public class CommonResturantsCustomerController {
    	}
     
     @PostMapping(CONTROLLER_URL+"/resturants/product-single/view")
-   	public ResponseEntity<?> viewSingleProduct(Long productId)  { 
+   	public ResponseEntity<?> viewSingleProduct(Long productId,@RequestParam(required = false) Long userId)  { 
        		
        	
    			ResponseEntityOutput response=new ResponseEntityOutput();
@@ -283,7 +312,7 @@ public class CommonResturantsCustomerController {
    				response.CODE="1";
    				response.USER_MESSAGE="";
    				response.SYSTEM_MESSAGE="Success";
-   				response.DATA=ResturantsProductsService.viewSingleProduct(utility.parseLong(productId));	
+   				response.DATA=ResturantsProductsService.viewSingleProduct(utility.parseLong(productId),utility.parseLong(userId));	
    				
    			
    			}

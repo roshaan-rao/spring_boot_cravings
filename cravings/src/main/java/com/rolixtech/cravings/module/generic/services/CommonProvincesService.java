@@ -8,8 +8,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.rolixtech.cravings.module.generic.dao.CommonProvincesDao;
 import com.rolixtech.cravings.module.generic.model.CommonProvinces;
-import com.rolixtech.cravings.module.users.dao.CommonProvincesDao;
 import com.rolixtech.cravings.module.users.dao.CommonRoleDao;
 import com.rolixtech.cravings.module.users.models.CommonRole;
 

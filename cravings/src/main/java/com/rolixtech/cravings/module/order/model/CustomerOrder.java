@@ -31,6 +31,9 @@ public class CustomerOrder {
 	private long userId;
 	private Date createdOn;
 	private long orderStatusId;
+	private double subtotal;
+	private double deliveryFee;
+	private double discount;
 	
 	public long getId() {
 		return id;
@@ -86,11 +89,30 @@ public class CustomerOrder {
 	public void setOrderStatusId(long orderStatusId) {
 		this.orderStatusId = orderStatusId;
 	}
+	public double getSubtotal() {
+		return subtotal;
+	}
+	public void setSubtotal(double subtotal) {
+		this.subtotal = subtotal;
+	}
+	public double getDeliveryFee() {
+		return deliveryFee;
+	}
+	public void setDeliveryFee(double deliveryFee) {
+		this.deliveryFee = deliveryFee;
+	}
+	public double getDiscount() {
+		return discount;
+	}
+	public void setDiscount(double discount) {
+		this.discount = discount;
+	}
 	@Override
 	public String toString() {
 		return "CustomerOrder [id=" + id + ", orderNumber=" + orderNumber + ", resturantId=" + resturantId
 				+ ", totalAmount=" + totalAmount + ", totalGst=" + totalGst + ", orderType=" + orderType + ", userId="
-				+ userId + ", createdOn=" + createdOn + ", orderStatusId=" + orderStatusId + "]";
+				+ userId + ", createdOn=" + createdOn + ", orderStatusId=" + orderStatusId + ", subtotal=" + subtotal
+				+ ", deliveryFee=" + deliveryFee + ", discount=" + discount + "]";
 	}
 	
 	

@@ -49,12 +49,16 @@ public class CommonUsersFavProductsService {
 	private CommonResturantsCategoriesService ResturantsCategoriesService;
 	
 	@Transactional
-	public void addProductToUsersFav(long productId,long userId){
-		if(FavProductsDao.existsByUserIdAndProductId(productId,userId)) {
-			FavProductsDao.deleteByUserIdAndProductId(productId,userId);
+	public void addProductToUsersFav(long productId,long userId,int actionId){
+		
+		if(FavProductsDao.existsByUserIdAndProductId(userId,productId)) {
+			FavProductsDao.deleteByUserIdAndProductId(userId,productId);
 		}
 		
-		FavProductsDao.save(new CommonUsersFavProducts(userId, productId));
+		if(actionId==1) {
+			FavProductsDao.save(new CommonUsersFavProducts(userId, productId));
+		}
+		
 		
 	}
 	
@@ -148,6 +152,17 @@ public class CommonUsersFavProductsService {
 		}
 		
 		return list;
+	}
+	
+	
+	
+	public int isProductLiked(long productId,long userId) {
+		int isLiked=0;
+		if(FavProductsDao.existsByUserIdAndProductId(userId,productId)) {
+			isLiked=1;
+		}
+		return isLiked;
+		
 	}
 
 	

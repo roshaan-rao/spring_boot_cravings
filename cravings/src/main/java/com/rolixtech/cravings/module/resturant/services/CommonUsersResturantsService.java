@@ -75,28 +75,7 @@ public class CommonUsersResturantsService {
 	}
 	
 	
-	public List<Map> bannersView() {
-		List<Map> list=new ArrayList<>();
-		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-		Date currentDate= new Date();
-//		String TodayDate = formatter.format(currentDate);
-//		Date date1 =new SimpleDateFormat("dd-MM-yyyy").parse(TodayDate); 
-		List<CommonResturantsPromotionalBanners> PromotionalBanners = ResturantsPromotionalBannersDao.findAll();
-		for(int i=0; i<PromotionalBanners.size(); i++) {
-			if(PromotionalBanners.get(i).getEndDate().after(currentDate) && PromotionalBanners.get(i).getIsActive()==1) {
-				List<CommonResturantsPromotionalBannersDetail> PromotionalBannersDetails = ResturantsPromotionalBannersDetailsDao.findByPromotionalBannerId(PromotionalBanners.get(i).getId());
-				if(PromotionalBannersDetails.isEmpty()) {
-					PromotionalBannersDetails.stream().forEach(
-					PromotionalBannerDetail->{Map Row=new HashMap<>();
-					Row.put("id", PromotionalBannerDetail.getPromotionalBannerId());
-					Row.put("resturantId", PromotionalBannerDetail.getResturantId());
-					Row.put("fileName", PromotionalBannerDetail.getImageUrl());
-					list.add(Row);});
-				}
-			}
-		}
-		return list;
-	}
+
 
 	
 	

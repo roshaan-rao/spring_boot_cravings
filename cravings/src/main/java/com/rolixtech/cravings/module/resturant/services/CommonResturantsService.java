@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,9 +27,13 @@ import com.rolixtech.cravings.module.generic.services.CommonProvincesService;
 import com.rolixtech.cravings.module.generic.services.GenericUtility;
 import com.rolixtech.cravings.module.resturant.dao.CommonResturantsDao;
 import com.rolixtech.cravings.module.resturant.dao.CommonResturantsProductsDao;
+import com.rolixtech.cravings.module.resturant.dao.CommonResturantsPromotionalBannersDao;
+import com.rolixtech.cravings.module.resturant.dao.CommonResturantsPromotionalBannersDetailDao;
 import com.rolixtech.cravings.module.resturant.model.CommonCategories;
 import com.rolixtech.cravings.module.resturant.model.CommonResturants;
 import com.rolixtech.cravings.module.resturant.model.CommonResturantsProducts;
+import com.rolixtech.cravings.module.resturant.model.CommonResturantsPromotionalBanners;
+import com.rolixtech.cravings.module.resturant.model.CommonResturantsPromotionalBannersDetail;
 import com.rolixtech.cravings.module.resturant.model.CommonResturantsTimings;
 import com.rolixtech.cravings.module.users.dao.CommonRoleDao;
 import com.rolixtech.cravings.module.users.models.CommonRole;
@@ -66,6 +71,12 @@ public class CommonResturantsService {
 	
 	@Autowired
 	private CommonResturantsCategoriesService ResturantsCategoriesService;
+	
+	@Autowired
+	private CommonResturantsPromotionalBannersDao ResturantsPromotionalBannersDao;
+	
+	@Autowired
+	private CommonResturantsPromotionalBannersDetailDao ResturantsPromotionalBannersDetailsDao;
 	
 	
 	@Autowired
@@ -960,6 +971,30 @@ public class CommonResturantsService {
 		
 		return purpose;
 		
+	}
+	
+	
+	public List<Map> bannersView() {
+		List<Map> list=new ArrayList<>();
+//		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+//		Date currentDate= new Date();
+		List<CommonResturantsPromotionalBanners> PromotionalBanners = ResturantsPromotionalBannersDao.findAll();
+		for(int i=0; i<PromotionalBanners.size(); i++) {	
+//			PromotionalBanners.get(i).getEndDate().after(currentDate) && 
+			if(PromotionalBanners.get(i).getIsActive()==1) {
+				List<CommonResturantsPromotionalBannersDetail> PromotionalBannersDetails = ResturantsPromotionalBannersDetailsDao.findByPromotionalBannerId(PromotionalBanners.get(i).getId());
+				if(!PromotionalBannersDetails.isEmpty()) {
+					PromotionalBannersDetails.stream().forEach(
+					PromotionalBannerDetail->{Map Row=new HashMap<>();
+					Row.put("id", PromotionalBannerDetail.getId());
+					Row.put("promotionalBannerId", PromotionalBannerDetail.getPromotionalBannerId());
+					Row.put("resturantId", PromotionalBannerDetail.getResturantId());
+					Row.put("fileName", PromotionalBannerDetail.getImageUrl());
+					list.add(Row);});
+				}
+			}
+		}
+		return list;
 	}
 
 

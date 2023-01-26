@@ -360,21 +360,14 @@ public class CommonResturantsCustomerController {
    			return ResponseEntity.ok(response);
    	}
     
-    @PostMapping(CONTROLLER_URL+"/resturants/prmotional-banners/view")
+    @GetMapping(CONTROLLER_URL+"/resturants/promotional-banners/view")
    	public ResponseEntity<?> viewPromotionalBanners()  { 
-       		
-       	
    			ResponseEntityOutput response=new ResponseEntityOutput();
-   			Map map=new HashMap<>();
-   			
    			try {
-   				
    				response.CODE="1";
    				response.USER_MESSAGE="";
    				response.SYSTEM_MESSAGE="Success";
-   				response.DATA=UsersResturantsService.bannersView();	
-   				
-   			
+   				response.DATA=ResturantsService.bannersView();	
    			}
 
    			catch (Exception e) {

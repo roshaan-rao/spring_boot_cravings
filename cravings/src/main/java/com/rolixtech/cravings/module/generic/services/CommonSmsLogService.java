@@ -2,18 +2,21 @@ package com.rolixtech.cravings.module.generic.services;
 
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.rolixtech.cravings.module.generic.dao.CommonSmsLogDao;
 import com.rolixtech.cravings.module.generic.model.CommonSmsLog;
 
 
 
 @Service
 public class CommonSmsLogService {
-//	@Autowired	
-//	private CommonSmsLogDao Dao;
+	
+	@Autowired	
+	private CommonSmsLogDao Dao;
 	
 	
 
@@ -23,12 +26,12 @@ public class CommonSmsLogService {
 		
 		CommonSmsLog smsLog=new CommonSmsLog();
 		smsLog.setSmsLogTypeId(logTypeId);
-		smsLog.setUserId(userId);
+		smsLog.setOtp(userId);
 		smsLog.setSentTo(sentTo);
 		smsLog.setSentOn(new Date());
 		smsLog.setTransactionId(Integer.parseInt(transactionId));
 		smsLog.setResponseCode(responseCode);
-//		Dao.save(smsLog);
+		Dao.save(smsLog);
 	}
 
 	

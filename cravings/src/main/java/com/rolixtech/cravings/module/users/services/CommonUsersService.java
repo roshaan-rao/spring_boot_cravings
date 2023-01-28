@@ -12,13 +12,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 
+
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.rolixtech.cravings.module.generic.dao.CommonSmsLogDao;
+import com.rolixtech.cravings.module.generic.model.CommonSmsLog;
 import com.rolixtech.cravings.module.generic.services.GenericUtility;
 import com.rolixtech.cravings.module.users.dao.CommonRoleDao;
 import com.rolixtech.cravings.module.users.dao.CommonUsersAddressDao;
@@ -46,7 +54,10 @@ public class CommonUsersService {
 	private CommonUsersAddressDao UsersAddressDao;
 	
 	@Autowired
-	private GenericUtility Utility; 
+	private GenericUtility Utility;
+	
+	@Autowired
+	private CommonSmsLogDao SmsLogDao;
 	
 	public void registerNewUserAccount(long recordId, String firstName,String lastName,String email,String mobile,String password,String completeAddress,
 			long countryId,long provinceId,long cityId,String postalCode,double lat,double lng,double accuracy,long roleId,MultipartFile profileImg) throws Exception {
@@ -334,6 +345,49 @@ public class CommonUsersService {
 		}
 		return purposeList;
 	}
+    
+    public List<Map> sendOTP(String phoneNo){
+    	List OTPResponse=new ArrayList<>(); 
+  		Random rand = new Random();
+  		int OTP = rand.nextInt(10000);
+  		String OTPString = OTP+"";
+  		String CravingsNumber = " 04235948200";
+        
+        new Thread(){
+        	public void run(){
+        		try {
+        			String Message = "Dear Customer,\nWELCOME To CRAVINGS,\nYour OTP is: "+OTPString+"\nON YOUR FIRST ORDER FROM CRAVINGS, WIN AN IPHONE.\nFor more info call:"+CravingsNumber;
+        			String result = GenericUtility.sendSms(phoneNo,Message);
+        			JSONParser parser = new JSONParser();
+        			JSONObject json = (JSONObject) parser.parse(result);
+        			JSONArray SmsDetail= (JSONArray) json.get("corpsms");
+        			JSONObject Data=(JSONObject) SmsDetail.get(0);
+        			
+					CommonSmsLog smsLog=new CommonSmsLog();
+					
+					smsLog.setResponseCode(Data.get("code").toString());
+					smsLog.setTransactionId(Integer.parseInt(Data.get("transactionID").toString()));
+					smsLog.setSentOn(new Date());
+					smsLog.setSentTo(phoneNo);
+					smsLog.setOtp(OTP);
+					smsLog.setSmsLogTypeId(1);
+					smsLog.setDocumentId(1);
+					SmsLogDao.save(smsLog);
+        		} catch (Exception e) {
+					// TODO Auto-generated catch block
+        			System.out.print(e);
+					e.printStackTrace();
+				}
+        	}
+        }.start();
+
+//        System.out.println(result);
+		Map<String, String> Row=new HashMap<String, String>();
+		Row.put("phone_no", phoneNo);
+		Row.put("otp", OTPString);
+		OTPResponse.add(Row);
+        return OTPResponse;
+    }
 	
 	
 	

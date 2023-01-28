@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -351,17 +353,31 @@ public class GenericUtility  {
 //    	  String result = GenericUtility.sendSms("92300xxxxxxx","Hello this is a test with a 5 note and an ampersand(&) symbol");
 //    	  System.out.println(result);
 //	  }
+      public static Map getCredientails() {
+  		
+ 	     Map Credientials=new HashMap();
+ 	     Credientials.put("id","cd1225cranings");
+ 	     Credientials.put("pass","cravings@26");
+ 	     Credientials.put("mask","CDS");
+ 	     return Credientials;
+ 	}
       
 	  public static String sendSms(String sToPhoneNo,String sMessage) {
 	   try {
 	   // Construct data
-    	   String data = "id=" + URLEncoder.encode("cd1225cranings", "UTF-8");
-    	   data += "&pass=" + URLEncoder.encode("cravings@26", "UTF-8");
+		   Map credientials= getCredientails();
+
+			 String id=credientials.get("id").toString();
+			 String pass=credientials.get("pass").toString();
+			 String mask=credientials.get("mask").toString();
+
+    	   String data = "id=" + URLEncoder.encode(id, "UTF-8");
+    	   data += "&pass=" + URLEncoder.encode(pass, "UTF-8");
     	   data += "&msg=" + URLEncoder.encode(sMessage, "UTF-8");
     	   data += "&lang=" + URLEncoder.encode("English", "UTF-8");
     	   data += "&to=" + URLEncoder.encode(sToPhoneNo, "UTF-8");
-    	   data += "&mask=" + URLEncoder.encode("8336", "UTF-8");
-    	   data += "&type=" + URLEncoder.encode("xml", "UTF-8");
+    	   data += "&mask=" + URLEncoder.encode(mask, "UTF-8");
+    	   data += "&type=" + URLEncoder.encode("json", "UTF-8");
 	   // Send data
     	   URL url = new URL("http://www.opencodes.pk/api/medver.php/sendsms/url");
     	   URLConnection conn = url.openConnection();
@@ -385,6 +401,22 @@ public class GenericUtility  {
 	    	   return "Error "+e;
 	    	   }
 		  }
+	  
+//	  	public static int OTP(){
+//	  		Random rand = new Random();
+//	  		System.out.printf("%04d%n", rand.nextInt(10000));
+//	        // Using numeric values
+//	        String numbers = "0123456789";
+//	        // Using random method
+//	        Random rndm_method = new Random();
+//	        int len = 4;
+//	        char[] otp = new char[len];
+//	        for (int i = 0; i < len; i++){
+//	            otp[i] = numbers.charAt(rndm_method.nextInt(numbers.length()));
+//	        }
+//	        System.out.println("OTP: "+otp);
+//	        return rand;
+//	    }
 	  
 		public static int[] parseInt(String val[]) {
 

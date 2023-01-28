@@ -199,4 +199,26 @@ public class CommonUsersCustomerController {
 			return ResponseEntity.ok(response);
 	}
     
+    
+    @GetMapping(CONTROLLER_URL+"/getUserOTP")
+	public ResponseEntity<?> GetUserOTP(String phoneno)  { 
+//    		long UserID =Utility.getUserIDByToken(token);
+			ResponseEntityOutput response=new ResponseEntityOutput();
+			try {
+				response.CODE="1";
+				response.USER_MESSAGE="Success";
+				response.SYSTEM_MESSAGE="Success";
+				response.DATA=UsersService.sendOTP(phoneno);
+				
+			}
+			catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				response.CODE="2";
+				response.USER_MESSAGE=e.getMessage();
+				response.SYSTEM_MESSAGE=e.toString();
+			}
+			return ResponseEntity.ok(response);
+	}
+    
 }

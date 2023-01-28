@@ -74,6 +74,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	public static final String ALLOWED_CUSTOMER_URL9 = GenericUtility.APPLICATION_CONTEXT + "/customer/resturants/common-categories-wise/view";
 	
+	public static final String ALLOWED_CUSTOMER_URL10 = GenericUtility.APPLICATION_CONTEXT + "/customer/getUserOTP";
+	
 	
 	
 	
@@ -124,7 +126,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// We don't need CSRF for this example
 		httpSecurity.csrf().disable()
 				// dont authenticate this particular request
-				.authorizeRequests().antMatchers(ALLOWED_URL1,ALLOWED_USER_URL2,ALLOWED_Categories_URL1,ALLOWED_GENERIC_URL1,ALLOWED_CUSTOMER_URL1,ALLOWED_CUSTOMER_URL2,ALLOWED_CUSTOMER_URL3,ALLOWED_CUSTOMER_URL4,ALLOWED_CUSTOMER_URL5,ALLOWED_CUSTOMER_URL6, ALLOWED_CUSTOMER_URL7,ALLOWED_CUSTOMER_URL8,ALLOWED_CUSTOMER_URL9).permitAll().
+				.authorizeRequests().antMatchers(ALLOWED_URL1,ALLOWED_USER_URL2,ALLOWED_Categories_URL1,ALLOWED_GENERIC_URL1,ALLOWED_CUSTOMER_URL1,ALLOWED_CUSTOMER_URL2,ALLOWED_CUSTOMER_URL3,ALLOWED_CUSTOMER_URL4,ALLOWED_CUSTOMER_URL5,ALLOWED_CUSTOMER_URL6, ALLOWED_CUSTOMER_URL7,ALLOWED_CUSTOMER_URL8,ALLOWED_CUSTOMER_URL9,ALLOWED_CUSTOMER_URL10).permitAll().
 				// all other requests need to be authenticated
 						anyRequest().authenticated().and()
 				// make sure we use stateless session; session won't be used to

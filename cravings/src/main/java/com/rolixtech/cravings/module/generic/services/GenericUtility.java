@@ -6,9 +6,18 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -340,7 +349,87 @@ public class GenericUtility  {
         return (rad * 180.0 / Math.PI);
       }
       
+//	  public static void main(String[] args) {
+//    	  String result = GenericUtility.sendSms("92300xxxxxxx","Hello this is a test with a 5 note and an ampersand(&) symbol");
+//    	  System.out.println(result);
+//	  }
+      public static Map getCredientails() {
+  		
+ 	     Map Credientials=new HashMap();
+ 	     Credientials.put("id","cd1225cranings");
+ 	     Credientials.put("pass","cravings@26");
+ 	     Credientials.put("mask","CDS");
+ 	     return Credientials;
+ 	}
       
+	  public static String sendSms(String sToPhoneNo,String sMessage) {
+	   try {
+	   // Construct data
+		   Map credientials= getCredientails();
+
+			 String id=credientials.get("id").toString();
+			 String pass=credientials.get("pass").toString();
+			 String mask=credientials.get("mask").toString();
+
+    	   String data = "id=" + URLEncoder.encode(id, "UTF-8");
+    	   data += "&pass=" + URLEncoder.encode(pass, "UTF-8");
+    	   data += "&msg=" + URLEncoder.encode(sMessage, "UTF-8");
+    	   data += "&lang=" + URLEncoder.encode("English", "UTF-8");
+    	   data += "&to=" + URLEncoder.encode(sToPhoneNo, "UTF-8");
+    	   data += "&mask=" + URLEncoder.encode(mask, "UTF-8");
+    	   data += "&type=" + URLEncoder.encode("json", "UTF-8");
+	   // Send data
+    	   URL url = new URL("http://www.opencodes.pk/api/medver.php/sendsms/url");
+    	   URLConnection conn = url.openConnection();
+    	   conn.setDoOutput(true);
+    	   OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+    	   wr.write(data);
+    	   wr.flush();
+	   // Get the response
+    	   BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+    	   String line;
+    	   String sResult="";
+    	   while ((line = rd.readLine()) != null) {
+	   // Process line...
+    	   sResult=sResult+line+" ";
+    	   }
+    	   wr.close();
+    	   rd.close();
+		   return sResult;
+		   } catch (Exception e) {
+	    	   System.out.println("Error SMS "+e);
+	    	   return "Error "+e;
+	    	   }
+		  }
+	  
+//	  	public static int OTP(){
+//	  		Random rand = new Random();
+//	  		System.out.printf("%04d%n", rand.nextInt(10000));
+//	        // Using numeric values
+//	        String numbers = "0123456789";
+//	        // Using random method
+//	        Random rndm_method = new Random();
+//	        int len = 4;
+//	        char[] otp = new char[len];
+//	        for (int i = 0; i < len; i++){
+//	            otp[i] = numbers.charAt(rndm_method.nextInt(numbers.length()));
+//	        }
+//	        System.out.println("OTP: "+otp);
+//	        return rand;
+//	    }
+	  
+		public static int[] parseInt(String val[]) {
+
+			if (val != null) {
+				int ret[] = new int[val.length];
+				for (int i = 0; i < val.length; i++) {
+					ret[i] = Integer.parseInt(val[i]);
+				}
+				return ret;
+			} else {
+				return null;
+			}
+		}
       public static String createRandomCode(int codeLength){   
     	     char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVYZ1234567890".toCharArray();
     	        StringBuilder sb = new StringBuilder();

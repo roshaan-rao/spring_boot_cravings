@@ -68,7 +68,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	public static final String ALLOWED_CUSTOMER_URL6 = GenericUtility.APPLICATION_CONTEXT + "/customer/resturants/product-single/view";
 	
-	public static final String ALLOWED_CUSTOMER_URL7 = GenericUtility.APPLICATION_CONTEXT + "/customer/resturants/promotional-banners/view";
+	public static final String ALLOWED_CUSTOMER_URL7 = GenericUtility.APPLICATION_CONTEXT + "/customer/promotional-banners/view";
 	
 	public static final String ALLOWED_CUSTOMER_URL8 = GenericUtility.APPLICATION_CONTEXT + "/customer/most-popular/products/view";
 	

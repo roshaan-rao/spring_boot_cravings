@@ -360,7 +360,7 @@ public class CommonResturantsCustomerController {
    			return ResponseEntity.ok(response);
    	}
     
-    @GetMapping(CONTROLLER_URL+"/resturants/promotional-banners/view")
+    @GetMapping(CONTROLLER_URL+"/promotional-banners/view")
    	public ResponseEntity<?> viewPromotionalBanners()  { 
    			ResponseEntityOutput response=new ResponseEntityOutput();
    			try {

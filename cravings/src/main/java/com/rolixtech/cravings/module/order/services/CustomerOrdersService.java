@@ -724,10 +724,14 @@ public class CustomerOrdersService {
 				if(Address!=null) {	
 					Row.put("cityName", Address.getCityName());
 					Row.put("completeAddress", Address.getCompleteAddress());
+					Row.put("lat", Address.getLat());
+					Row.put("lng", Address.getLng());
 					
 				}else {
 					Row.put("cityName", "");
 					Row.put("completeAddress", "");
+					Row.put("lat", Address.getLat());
+					Row.put("lng", Address.getLng());
 					
 				}
 				

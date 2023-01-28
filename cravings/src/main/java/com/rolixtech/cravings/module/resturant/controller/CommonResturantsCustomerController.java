@@ -76,7 +76,7 @@ public class CommonResturantsCustomerController {
 				response.CODE="1";
 				response.USER_MESSAGE="";
 				response.SYSTEM_MESSAGE="";
-				response.DATA=ResturantsService.getAllPopularResturantsByLatLngLimit(Double.parseDouble(latitude), Double.parseDouble(longitude), limit);
+				response.DATA=ResturantsService.getAllPopularResturantsByLatLngLimitV2(Double.parseDouble(latitude), Double.parseDouble(longitude), limit);
 			
 			}
 
@@ -360,6 +360,8 @@ public class CommonResturantsCustomerController {
    			return ResponseEntity.ok(response);
    	}
     
+    
+   
     @GetMapping(CONTROLLER_URL+"/resturants/promotional-banners/view")
    	public ResponseEntity<?> viewPromotionalBanners()  { 
    			ResponseEntityOutput response=new ResponseEntityOutput();

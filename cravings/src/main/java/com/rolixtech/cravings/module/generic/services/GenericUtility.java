@@ -237,7 +237,7 @@ public class GenericUtility  {
 	    String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
 	            TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
 	            TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
-	    System.out.println(hms);
+	    
 	    return hms;
 	}
 	
@@ -312,7 +312,7 @@ public class GenericUtility  {
 //    System.out.println(distance(32.9697, -96.80322, 29.46786, -98.53506, 'N') + " Nautical Miles\n");
 	
 	
-    private double distanceCalculate(double lat1, double lon1, double lat2, double lon2, char unit) {
+    public static double distanceCalculate(double lat1, double lon1, double lat2, double lon2, char unit) {
         double theta = lon1 - lon2;
         double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
         dist = Math.acos(dist);
@@ -329,14 +329,14 @@ public class GenericUtility  {
       /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
       /*::  This function converts decimal degrees to radians             :*/
       /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-      private double deg2rad(double deg) {
+      private static double deg2rad(double deg) {
         return (deg * Math.PI / 180.0);
       }
       
       /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
       /*::  This function converts radians to decimal degrees             :*/
       /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-      private double rad2deg(double rad) {
+      private static double rad2deg(double rad) {
         return (rad * 180.0 / Math.PI);
       }
       

@@ -8,11 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.stereotype.Service;
 
 import com.rolixtech.cravings.CravingsApplication;
+import com.rolixtech.cravings.module.cravings.model.CravingsPromotionalVouchers;
+import com.rolixtech.cravings.module.cravings.model.CravingsPromotionalVouchersChangeLog;
 import com.rolixtech.cravings.module.generic.services.GenericUtility;
 import com.rolixtech.cravings.module.order.POJO.OrderAddressPOJO;
 import com.rolixtech.cravings.module.order.POJO.OrderPOJO;
@@ -20,12 +23,14 @@ import com.rolixtech.cravings.module.order.POJO.OrderProductsOptionalAddOnPOJO;
 import com.rolixtech.cravings.module.order.POJO.OrderProductsPOJO;
 import com.rolixtech.cravings.module.order.POJO.OrderProductsRequiredAddOnPOJO;
 import com.rolixtech.cravings.module.order.dao.CustomerOrderAddressDao;
+import com.rolixtech.cravings.module.order.dao.CustomerOrderChangeLogDao;
 import com.rolixtech.cravings.module.order.dao.CustomerOrderDao;
 import com.rolixtech.cravings.module.order.dao.CustomerOrderProductsDao;
 import com.rolixtech.cravings.module.order.dao.CustomerOrderProductsOptionalAddOnDao;
 import com.rolixtech.cravings.module.order.dao.CustomerOrderProductsRequiredAddOnDao;
 import com.rolixtech.cravings.module.order.model.CustomerOrder;
 import com.rolixtech.cravings.module.order.model.CustomerOrderAddress;
+import com.rolixtech.cravings.module.order.model.CustomerOrderChangeLog;
 import com.rolixtech.cravings.module.order.model.CustomerOrderProducts;
 import com.rolixtech.cravings.module.order.model.CustomerOrderProductsOptionalAddOn;
 import com.rolixtech.cravings.module.order.model.CustomerOrderProductsRequiredAddOn;
@@ -78,6 +83,11 @@ public class CustomerOrdersService {
 	@Autowired
 	private GenericUtility utility;
 	
+	
+	@Autowired
+	private CustomerOrderChangeLogDao OrderChangeLogDao;
+	
+	
 	public String findLabelById(long categoryId) {
 		String label="";
 //		CommonCategories Categories=CategoriesDao.findById(categoryId);
@@ -104,7 +114,8 @@ public class CustomerOrdersService {
 			CustomerOrder Order=new CustomerOrder();
 			Order.setResturantId(resturantId);
 			Order.setOrderType(orderType);
-			Order.setOrderNumber(orderType);
+			String orderNumber=utility.createRandomCode(6)+utility.getUniqueId().substring(6);
+			Order.setOrderNumber("cra-"+orderNumber);
 			Order.setTotalAmount(totalAmount);
 			Order.setTotalGst(totalGst);
 			Order.setDeliveryFee(deliveryFee);
@@ -601,7 +612,7 @@ public class CustomerOrdersService {
 	public List<Map> getAllActiveOrders() {
 		List<Map> list=new ArrayList<>();
 		
-		List<CustomerOrder> orders=OrderDao.findAllByOrderStatusIdGreaterThan(1l);
+		List<CustomerOrder> orders=OrderDao.findAllByOrderStatusIdGreaterThanOrderByIdDesc(0l);
 		if(!orders.isEmpty()) {
 			orders.stream().forEach(
 				order->{
@@ -700,7 +711,7 @@ public class CustomerOrdersService {
 	public List<Map> getActiveOrdersByOrderIdAdmin(long orderId) {
 		List<Map> list=new ArrayList<>();
 		
-		CustomerOrder order=OrderDao.findAllByIdAndOrderStatusIdGreaterThan(orderId,1l);
+		CustomerOrder order=OrderDao.findById(orderId);
 		if(order!=null) {
 			
 					
@@ -799,12 +810,28 @@ public class CustomerOrdersService {
 	}
 	
 	
-	public void changeOrderStatus(long orderId,long statusId) {
+	public void changeOrderStatus(long orderId,long statusId,int remmaining,long userId) {
 		
 		
 		CustomerOrder order=OrderDao.findById(orderId);
 		if(order!=null) {
+			CustomerOrderChangeLog OrderChangeLog=new CustomerOrderChangeLog();
+			CustomerOrder iRealChange=OrderDao.findById(orderId);
+					BeanUtils.copyProperties(iRealChange, OrderChangeLog);
+					
+					OrderChangeLog.setId(0);
+					OrderChangeLog.setRecordId(orderId);
+					OrderChangeLog.setLogCreatedBy(userId);
+					OrderChangeLog.setLogCreatedOn(new Date());
+					OrderChangeLog.setLogReason("Change Order Status");
+					OrderChangeLog.setLogTypeId(utility.parseLong("1"));
+					OrderChangeLogDao.save(OrderChangeLog);
+					
+			
+			
 			order.setOrderStatusId(statusId);
+			order.setOrderStatusChangedBy(userId);
+			order.setOrderStatusChangedOn(new Date());
 			OrderDao.save(order);	
 		}
 		
@@ -851,20 +878,15 @@ public class CustomerOrdersService {
 							Row.put("isTimingEnable", Product.getIsActive());
 							Row.put("isTimingEnableLable", "Yes");
 							
-							System.out.println(Product.getAvailabilityFrom());
 							
-							Row.put("availabilityFrom", DateUtils.addHours(Product.getAvailabilityFrom(), 5).getTime());
 							
-							try { 
-								Row.put("availabilityFromDisplay", utility.millisecondstoTime(DateUtils.addHours(Product.getAvailabilityFrom(), 5).getTime()));
-							} catch (ParseException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-								Row.put("availabilityFromDisplay", "00:00:00");
+							Row.put("availabilityFrom", Product.getAvailabilityFrom().getTime());
+							Row.put("availabilityFromDisplay", utility.getDisplayTimeFromDate((Product.getAvailabilityFrom())));
+							
 								
-							}
+							Row.put("availabilityToDisplay", utility.getDisplayTimeFromDate((Product.getAvailabilityTo())));
 							
-							Row.put("availabilityTo", DateUtils.addHours(Product.getAvailabilityTo(), 5).getTime());
+							Row.put("availabilityTo", (Product.getAvailabilityTo().getTime()));
 							
 //						
 						}

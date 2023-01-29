@@ -69,27 +69,27 @@ public class CommonResturantsTimingsService {
 					Map Row=new HashMap<>();
 					if(ResturantsTiming.getClosingTime()!=null && ResturantsTiming.getOpeningTime()!=null) {
 					
-						Row.put("closeTiming", DateUtils.addHours(ResturantsTiming.getClosingTime(), 5).getTime());
-					
-						try { 
-							Row.put("closeTimingDisplay", utility.millisecondstoTime(DateUtils.addHours(ResturantsTiming.getClosingTime(), 5).getTime()));
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-							Row.put("closeTimingDisplay", "00:00:00");
-							
-						}
+						Row.put("closeTiming", (ResturantsTiming.getClosingTime()).getTime());
+						Row.put("closeTimingDisplay", utility.getDisplayTimeFromDate(ResturantsTiming.getClosingTime()));
 						
-						Row.put("openTiming", DateUtils.addHours(ResturantsTiming.getOpeningTime(), 5).getTime());
 						
-						try { 
-							Row.put("openTimingDisplay", utility.millisecondstoTime(DateUtils.addHours(ResturantsTiming.getOpeningTime(), 5).getTime()));
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-							Row.put("openTimingDisplay", "00:00:00");
-							
-						}
+						Row.put("openTiming", ResturantsTiming.getOpeningTime().getTime());
+						Row.put("openTimingDisplay",utility.getDisplayTimeFromDate(ResturantsTiming.getOpeningTime()) );
+//						try {
+//							
+//						} catch (ParseException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//						try { 
+//							
+//							//Row.put("openTimingDisplay", utility.millisecondstoTime(DateUtils.addHours(ResturantsTiming.getOpeningTime(), 5).getTime()));
+//						} catch (ParseException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//							Row.put("openTimingDisplay", "00:00:00");
+//							
+//						}
 					}else {
 						Row.put("closeTimingDisplay", "");
 						Row.put("closeTiming", "");

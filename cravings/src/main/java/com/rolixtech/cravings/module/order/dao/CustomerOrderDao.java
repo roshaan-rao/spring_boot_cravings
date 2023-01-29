@@ -34,4 +34,6 @@ public interface CustomerOrderDao extends JpaRepository<CustomerOrder, Long>  {
 	@Query(value="SELECT cop.product_id,count(*) FROM customer_order_products  cop join common_resturants_products crp on crp.id=cop.product_id and crp.is_active=?1 and crp.is_deleted=?2 group by cop.product_id order by count(*) desc ",nativeQuery = true)
 	List<Long> findAllPopularProductsByIsActiveAndIsDeleted(int isActive, int isDeleted);
 
+	List<CustomerOrder> findAllByOrderStatusIdGreaterThanOrderByIdDesc(long l);
+
 }

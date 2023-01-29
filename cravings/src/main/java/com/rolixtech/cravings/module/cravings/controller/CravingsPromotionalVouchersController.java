@@ -192,4 +192,35 @@ public class CravingsPromotionalVouchersController {
 	   			
 	   			return ResponseEntity.ok(response);
 	   	}
+	    
+	    
+	    @PostMapping(CONTROLLER_URL+"/edit/save")
+	   	public ResponseEntity<?> singleSave(String recordId,String prefixStr ,Double amount,Double percentageVal,@DateTimeFormat(pattern="dd/MM/yyyy") Date validFrom,@DateTimeFormat(pattern="dd/MM/yyyy") Date validTo,@RequestHeader("authorization") String token)  { 
+	       		long UserId=utility.getUserIDByToken(token);
+	       	
+	   			ResponseEntityOutput response=new ResponseEntityOutput();
+	   			Map map=new HashMap<>();
+	   			
+	   			try {
+	   				
+	   				response.CODE="1";
+	   				response.USER_MESSAGE="";
+	   				response.SYSTEM_MESSAGE="Updated";
+	   				VouchersService.EditSave(Long.parseLong(recordId), prefixStr ,amount,percentageVal,validFrom,validTo,UserId);	
+	   				
+	   			
+	   			}
+
+	   			catch (Exception e) {
+	   				// TODO: handle exception
+	   				e.printStackTrace();
+	   				response.CODE="2";
+	   				response.USER_MESSAGE=e.getMessage();
+	   				response.SYSTEM_MESSAGE=e.toString();
+	   				
+	   			}
+	   			
+	   			
+	   			return ResponseEntity.ok(response);
+	   	}
 }

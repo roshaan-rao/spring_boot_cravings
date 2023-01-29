@@ -117,7 +117,7 @@ public class CommonResturantsService {
 						Row.put("totalNumberOfRatings", resturant.getRating());
 						Row.put("foodCategory", getMostlyAddedProductsCatgoryByResturant(resturant.getId()));
 						Row.put("deliveryTime", "30 min");
-						Row.put("distance", "1.5km away");
+						//Row.put("distance", utility.distanceCalculate(resturant.getLatitude(), resturant.getLongitude(), lat, lng, 'k')+"km away");
 						Row.put("minOrderPrice", "Rs.250");						
 						
 						if(resturant.getIsActive()==0) {
@@ -184,7 +184,7 @@ public class CommonResturantsService {
 						Row.put("totalNumberOfRatings", resturant.getRating());
 						Row.put("foodCategory", getMostlyAddedProductsCatgoryByResturant(resturant.getId()));
 						Row.put("deliveryTime", "30 min");
-						Row.put("distance", "1.5km away");
+						Row.put("distance", utility.distanceCalculate(resturant.getLatitude(),resturant.getLongitude(), lat, lng, 'k')+"km away");
 						Row.put("minOrderPrice", "Rs.250");						
 						
 						if(resturant.getIsActive()==0) {
@@ -214,65 +214,110 @@ public class CommonResturantsService {
 		
 		List<Map> list=new ArrayList<>();
 	
-		List<CommonResturants> Resturants=new ArrayList<>();
+		List<CommonResturants> ResturantsTOShow=new ArrayList<>();
  	
-		Resturants=ResturantsDao.findAllByIsActiveAndIsDeleted(1,0);		
+		ResturantsTOShow=ResturantsDao.findAllByIsActiveAndIsDeleted(1,0);		
 				
-		if(!Resturants.isEmpty()) {
-			Resturants=Resturants.stream()
-			.filter(distance -> utility.distanceCalculate(distance.getLatitude(), distance.getLongitude(), lat, lng, 'k')*2  <= 10.0  )
+		if(!ResturantsTOShow.isEmpty()) {
+			
+			List<CommonResturants> Resturants=new ArrayList<>();
+			Resturants=ResturantsTOShow.stream()
+			.filter(distance -> utility.distanceCalculate(distance.getLatitude(), distance.getLongitude(), lat, lng, 'k') <= 10.0  )
 			.sorted((p1, p2) -> ((Double)p2.getRating()).compareTo(p1.getRating()))
 			.collect(Collectors.toList());
-			
-			
-			
-			if(!Resturants.isEmpty()) {
-				Resturants.stream().forEach(
-						resturant->{
-							Map Row=new HashMap<>();
-							Row.put("id", resturant.getId());
-							Row.put("label", resturant.getLabel());
-							Row.put("directory", resturant.getDirectoryUrl());
-							Row.put("address", resturant.getAddress());
-							Row.put("countryId", resturant.getCountryId());
-							Row.put("countryLabel",CountriesService.findLabelById(resturant.getCountryId()));
-							Row.put("provinceId", resturant.getProvinceId());
-							Row.put("provinceLabel",ProvincesService.findLabelById(resturant.getProvinceId()));
-							Row.put("cityId", resturant.getCityId());
-							Row.put("cityLabel",CitiesService.findLabelById(resturant.getCityId()));
-							Row.put("latitude", resturant.getLatitude());
-							Row.put("longitude", resturant.getLongitude());
-							Row.put("accuracy", resturant.getAccuracy());
-							Row.put("logoImgUrl", resturant.getLogoImgUrl());
-							Row.put("profileImgUrl", resturant.getProfileImgUrl());
-							Row.put("bannerImgUrl", resturant.getBannerImgUrl());
-							Row.put("contactNo", resturant.getContactNo());
-							Row.put("email", resturant.getEmail());
-							Row.put("rating", resturant.getRating());
-							Row.put("totalNumberOfRatings", resturant.getRating());
-							Row.put("foodCategory", "Pakistani");
-							Row.put("deliveryTime", "30 min");
-							Row.put("distance", "1.5km away");
-							Row.put("minOrderPrice", "Rs.250");	
-							if(resturant.getIsActive()==0) {
-								Row.put("isActive", resturant.getIsActive());
-								Row.put("isActiveLabel", "In-Active");
-							}else {
-								Row.put("isActive", resturant.getIsActive());
-								Row.put("isActiveLabel", "Active");
-							}
-							
-							Row.put("status", resturant.getStatus());
-							Row.put("statusLabel", StatusService.findLabelById(resturant.getStatus()));
-							Row.put("users",UsersResturantsService.getUsersOfResturant(resturant.getId()));
-							List<Map> ResturantsTimings=ResturantsTimingsService.getResturantTimings((resturant.getId()));
-							Row.put("resturantTimings", ResturantsTimings);
-							list.add(Row);
-						}
+			int counter=0;
+			for(int i=0;i<Resturants.size();i++) {
+				if(limit!=0 &&  limit>=counter) {
+					Map Row=new HashMap<>();
+					Row.put("id", Resturants.get(i).getId());
+					Row.put("label", Resturants.get(i).getLabel());
+					Row.put("directory", Resturants.get(i).getDirectoryUrl());
+					Row.put("address", Resturants.get(i).getAddress());
+					Row.put("countryId", Resturants.get(i).getCountryId());
+					Row.put("countryLabel",CountriesService.findLabelById(Resturants.get(i).getCountryId()));
+					Row.put("provinceId", Resturants.get(i).getProvinceId());
+					Row.put("provinceLabel",ProvincesService.findLabelById(Resturants.get(i).getProvinceId()));
+					Row.put("cityId", Resturants.get(i).getCityId());
+					Row.put("cityLabel",CitiesService.findLabelById(Resturants.get(i).getCityId()));
+					Row.put("latitude", Resturants.get(i).getLatitude());
+					Row.put("longitude", Resturants.get(i).getLongitude());
+					Row.put("accuracy", Resturants.get(i).getAccuracy());
+					Row.put("logoImgUrl", Resturants.get(i).getLogoImgUrl());
+					Row.put("profileImgUrl", Resturants.get(i).getProfileImgUrl());
+					Row.put("bannerImgUrl", Resturants.get(i).getBannerImgUrl());
+					Row.put("contactNo", Resturants.get(i).getContactNo());
+					Row.put("email", Resturants.get(i).getEmail());
+					Row.put("rating", Resturants.get(i).getRating());
+					Row.put("totalNumberOfRatings", Resturants.get(i).getRating());
+					Row.put("foodCategory", getMostlyAddedProductsCatgoryByResturant( Resturants.get(i).getId()));
+					Row.put("deliveryTime", "30 min");
+					Row.put("distance", utility.distanceCalculate(Resturants.get(i).getLatitude(), Resturants.get(i).getLongitude(), lat, lng, 'k')+"km away");
+					Row.put("minOrderPrice", "Rs.250");	
+					if(Resturants.get(i).getIsActive()==0) {
+						Row.put("isActive", Resturants.get(i).getIsActive());
+						Row.put("isActiveLabel", "In-Active");
+					}else {
+						Row.put("isActive", Resturants.get(i).getIsActive());
+						Row.put("isActiveLabel", "Active");
+					}
 					
-				);
+					Row.put("status", Resturants.get(i).getStatus());
+					Row.put("statusLabel", StatusService.findLabelById(Resturants.get(i).getStatus()));
+					Row.put("users",UsersResturantsService.getUsersOfResturant(Resturants.get(i).getId()));
+					List<Map> ResturantsTimings=ResturantsTimingsService.getResturantTimings((Resturants.get(i).getId()));
+					Row.put("resturantTimings", ResturantsTimings);
+					list.add(Row);
+					counter++;
+					
+				}else {
+					Map Row=new HashMap<>();
+					Row.put("id", Resturants.get(i).getId());
+					Row.put("label", Resturants.get(i).getLabel());
+					Row.put("directory", Resturants.get(i).getDirectoryUrl());
+					Row.put("address", Resturants.get(i).getAddress());
+					Row.put("countryId", Resturants.get(i).getCountryId());
+					Row.put("countryLabel",CountriesService.findLabelById(Resturants.get(i).getCountryId()));
+					Row.put("provinceId", Resturants.get(i).getProvinceId());
+					Row.put("provinceLabel",ProvincesService.findLabelById(Resturants.get(i).getProvinceId()));
+					Row.put("cityId", Resturants.get(i).getCityId());
+					Row.put("cityLabel",CitiesService.findLabelById(Resturants.get(i).getCityId()));
+					Row.put("latitude", Resturants.get(i).getLatitude());
+					Row.put("longitude", Resturants.get(i).getLongitude());
+					Row.put("accuracy", Resturants.get(i).getAccuracy());
+					Row.put("logoImgUrl", Resturants.get(i).getLogoImgUrl());
+					Row.put("profileImgUrl", Resturants.get(i).getProfileImgUrl());
+					Row.put("bannerImgUrl", Resturants.get(i).getBannerImgUrl());
+					Row.put("contactNo", Resturants.get(i).getContactNo());
+					Row.put("email", Resturants.get(i).getEmail());
+					Row.put("rating", Resturants.get(i).getRating());
+					Row.put("totalNumberOfRatings", Resturants.get(i).getRating());
+					Row.put("foodCategory", getMostlyAddedProductsCatgoryByResturant( Resturants.get(i).getId()));
+					Row.put("deliveryTime", "30 min");
+					Row.put("distance", utility.distanceCalculate(Resturants.get(i).getLatitude(), Resturants.get(i).getLongitude(), lat, lng, 'k')+"km away");
+					Row.put("minOrderPrice", "Rs.250");	
+					if(Resturants.get(i).getIsActive()==0) {
+						Row.put("isActive", Resturants.get(i).getIsActive());
+						Row.put("isActiveLabel", "In-Active");
+					}else {
+						Row.put("isActive", Resturants.get(i).getIsActive());
+						Row.put("isActiveLabel", "Active");
+					}
+					
+					Row.put("status", Resturants.get(i).getStatus());
+					Row.put("statusLabel", StatusService.findLabelById(Resturants.get(i).getStatus()));
+					Row.put("users",UsersResturantsService.getUsersOfResturant(Resturants.get(i).getId()));
+					List<Map> ResturantsTimings=ResturantsTimingsService.getResturantTimings((Resturants.get(i).getId()));
+					Row.put("resturantTimings", ResturantsTimings);
+					list.add(Row);
+					
+				}
 			}
+			
+							
+							
 		}
+					
+				
 		
 		return list;
 		
@@ -317,9 +362,9 @@ public class CommonResturantsService {
 						Row.put("email", resturant.getEmail());
 						Row.put("rating", resturant.getRating());
 						Row.put("totalNumberOfRatings", resturant.getRating());
-						Row.put("foodCategory", "Pakistani");
+						Row.put("foodCategory", getMostlyAddedProductsCatgoryByResturant(resturant.getId()));
 						Row.put("deliveryTime", "30 min");
-						Row.put("distance", "1.5km away");
+						//Row.put("distance", utility.distanceCalculate(Resturants.get(i).getLatitude(), Resturants.get(i).getLongitude(), lat, lng, 'k')+"km away");
 						Row.put("minOrderPrice", "Rs.250");	
 						if(resturant.getIsActive()==0) {
 							Row.put("isActive", resturant.getIsActive());
@@ -609,9 +654,9 @@ public class CommonResturantsService {
 						Row.put("email", resturant.getEmail());
 						Row.put("rating", resturant.getRating());
 						Row.put("totalNumberOfRatings", resturant.getRating());
-						Row.put("foodCategory", "Pakistani");
+						Row.put("foodCategory", getMostlyAddedProductsCatgoryByResturant( resturant.getId()));
 						Row.put("deliveryTime", "30 min");
-						Row.put("distance", "1.5km away");
+						//Row.put("distance", utility.distanceCalculate(Resturants.get(i).getLatitude(), Resturants.get(i).getLongitude(), lat, lng, 'k')+"km away");
 						Row.put("minOrderPrice", "Rs.250");	
 						if(resturant.getIsActive()==0) {
 							Row.put("isActive", resturant.getIsActive());
@@ -665,9 +710,9 @@ public class CommonResturantsService {
 				Row.put("profileImgUrl", resturant.getProfileImgUrl());
 				Row.put("bannerImgUrl", resturant.getBannerImgUrl());
 				Row.put("totalNumberOfRatings", resturant.getRating());
-				Row.put("foodCategory", "Pakistani");
+				Row.put("foodCategory", getMostlyAddedProductsCatgoryByResturant( resturant.getId()));
 				Row.put("deliveryTime", "30 min");
-				Row.put("distance", "1.5km away");
+				//Row.put("distance", utility.distanceCalculate(Resturants.get(i).getLatitude(), Resturants.get(i).getLongitude(), lat, lng, 'k')+"km away");
 				Row.put("minOrderPrice", "Rs.250");	
 				CommonResturantsTimings Timings= ResturantsTimingsService.getResturantTimingForToday(resturant.getId());
 				if(Timings==null) {
@@ -997,9 +1042,9 @@ public class CommonResturantsService {
 							
 							Row.put("rating", resturant.getRating());
 							Row.put("totalNumberOfRatings", resturant.getRating());
-							Row.put("foodCategory", "Pakistani");
+							Row.put("foodCategory", getMostlyAddedProductsCatgoryByResturant( resturant.getId()));
 							Row.put("deliveryTime", "30 min");
-							Row.put("distance", "1.5km away");
+							//Row.put("distance", utility.distanceCalculate(resturant.getLatitude(), resturant.getLongitude(), lat, lng, 'k')+"km away");
 							Row.put("minOrderPrice", "Rs.250");	
 							if(resturant.getIsActive()==0) {
 								Row.put("isActive", resturant.getIsActive());

@@ -30,6 +30,7 @@ import com.rolixtech.cravings.module.generic.services.GenericUtility;
 import com.rolixtech.cravings.module.resturant.services.CommonCategoriesService;
 import com.rolixtech.cravings.module.resturant.services.CommonResturantsCategoriesService;
 import com.rolixtech.cravings.module.resturant.services.CommonResturantsService;
+import com.rolixtech.cravings.module.resturant.services.CommonResturantsTimingsService;
 import com.rolixtech.cravings.module.users.dao.CommonUsersDao;
 import com.rolixtech.cravings.module.users.services.CommonUsersService;
 @RestController
@@ -48,10 +49,13 @@ public class CommonResturantsOwnerController {
 	
 	@Autowired
 	private GenericUtility utility;
+	
+	@Autowired
+	private CommonResturantsTimingsService ResturantsTimingsService;
     
     @PostMapping(CONTROLLER_URL+"/register")
 	public ResponseEntity<?> Save(String recordId,String label,String address,Long countryId,Long provinceId,Long cityId,Double lat,Double lng,Double accuracy,@RequestParam(name ="logo_img_url") MultipartFile logoImg,
-			@RequestParam(name ="profile_img_url") MultipartFile profileImg ,@RequestParam(name ="banner_img_url") MultipartFile bannerImg,Long dayId[], @DateTimeFormat(pattern="HH:mm") Date openTimings[],@DateTimeFormat(pattern="HH:mm") Date closeTimings[],String contactNo,String email,@RequestHeader("authorization") String token)  { 
+			@RequestParam(name ="profile_img_url") MultipartFile profileImg ,@RequestParam(name ="banner_img_url") MultipartFile bannerImg,String contactNo,String email,@RequestHeader("authorization") String token)  { 
     		long resturantOwnerId=utility.getUserIDByToken(token);
     	
 			ResponseEntityOutput response=new ResponseEntityOutput();
@@ -62,7 +66,67 @@ public class CommonResturantsOwnerController {
 				response.CODE="1";
 				response.USER_MESSAGE="";
 				response.SYSTEM_MESSAGE="Saved";
-				ResturantsService.saveResturantOwner(Long.parseLong(recordId),label,address,(countryId).longValue(),(provinceId).longValue(),(cityId).longValue(),lat.doubleValue(),lng.doubleValue(),accuracy.doubleValue(),logoImg,profileImg,bannerImg,resturantOwnerId,utility.toPrimitives(dayId),openTimings,closeTimings,contactNo,email);	
+				//ResturantsService.saveResturantOwner(Long.parseLong(recordId),label,address,(countryId).longValue(),(provinceId).longValue(),(cityId).longValue(),lat.doubleValue(),lng.doubleValue(),accuracy.doubleValue(),logoImg,profileImg,bannerImg,resturantOwnerId,contactNo,email);	
+					
+			}
+
+			catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				response.CODE="2";
+				response.USER_MESSAGE="Error";
+				response.SYSTEM_MESSAGE=e.toString();
+				
+			}
+			
+			
+			return ResponseEntity.ok(response);
+	}
+    
+    
+    @PostMapping(CONTROLLER_URL+"/add/timings")
+	public ResponseEntity<?> SaveTimings(long resturantId,Long dayId[], @DateTimeFormat(pattern="HH:mm") Date openTimings[],@DateTimeFormat(pattern="HH:mm") Date closeTimings[],@RequestHeader("authorization") String token)  { 
+    		long resturantOwnerId=utility.getUserIDByToken(token);
+    	
+			ResponseEntityOutput response=new ResponseEntityOutput();
+			Map map=new HashMap<>();
+			
+			try {
+				
+				response.CODE="1";
+				response.USER_MESSAGE="";
+				response.SYSTEM_MESSAGE="Saved";
+				ResturantsTimingsService.SaveResturantTimings(resturantId, utility.parseLong(dayId), openTimings, closeTimings);
+					
+			}
+
+			catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				response.CODE="2";
+				response.USER_MESSAGE="Error";
+				response.SYSTEM_MESSAGE=e.toString();
+				
+			}
+			
+			
+			return ResponseEntity.ok(response);
+	}
+    
+    
+    @PostMapping(CONTROLLER_URL+"/view/timings")
+	public ResponseEntity<?> ViewTimings(long resturantId,@RequestHeader("authorization") String token)  { 
+    		long resturantOwnerId=utility.getUserIDByToken(token);
+    	
+			ResponseEntityOutput response=new ResponseEntityOutput();
+			Map map=new HashMap<>();
+			
+			try {
+				
+				response.CODE="1";
+				response.USER_MESSAGE="";
+				response.SYSTEM_MESSAGE="Saved";
+				response.DATA= ResturantsTimingsService.getResturantTimings(resturantId);
 					
 			}
 

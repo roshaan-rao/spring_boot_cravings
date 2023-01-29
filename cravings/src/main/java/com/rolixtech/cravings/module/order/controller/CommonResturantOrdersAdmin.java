@@ -142,7 +142,7 @@ public class CommonResturantOrdersAdmin {
 	}
     
     @PostMapping(value=CONTROLLER_URL+"/change-active/status" )
-	public ResponseEntity<?> detailedView(long recordId,long statusId,@RequestHeader("authorization") String token)  { 
+	public ResponseEntity<?> detailedView(long recordId,long statusId,int remainingTime,@RequestHeader("authorization") String token)  { 
     	    long UserId=utility.getUserIDByToken(token);
 			ResponseEntityOutput response=new ResponseEntityOutput();
 			Map map=new HashMap<>();
@@ -153,7 +153,7 @@ public class CommonResturantOrdersAdmin {
 				response.CODE="1";
 				response.USER_MESSAGE="Updated";
 				response.SYSTEM_MESSAGE="";
-				OrdersService.changeOrderStatus(recordId,statusId);
+				OrdersService.changeOrderStatus(recordId,statusId,remainingTime,UserId);
 			
 			}
 

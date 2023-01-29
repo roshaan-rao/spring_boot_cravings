@@ -18,11 +18,12 @@ import org.hibernate.annotations.OnDeleteAction;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class CustomerOrder {
+public class CustomerOrderChangeLog {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;
+	private Long recordId; 
 	private String orderNumber;
 	private long resturantId;
 	private double totalAmount;
@@ -36,6 +37,10 @@ public class CustomerOrder {
 	private double subtotal;
 	private double deliveryFee;
 	private double discount;
+	private Long logTypeId; 
+	private String logReason;
+	private long logCreatedBy;
+	private Date logCreatedOn;
 	
 	public long getId() {
 		return id;
@@ -109,6 +114,39 @@ public class CustomerOrder {
 	public void setDiscount(double discount) {
 		this.discount = discount;
 	}
+	
+	
+	public Long getRecordId() {
+		return recordId;
+	}
+	public void setRecordId(Long recordId) {
+		this.recordId = recordId;
+	}
+	public Long getLogTypeId() {
+		return logTypeId;
+	}
+	public void setLogTypeId(Long logTypeId) {
+		this.logTypeId = logTypeId;
+	}
+	public String getLogReason() {
+		return logReason;
+	}
+	public void setLogReason(String logReason) {
+		this.logReason = logReason;
+	}
+	public long getLogCreatedBy() {
+		return logCreatedBy;
+	}
+	public void setLogCreatedBy(long logCreatedBy) {
+		this.logCreatedBy = logCreatedBy;
+	}
+	public Date getLogCreatedOn() {
+		return logCreatedOn;
+	}
+	public void setLogCreatedOn(Date logCreatedOn) {
+		this.logCreatedOn = logCreatedOn;
+	}
+	
 	public Long getOrderStatusChangedBy() {
 		return orderStatusChangedBy;
 	}
@@ -123,11 +161,12 @@ public class CustomerOrder {
 	}
 	@Override
 	public String toString() {
-		return "CustomerOrder [id=" + id + ", orderNumber=" + orderNumber + ", resturantId=" + resturantId
-				+ ", totalAmount=" + totalAmount + ", totalGst=" + totalGst + ", orderType=" + orderType + ", userId="
-				+ userId + ", createdOn=" + createdOn + ", orderStatusId=" + orderStatusId + ", orderStatusChangedBy="
-				+ orderStatusChangedBy + ", orderStatusChangedOn=" + orderStatusChangedOn + ", subtotal=" + subtotal
-				+ ", deliveryFee=" + deliveryFee + ", discount=" + discount + "]";
+		return "CustomerOrderChangeLog [id=" + id + ", recordId=" + recordId + ", orderNumber=" + orderNumber
+				+ ", resturantId=" + resturantId + ", totalAmount=" + totalAmount + ", totalGst=" + totalGst
+				+ ", orderType=" + orderType + ", userId=" + userId + ", createdOn=" + createdOn + ", orderStatusId="
+				+ orderStatusId + ", subtotal=" + subtotal + ", deliveryFee=" + deliveryFee + ", discount=" + discount
+				+ ", logTypeId=" + logTypeId + ", logReason=" + logReason + ", logCreatedBy=" + logCreatedBy
+				+ ", logCreatedOn=" + logCreatedOn + "]";
 	}
 	
 	

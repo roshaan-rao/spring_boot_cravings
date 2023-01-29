@@ -348,9 +348,9 @@ public class CommonUsersService {
     
     public List<Map> sendOTP(String phoneNo){
     	List OTPResponse=new ArrayList<>(); 
-  		Random rand = new Random();
-  		int OTP = rand.nextInt(10000);
-  		String OTPString = OTP+"";
+//  		Random rand = new Random();
+//  		int OTP = rand.nextInt(10000);
+  		String OTPString = Utility.createRandomNumericCode(4);
   		String CravingsNumber = " 04235948200";
         
         new Thread(){
@@ -369,7 +369,7 @@ public class CommonUsersService {
 					smsLog.setTransactionId(Integer.parseInt(Data.get("transactionID").toString()));
 					smsLog.setSentOn(new Date());
 					smsLog.setSentTo(phoneNo);
-					smsLog.setOtp(OTP);
+					smsLog.setOtp(Utility.parseLong(Utility.createRandomNumericCode(4)));
 					smsLog.setSmsLogTypeId(1);
 					smsLog.setDocumentId(1);
 					SmsLogDao.save(smsLog);

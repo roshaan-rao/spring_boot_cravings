@@ -124,7 +124,7 @@ public class CommonResturantsCustomerController {
     
     
     @PostMapping(CONTROLLER_URL+"/resturants/common-categories-wise/view")
-   	public ResponseEntity<?> View(long categoryId)  { 
+   	public ResponseEntity<?> View(long categoryId)  {  
    			
    			ResponseEntityOutput response=new ResponseEntityOutput();
    			Map map=new HashMap<>();

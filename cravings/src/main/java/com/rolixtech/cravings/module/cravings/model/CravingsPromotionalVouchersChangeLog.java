@@ -18,6 +18,8 @@ public class CravingsPromotionalVouchersChangeLog {
 	private String postFixStr;
 	private String completeString;
 	private int status;
+	private Date statusChangedOn;
+	private Long statusChangeBy;
 	private Date createdOn;
 	private long createdBy;
 	private double amount;
@@ -101,13 +103,61 @@ public class CravingsPromotionalVouchersChangeLog {
 	public void setIsRedeemed(int isRedeemed) {
 		this.isRedeemed = isRedeemed;
 	}
-	@Override
-	public String toString() {
-		return "CravingsPromotionalVouchers [id=" + id + ", preFixStr=" + preFixStr + ", postFixStr=" + postFixStr
-				+ ", completeString=" + completeString + ", status=" + status + ", createdOn=" + createdOn
-				+ ", createdBy=" + createdBy + ", amount=" + amount + ", percentageVal=" + percentageVal + ", validTo="
-				+ validTo + ", validFrom=" + validFrom + ", isRedeemed=" + isRedeemed + "]";
+	
+	
+	public Long getRecordId() {
+		return recordId;
+	}
+	public void setRecordId(Long recordId) {
+		this.recordId = recordId;
+	}
+	public Long getLogTypeId() {
+		return logTypeId;
+	}
+	public void setLogTypeId(Long logTypeId) {
+		this.logTypeId = logTypeId;
+	}
+	public String getLogReason() {
+		return logReason;
+	}
+	public void setLogReason(String logReason) {
+		this.logReason = logReason;
+	}
+	public long getLogCreatedBy() {
+		return logCreatedBy;
+	}
+	public void setLogCreatedBy(long logCreatedBy) {
+		this.logCreatedBy = logCreatedBy;
+	}
+	public Date getLogCreatedOn() {
+		return logCreatedOn;
+	}
+	public void setLogCreatedOn(Date logCreatedOn) {
+		this.logCreatedOn = logCreatedOn;
 	}
 	
+	
+	public Date getStatusChangedOn() {
+		return statusChangedOn;
+	}
+	public void setStatusChangedOn(Date statusChangedOn) {
+		this.statusChangedOn = statusChangedOn;
+	}
+	public Long getStatusChangeBy() {
+		return statusChangeBy;
+	}
+	public void setStatusChangeBy(Long statusChangeBy) {
+		this.statusChangeBy = statusChangeBy;
+	}
+	@Override
+	public String toString() {
+		return "CravingsPromotionalVouchersChangeLog [id=" + id + ", recordId=" + recordId + ", preFixStr=" + preFixStr
+				+ ", postFixStr=" + postFixStr + ", completeString=" + completeString + ", status=" + status
+				+ ", statusChangedOn=" + statusChangedOn + ", statusChangeBy=" + statusChangeBy + ", createdOn="
+				+ createdOn + ", createdBy=" + createdBy + ", amount=" + amount + ", percentageVal=" + percentageVal
+				+ ", validTo=" + validTo + ", validFrom=" + validFrom + ", isRedeemed=" + isRedeemed + ", logTypeId="
+				+ logTypeId + ", logReason=" + logReason + ", logCreatedBy=" + logCreatedBy + ", logCreatedOn="
+				+ logCreatedOn + "]";
+	}
 	
 }

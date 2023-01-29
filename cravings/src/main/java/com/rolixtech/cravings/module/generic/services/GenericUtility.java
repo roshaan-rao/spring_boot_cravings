@@ -328,7 +328,8 @@ public class GenericUtility  {
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515;
         if (unit == 'K') {
-          dist = dist * 1.609344;
+        	//Added *2.3 for estimation betterment
+          dist = (dist * 1.609344)*2.3;
         } else if (unit == 'N') {
           dist = dist * 0.8684;
           }
@@ -443,6 +444,19 @@ public class GenericUtility  {
     	        return output ;
     }
       
+      public static String createRandomNumericCode(int codeLength){   
+ 	     char[] chars = "1234567890".toCharArray();
+ 	        StringBuilder sb = new StringBuilder();
+ 	        Random random = new SecureRandom();
+ 	        for (int i = 0; i < codeLength; i++) {
+ 	            char c = chars[random.nextInt(chars.length)];
+ 	            sb.append(c);
+ 	        }
+ 	        String output = sb.toString();
+ 	        
+ 	        return output ;
+ }
+      
       
      /***
       *@return Date in  "dd/MM/yyyy"
@@ -452,5 +466,17 @@ public class GenericUtility  {
     	  SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
     	  String date = simpleDateFormat.format(val);
     	 return date;
+      }
+      
+      
+      
+      /***
+       *@return Date in  "HH:mm"
+       * */ 
+      public static String getDisplayTimeFromDate(Date date){
+          SimpleDateFormat localDateFormat = new SimpleDateFormat("HH:mm:ss");
+          String time = localDateFormat.format(date);
+          return time;
+          
       }
 }

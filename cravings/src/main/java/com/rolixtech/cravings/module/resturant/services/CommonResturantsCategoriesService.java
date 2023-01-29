@@ -198,6 +198,19 @@ public class CommonResturantsCategoriesService {
 		return categoryId;
 	}
 	
+	public long  getCommonCategoryLabelByResturantCatoryId(long resturantCatoryId) {
+		Long categoryId=0l;
+		CommonResturantsCategories ResturantsCategories=null;
+		if(resturantCatoryId!=0) {
+			 ResturantsCategories=ResturantsCategoriesDao.findById(resturantCatoryId);
+			 if(ResturantsCategories!=null) {
+				 categoryId= ResturantsCategories.getCategoryId();
+			 }
+		}
+		
+		return categoryId;
+	}
+	
 	
 
 

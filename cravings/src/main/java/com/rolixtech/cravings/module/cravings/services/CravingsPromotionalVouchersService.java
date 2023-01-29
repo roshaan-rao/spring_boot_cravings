@@ -6,9 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.rolixtech.cravings.module.cravings.dao.CravingsPromotionalVouchersChangeLogDao;
 import com.rolixtech.cravings.module.cravings.dao.CravingsPromotionalVouchersDao;
 import com.rolixtech.cravings.module.cravings.model.CravingsPromotionalVouchers;
 import com.rolixtech.cravings.module.cravings.model.CravingsPromotionalVouchersChangeLog;
@@ -30,6 +32,9 @@ public class CravingsPromotionalVouchersService {
 	
 	
 	@Autowired
+	private CravingsPromotionalVouchersChangeLogDao VouchersChangeLogDao; 
+	
+	@Autowired
 	private CravingsPromotionalVouchersStatusTypesService VouchersStatusTypesService;
 	@Autowired
 	private GenericUtility utility;
@@ -41,14 +46,23 @@ public class CravingsPromotionalVouchersService {
 			for(int i=1;i<totalNumber;i++) {
 				CravingsPromotionalVouchers PromotionalVouchers=new CravingsPromotionalVouchers();
 				
-				String postFix=utility.createRandomCode(8); 
-				String CompeleteStr=prefixStr+postFix;
 				
-				if(!PromotionalVouchersDao.existsByCompleteString(CompeleteStr)) {
+				
+				String uniqueVoucherCode="";
+				String  postFix="";
+				
+				while(true) {
+					  postFix=utility.createRandomCode(8);
+					  String CompeleteStr=prefixStr+postFix;
+					   if(!PromotionalVouchersDao.existsByCompleteString(CompeleteStr)) {
+						   uniqueVoucherCode=CompeleteStr; 
+					      break;
+					   }
+				}
 					
-					if(!alreadyCreatedPromos.contains(CompeleteStr)) { 
+					if(!alreadyCreatedPromos.contains(uniqueVoucherCode)) { 
 						
-						PromotionalVouchers.setCompleteString(CompeleteStr);
+						PromotionalVouchers.setCompleteString(uniqueVoucherCode);
 						PromotionalVouchers.setCreatedBy(userId);
 						PromotionalVouchers.setCreatedOn(new Date());
 						PromotionalVouchers.setStatus(1);
@@ -60,10 +74,10 @@ public class CravingsPromotionalVouchersService {
 						PromotionalVouchers.setValidTo(validTo);
 						PromotionalVouchersDao.save(PromotionalVouchers);
 						
-						alreadyCreatedPromos.add(CompeleteStr);
+						alreadyCreatedPromos.add(uniqueVoucherCode);
 					
 					}
-				}
+				
 				
 			}	
 		
@@ -166,18 +180,78 @@ public class CravingsPromotionalVouchersService {
 
 	public void ChangeStatus(long recordId, int status, long userId) {
 		// TODO Auto-generated method stub
-//		CravingsPromotionalVouchersChangeLog PromotionalVouchersLog=new CravingsPromotionalVouchersChangeLog();
-//		LogChangeCommonAcademicsTimeTable iLogChange=new LogChangeCommonAcademicsTimeTable();
-//		  CommonAcademicsTimeTable iRealChange=TimeTableDao.findById(id);
-//				BeanUtils.copyProperties(iRealChange, iLogChange);
-//				
-//				iLogChange.setId(0);
-//				iLogChange.setRecordId(id);
-//				iLogChange.setLogCreatedBy(createdBy);
-//				iLogChange.setLogCreatedOn(new Date());
-//				iLogChange.setLogReason("");
-//				iLogChange.setLogTypeId(Utilities.parseLong("1"));
-//				LogChangeTimeTableDao.save(iLogChange);
+		CravingsPromotionalVouchersChangeLog PromotionalVouchersLog=new CravingsPromotionalVouchersChangeLog();
+		CravingsPromotionalVouchers iRealChange=PromotionalVouchersDao.findById(recordId);
+				BeanUtils.copyProperties(iRealChange, PromotionalVouchersLog);
+				
+				PromotionalVouchersLog.setId(0);
+				PromotionalVouchersLog.setRecordId(recordId);
+				PromotionalVouchersLog.setLogCreatedBy(userId);
+				PromotionalVouchersLog.setLogCreatedOn(new Date());
+				PromotionalVouchersLog.setLogReason("Voucher Status Change");
+				PromotionalVouchersLog.setLogTypeId(utility.parseLong("1"));
+				VouchersChangeLogDao.save(PromotionalVouchersLog);
+				
+				iRealChange.setStatus(status);
+				iRealChange.setStatusChangeBy(userId);
+				iRealChange.setStatusChangedOn(new Date());
+				PromotionalVouchersDao.save(iRealChange);
+	}
+
+
+
+
+
+
+	public void EditSave(long recordId, String prefixStr, Double amount, Double percentageVal,Date validFrom,Date validTo, long userId) {
+		CravingsPromotionalVouchers PromotionalVouchers=PromotionalVouchersDao.findById(recordId);
+		if(PromotionalVouchers!=null) {
+			
+			CravingsPromotionalVouchersChangeLog PromotionalVouchersLog=new CravingsPromotionalVouchersChangeLog();
+			CravingsPromotionalVouchers iRealChange=PromotionalVouchersDao.findById(recordId);
+					BeanUtils.copyProperties(iRealChange, PromotionalVouchersLog);
+					
+					PromotionalVouchersLog.setId(0);
+					PromotionalVouchersLog.setRecordId(recordId);
+					PromotionalVouchersLog.setLogCreatedBy(userId);
+					PromotionalVouchersLog.setLogCreatedOn(new Date());
+					PromotionalVouchersLog.setLogReason("Voucher Edit Save");
+					PromotionalVouchersLog.setLogTypeId(utility.parseLong("1"));
+					VouchersChangeLogDao.save(PromotionalVouchersLog);
+					
+			
+			
+			String uniqueVoucherCode="";
+			String  postFix="";
+			
+			while(true) {
+				  postFix=utility.createRandomCode(8);
+				  String CompeleteStr=prefixStr+postFix;
+				   if(!PromotionalVouchersDao.existsByCompleteString(CompeleteStr)) {
+					   uniqueVoucherCode=CompeleteStr; 
+				      break;
+				   }
+			}
+			
+			
+					
+			PromotionalVouchers.setCompleteString(uniqueVoucherCode);
+			PromotionalVouchers.setCreatedBy(userId);
+			PromotionalVouchers.setCreatedOn(new Date());
+			PromotionalVouchers.setStatus(1);
+			PromotionalVouchers.setPostFixStr(postFix);
+			PromotionalVouchers.setPreFixStr(prefixStr);
+			PromotionalVouchers.setPercentageVal(percentageVal);
+			PromotionalVouchers.setAmount(amount);
+			PromotionalVouchers.setValidFrom(validFrom);
+			PromotionalVouchers.setValidTo(validTo);
+			PromotionalVouchersDao.save(PromotionalVouchers);
+				
+			
+		}
+		
+		
+		
 	}
 
 

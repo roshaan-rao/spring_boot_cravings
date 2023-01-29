@@ -158,7 +158,7 @@ public class CommonUsersCustomerController {
 	}
     
     @PostMapping(CONTROLLER_URL+"/setNewPassword")
-	public ResponseEntity<?> setNewPassword(String newPassword ,@RequestHeader("authorization") String token)  { 
+	public ResponseEntity<?> setNewPassword(String newPassword,@RequestHeader("authorization") String token)  { 
     		long UserID =Utility.getUserIDByToken(token);
 			ResponseEntityOutput response=new ResponseEntityOutput();
 			try {
@@ -177,6 +177,26 @@ public class CommonUsersCustomerController {
 			return ResponseEntity.ok(response);
 	}
     
+    
+    @PostMapping(CONTROLLER_URL+"/setForgotPassword")
+	public ResponseEntity<?> FogotPassword(long mobile, String newPassword)  { 
+//    		long UserID =Utility.getUserIDByToken(token);
+			ResponseEntityOutput response=new ResponseEntityOutput();
+			try {
+				response.CODE="1";
+				response.USER_MESSAGE="Your Password has been changed.";
+				response.SYSTEM_MESSAGE="Success";
+				UsersService.setForgotPassword(mobile, newPassword);
+			}
+			catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				response.CODE="2";
+				response.USER_MESSAGE=e.getMessage();
+				response.SYSTEM_MESSAGE=e.toString();
+			}
+			return ResponseEntity.ok(response);
+	}
     
     
     @GetMapping(CONTROLLER_URL+"/UserProfileView")

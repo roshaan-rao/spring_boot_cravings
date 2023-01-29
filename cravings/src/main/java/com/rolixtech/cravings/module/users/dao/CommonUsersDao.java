@@ -24,6 +24,7 @@ public interface CommonUsersDao extends JpaRepository<CommonUsers, Long>  {
 
 	boolean existsByEmail(String email);
 	CommonUsers findById(long  Id);
+	CommonUsers findByMobile(long  mobile);
 
 	CommonUsers findByIdAndIsActiveAndIsDeleted(long recordId, int i, int j);
 

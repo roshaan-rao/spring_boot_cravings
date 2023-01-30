@@ -11,6 +11,14 @@ import java.util.Set;
 @Entity
 public class CommonUsers {
 	
+	@Override
+	public String toString() {
+		return "CommonUsers [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
+				+ ", password=" + password + ", mobile=" + mobile + ", categoryId=" + categoryId + ", isDeleted="
+				+ isDeleted + ", deletedOn=" + deletedOn + ", deletedBy=" + deletedBy + ", profileImgUrl="
+				+ profileImgUrl + ", isActive=" + isActive + ", roles=" + roles + ", addresses=" + addresses + "]";
+	}
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;

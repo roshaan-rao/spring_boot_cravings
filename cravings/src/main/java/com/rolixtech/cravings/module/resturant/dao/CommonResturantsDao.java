@@ -39,8 +39,10 @@ public interface CommonResturantsDao extends JpaRepository<CommonResturants, Lon
 
 	List<CommonResturants> findAllByIsActiveAndIsDeleted(int i, int j);
 
-	@Query(value="Select * from common_resturants where id in (SELECT distinct resturant_id FROM common_resturants_categories where category_id=?1 and is_active=1 and is_deleted=0)",nativeQuery = true)
+	@Query(value="Select * from common_resturants where  is_active=1 and is_deleted=0 and id in (SELECT distinct resturant_id FROM common_resturants_categories where category_id=?1 and is_active=1 and is_deleted=0)",nativeQuery = true)
 	List<CommonResturants> findAllByCommonCategoryIdWise(long categoryId);
+
+	List<CommonResturants> findAllByLabelContainingAndIsActiveAndIsDeleted(String keyword, int i, int j);
 
 	
 

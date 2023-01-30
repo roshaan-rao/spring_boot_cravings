@@ -9,6 +9,7 @@ import java.util.Map;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.rolixtech.cravings.module.cravings.dao.CravingsPromotionalVouchersChangeLogDao;
 import com.rolixtech.cravings.module.cravings.dao.CravingsPromotionalVouchersDao;
@@ -252,6 +253,26 @@ public class CravingsPromotionalVouchersService {
 		
 		
 		
+	}
+	
+	
+	@Transactional
+	public void deleteVoucher(long recordId, long userId) {
+		// TODO Auto-generated method stub
+		CravingsPromotionalVouchersChangeLog PromotionalVouchersLog=new CravingsPromotionalVouchersChangeLog();
+		CravingsPromotionalVouchers iRealChange=PromotionalVouchersDao.findById(recordId);
+				BeanUtils.copyProperties(iRealChange, PromotionalVouchersLog);
+				
+				PromotionalVouchersLog.setId(0);
+				PromotionalVouchersLog.setRecordId(recordId);
+				PromotionalVouchersLog.setLogCreatedBy(userId);
+				PromotionalVouchersLog.setLogCreatedOn(new Date());
+				PromotionalVouchersLog.setLogReason("Voucher Delete");
+				PromotionalVouchersLog.setLogTypeId(utility.parseLong("1"));
+				VouchersChangeLogDao.save(PromotionalVouchersLog);
+				
+				
+				PromotionalVouchersDao.deleteById(recordId);
 	}
 
 

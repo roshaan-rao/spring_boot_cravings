@@ -68,7 +68,7 @@ public class CommonResturantsProductsService {
 	
 	public List<CommonResturantsProducts> findAllByLabelContaining(String keyword) {
 		
-		List<CommonResturantsProducts> ResturantsProduct=ResturantsProductsDao.findByLabelContaining(keyword);
+		List<CommonResturantsProducts> ResturantsProduct=ResturantsProductsDao.findAllByLabelContainingAndIsActiveAndIsDeleted(keyword,1,0);
 		if(ResturantsProduct.isEmpty()) {
 			ResturantsProduct=new ArrayList<>();
 		}
@@ -860,6 +860,13 @@ public class CommonResturantsProductsService {
 		if(recordId!=0) {
 			ProductsAddOnService.deleteProductAddOnGroup(recordId);
 		}
+	}
+
+
+	public List<CommonResturantsProducts> findAllByLabelContainingAndIsActiveAndIsDeleted(String keyword, int i,
+			int j) {
+		// TODO Auto-generated method stub
+		return null;
 	} 
 
 	

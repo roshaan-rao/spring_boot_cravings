@@ -251,7 +251,7 @@ public class CommonResturantsService {
 					Row.put("totalNumberOfRatings", Resturants.get(i).getRating());
 					Row.put("foodCategory", getMostlyAddedProductsCatgoryByResturant( Resturants.get(i).getId()));
 					Row.put("deliveryTime", "30 min");
-					Row.put("distance", utility.distanceCalculate(Resturants.get(i).getLatitude(), Resturants.get(i).getLongitude(), lat, lng, 'k')+"km away");
+					Row.put("distance",utility.roundToOneDecimal(utility.distanceCalculate(Resturants.get(i).getLatitude(), Resturants.get(i).getLongitude(), lat, lng, 'k'))+"km away");
 					Row.put("minOrderPrice", "Rs.250");	
 					if(Resturants.get(i).getIsActive()==0) {
 						Row.put("isActive", Resturants.get(i).getIsActive());
@@ -293,7 +293,9 @@ public class CommonResturantsService {
 					Row.put("totalNumberOfRatings", Resturants.get(i).getRating());
 					Row.put("foodCategory", getMostlyAddedProductsCatgoryByResturant( Resturants.get(i).getId()));
 					Row.put("deliveryTime", "30 min");
-					Row.put("distance", utility.distanceCalculate(Resturants.get(i).getLatitude(), Resturants.get(i).getLongitude(), lat, lng, 'k')+"km away");
+					Row.put("distance",utility.roundToOneDecimal(utility.distanceCalculate(Resturants.get(i).getLatitude(), Resturants.get(i).getLongitude(), lat, lng, 'k'))+"km away");
+					
+					//Row.put("distance", utility.distanceCalculate(Resturants.get(i).getLatitude(), Resturants.get(i).getLongitude(), lat, lng, 'k')+"km away");
 					Row.put("minOrderPrice", "Rs.250");	
 					if(Resturants.get(i).getIsActive()==0) {
 						Row.put("isActive", Resturants.get(i).getIsActive());
@@ -331,7 +333,7 @@ public class CommonResturantsService {
 		List<CommonResturants> Resturants=new ArrayList<>();
 		List<CommonResturantsProducts> Products=new ArrayList<>();
 		if(searchType==1) {
-			Resturants=ResturantsDao.findAllByLabelContaining(keyword);
+			Resturants=ResturantsDao.findAllByLabelContainingAndIsActiveAndIsDeleted(keyword,1,0);
 			
 		}else if(searchType==2) {
 			Products=ProductsService.findAllByLabelContaining(keyword);

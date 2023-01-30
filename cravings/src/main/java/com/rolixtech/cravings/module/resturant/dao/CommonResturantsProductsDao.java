@@ -39,4 +39,6 @@ public interface CommonResturantsProductsDao extends JpaRepository<CommonRestura
 	@Query(value="SELECT resturant_category_id ,count(id) as maxCount FROM common_resturants_products where resturant_id=?1 and is_deleted=?2  group by resturant_category_id order by maxCount desc limit 1",nativeQuery = true)
 	Long findResturantCategoryIdByResturantIdAndIsDeleted(long resturantId,long isDeleted);
 
+	List<CommonResturantsProducts> findAllByLabelContainingAndIsActiveAndIsDeleted(String keyword, int i, int j);
+
 }

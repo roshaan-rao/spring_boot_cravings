@@ -36,4 +36,19 @@ public interface CustomerOrderDao extends JpaRepository<CustomerOrder, Long>  {
 
 	List<CustomerOrder> findAllByOrderStatusIdGreaterThanOrderByIdDesc(long l);
 
+	
+
+	@Query(value="SELECT * FROM customer_order  where order_status_id >?1 and order_status_id not in (?2) order by id desc",nativeQuery = true)
+	List<CustomerOrder> findAllByOrderStatusIdGreaterThanOrderAndOrderStatusIdNotByIdDesc(long l,List<Integer> statusIdNotIn);
+
+	List<CustomerOrder> findAllByUserIdAndOrderStatusIdIn(long userId, List<Long> statusIds);
+	
+	
+	@Query(value="SELECT * FROM customer_order  where order_status_id >?1 and order_status_id not in (?2) and user_id=?3 order by id desc",nativeQuery = true)
+	List<CustomerOrder> findAllByOrderStatusIdGreaterThanOrderAndOrderStatusIdNotInAndUserIdOrderByIdDesc(long l,List<Long> statusIdNotIn,long userId);
+
+	
+
+	List<CustomerOrder> findAllByOrderByIdDesc();
+
 }

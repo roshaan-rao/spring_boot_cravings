@@ -97,16 +97,16 @@ public class CustomerOrdersService {
 		return label;
 	}
 	
-	public void Save(OrderPOJO order){
+	public void Save(OrderPOJO order,long userId){
 		
 		OrderPOJO orderr=order;
 		if(orderr!=null)
 		{ 
 			long resturantId=orderr.getResturantId();
-			double totalAmount=orderr.getTotalAmount();
+			double totalAmount=orderr.getTotalAmount(); 
 			double totalGst=orderr.getTotalGst();
 			String orderType=orderr.getOrderType();
-			long userId=orderr.getUserId();
+			
 			double subtotal=orderr.getSubtotal();
 			double discount=orderr.getDiscount();
 			double deliveryFee=orderr.getDeliveryFee();
@@ -306,7 +306,11 @@ public class CustomerOrdersService {
 	public List<Map> getAllUserPastOrders(long userId){
 		
 		List<Map> list=new ArrayList<>();
-		List<CustomerOrder> orders=OrderDao.findAllByUserId(userId);
+		List<Long> statusIds=new ArrayList<>();
+		statusIds.add(5L);
+		statusIds.add(6L);
+		statusIds.add(7L);
+		List<CustomerOrder> orders=OrderDao.findAllByUserIdAndOrderStatusIdIn(userId,statusIds);
 		if(!orders.isEmpty()) {
 			orders.stream().forEach(
 				order->{
@@ -359,7 +363,14 @@ public class CustomerOrdersService {
 	public List<Map> getUserActiveOrder(long userId){
 		
 		List<Map> list=new ArrayList<>();
-		List<CustomerOrder> orders=OrderDao.findAllByUserIdAndOrderStatusId(userId,2l);
+		List<Long> statusIds=new ArrayList<>();
+		statusIds.add(5L);
+		statusIds.add(6L);
+		statusIds.add(7L);
+		
+		//
+		//List<CustomerOrder> orders=OrderDao.findAllByUserIdAndOrderStatusId(userId,2l);
+		List<CustomerOrder> orders=OrderDao.findAllByOrderStatusIdGreaterThanOrderAndOrderStatusIdNotInAndUserIdOrderByIdDesc(0l,statusIds,userId);
 		if(!orders.isEmpty()) {
 			orders.stream().forEach(
 				order->{
@@ -611,8 +622,111 @@ public class CustomerOrdersService {
 
 	public List<Map> getAllActiveOrders() {
 		List<Map> list=new ArrayList<>();
+		List<Integer> statusIdNotIn=new ArrayList<>();
+		statusIdNotIn.add(5);
+		statusIdNotIn.add(6); 
+		statusIdNotIn.add(7);
+		List<CustomerOrder> orders=OrderDao.findAllByOrderStatusIdGreaterThanOrderAndOrderStatusIdNotByIdDesc(0l,statusIdNotIn);
+		if(!orders.isEmpty()) {
+			orders.stream().forEach(
+				order->{
+					
+						long orderId=order.getId();
+						Map Row=new HashMap<>();
+						Row.put("id", order.getId());
+						Row.put("resturantId", order.getResturantId());
+						Row.put("resturantLabel",ResturantsService.findLabelById(order.getResturantId()));
+						Row.put("resturantBanner",ResturantsService.findBannerImgById(order.getResturantId()));
+						Row.put("orderNumber", order.getOrderNumber());
+						Row.put("totalAmount", order.getTotalAmount());
+						Row.put("totalGst", order.getTotalGst());
+						Row.put("orderType", order.getOrderType());
+						Row.put("createdOn", order.getCreatedOn());
+						Row.put("orderStatusId", order.getOrderStatusId());
+						Row.put("orderStatusLabel", OrderStatusService.findLabelById(order.getOrderStatusId()));
+						Row.put("subtotal", order.getSubtotal());
+						Row.put("discount", order.getDiscount());
+						Row.put("deliveryFee", order.getDeliveryFee());
+						CustomerOrderAddress Address=OrderAddressDao.findByOrderId(orderId);
+						if(Address!=null) {	
+							Row.put("cityName", Address.getCityName());
+							Row.put("completeAddress", Address.getCompleteAddress());
+							
+						}else {
+							Row.put("cityName", "");
+							Row.put("completeAddress", "");
+							
+						}
+						
+						List<Map> orderProductsList=new ArrayList<>();
+						List<CustomerOrderProducts> OrderProducts=OrderProductsDao.findAllByOrderId(orderId);
+						if(!OrderProducts.isEmpty()) {
+							OrderProducts.stream().forEach(
+								OrderProduct->{
+									Map Rowproduct=new HashMap<>();
+									Rowproduct.put("price", OrderProduct.getPrice());
+									Rowproduct.put("productId", OrderProduct.getProductId());
+									Rowproduct.put("quantity", OrderProduct.getQuantity());
+									Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
+									
+									List<Map> requiredAddOnsList=new ArrayList<>();
+									List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+									if(!requiredAddOns.isEmpty()) {
+										requiredAddOns.stream().forEach(
+												requiredAddOn->{
+													Map RowproductRequiredAddon=new HashMap<>();
+													RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
+													RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
+													RowproductRequiredAddon.put("label",ResturantsProductsService.findLabelById(requiredAddOn.getProductId()));
+													requiredAddOnsList.add(RowproductRequiredAddon);
+													
+													
+												}
+										);
+									}
+									Rowproduct.put("requiredAddOn", requiredAddOnsList);
+									
+									List<Map> optionalAddOnsList=new ArrayList<>();
+									List<CustomerOrderProductsOptionalAddOn> optionalAddOns=OrderProductsOptionalAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+									if(!optionalAddOns.isEmpty()) {
+										optionalAddOns.stream().forEach(
+												optionalAddOn->{
+													Map RowproductOptionalAddon=new HashMap<>();
+													RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
+													RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
+													RowproductOptionalAddon.put("label",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
+													optionalAddOnsList.add(RowproductOptionalAddon);
+													
+													
+												}
+										);
+									}
+									Rowproduct.put("optionalAddOn", optionalAddOnsList);
+									
+									orderProductsList.add(Rowproduct);
+										
+								}
+							);
+						}
+						
+						Row.put("products",orderProductsList);
+						
+						list.add(Row);
+				}
+			
+			);
+		}
 		
-		List<CustomerOrder> orders=OrderDao.findAllByOrderStatusIdGreaterThanOrderByIdDesc(0l);
+		
+		
+		return list;
+	}
+	
+	
+	public List<Map> getAllOrders() {
+		List<Map> list=new ArrayList<>();
+		
+		List<CustomerOrder> orders=OrderDao.findAllByOrderByIdDesc(); 
 		if(!orders.isEmpty()) {
 			orders.stream().forEach(
 				order->{

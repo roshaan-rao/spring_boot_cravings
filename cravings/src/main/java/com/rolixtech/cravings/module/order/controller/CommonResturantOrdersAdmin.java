@@ -82,6 +82,35 @@ public class CommonResturantOrdersAdmin {
    			return ResponseEntity.ok(response);
    	}
     
+    @GetMapping(value=CONTROLLER_URL+"/all-orders/view" )
+   	public ResponseEntity<?> ActiveOrdersView(@RequestHeader("authorization") String token)  { 
+       	    long UserId=utility.getUserIDByToken(token);
+   			ResponseEntityOutput response=new ResponseEntityOutput();
+   			Map map=new HashMap<>();
+   			
+   			try {
+   				
+
+   				response.CODE="1";
+   				response.USER_MESSAGE="Success";
+   				response.SYSTEM_MESSAGE="";
+   				response.DATA= OrdersService.getAllOrders();
+   			
+   			}
+
+   			catch (Exception e) {
+   				// TODO: handle exception
+   				e.printStackTrace();
+   				response.CODE="2";
+   				response.USER_MESSAGE="Error";
+   				response.SYSTEM_MESSAGE=e.toString();
+   				
+   			}
+   			
+   			
+   			return ResponseEntity.ok(response);
+   	}
+    
     @PostMapping(value=CONTROLLER_URL+"/active-order-summary/view" ) 
    	public ResponseEntity<?> ActiveAllViewDetail(Long recordId,@RequestHeader("authorization") String token)  { 
        	    long UserId=utility.getUserIDByToken(token);

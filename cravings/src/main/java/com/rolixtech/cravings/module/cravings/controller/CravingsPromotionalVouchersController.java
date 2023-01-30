@@ -29,6 +29,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -41,6 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.rolixtech.cravings.module.auth.model.ResponseEntityOutput;
 import com.rolixtech.cravings.module.cravings.services.CravingsPromotionalVouchersService;
+import com.rolixtech.cravings.module.cravings.services.CravingsPromotionalVouchersStatusTypesService;
 import com.rolixtech.cravings.module.generic.model.CommonCountries;
 import com.rolixtech.cravings.module.generic.services.CommonCitiesService;
 import com.rolixtech.cravings.module.generic.services.CommonCountriesService;
@@ -65,6 +67,9 @@ public class CravingsPromotionalVouchersController {
 	@Autowired
 	private CravingsPromotionalVouchersService VouchersService;
 	
+	
+	@Autowired
+	private CravingsPromotionalVouchersStatusTypesService VouchersStatusTypesService;
 	
 	public static final String CONTROLLER_URL = GenericUtility.APPLICATION_CONTEXT + "/promotional/voucher";
 
@@ -164,7 +169,7 @@ public class CravingsPromotionalVouchersController {
 	    
 	    
 	    @PutMapping(CONTROLLER_URL+"/changeStatus")
-	   	public ResponseEntity<?> changeStatus(String recordId,Integer status,@RequestHeader("authorization") String token)  { 
+	   	public ResponseEntity<?> changeStatus(String recordId,Integer statusId,@RequestHeader("authorization") String token)  { 
 	       		long UserId=utility.getUserIDByToken(token);
 	       	
 	   			ResponseEntityOutput response=new ResponseEntityOutput();
@@ -175,7 +180,37 @@ public class CravingsPromotionalVouchersController {
 	   				response.CODE="1";
 	   				response.USER_MESSAGE="";
 	   				response.SYSTEM_MESSAGE="Updated";
-	   				VouchersService.ChangeStatus(Long.parseLong(recordId),status.intValue(),UserId);	
+	   				VouchersService.ChangeStatus(Long.parseLong(recordId),statusId.intValue(),UserId);	
+	   				
+	   			
+	   			}
+
+	   			catch (Exception e) {
+	   				// TODO: handle exception
+	   				e.printStackTrace();
+	   				response.CODE="2";
+	   				response.USER_MESSAGE=e.getMessage();
+	   				response.SYSTEM_MESSAGE=e.toString();
+	   				
+	   			}
+	   			
+	   			
+	   			return ResponseEntity.ok(response);
+	   	}
+	    
+	    @DeleteMapping(CONTROLLER_URL+"/delete")
+	   	public ResponseEntity<?> delete(String recordId,@RequestHeader("authorization") String token)  { 
+	       		long UserId=utility.getUserIDByToken(token);
+	       	
+	   			ResponseEntityOutput response=new ResponseEntityOutput();
+	   			Map map=new HashMap<>();
+	   			
+	   			try {
+	   				
+	   				response.CODE="1";
+	   				response.USER_MESSAGE="";
+	   				response.SYSTEM_MESSAGE="Deleted";
+	   				VouchersService.deleteVoucher(Long.parseLong(recordId),UserId);	
 	   				
 	   			
 	   			}
@@ -223,4 +258,35 @@ public class CravingsPromotionalVouchersController {
 	   			
 	   			return ResponseEntity.ok(response);
 	   	}
+	    
+	    
+	    @GetMapping(GenericUtility.APPLICATION_CONTEXT +"/generic/voucher/status-drop-down/view")
+		   public ResponseEntity<?> ViewAllStatus()  { 
+		       		
+		       	
+		   			ResponseEntityOutput response=new ResponseEntityOutput();
+		   			Map map=new HashMap<>();
+		   			
+		   			try {
+		   				
+		   				response.CODE="1";
+		   				response.USER_MESSAGE="";
+		   				response.SYSTEM_MESSAGE="Success";
+		   				response.DATA=VouchersStatusTypesService.getAll();
+		   				
+		   			
+		   			}
+
+		   			catch (Exception e) {
+		   				// TODO: handle exception
+		   				e.printStackTrace();
+		   				response.CODE="2";
+		   				response.USER_MESSAGE="Error";
+		   				response.SYSTEM_MESSAGE=e.toString();
+		   				
+		   			}
+		   			
+		   			
+		   			return ResponseEntity.ok(response);
+		   	}
 }

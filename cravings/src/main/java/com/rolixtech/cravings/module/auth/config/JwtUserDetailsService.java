@@ -34,7 +34,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 	 
 	 @Override
 		public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		 CommonUsers user = UsersDao.findByEmail(username);
+		 CommonUsers user = UsersDao.findByEmailAndIsDeleted(username,0);
 			if (user == null) {
 				throw new UsernameNotFoundException("User not found with username: " + username);
 			}

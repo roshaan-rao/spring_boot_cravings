@@ -479,4 +479,10 @@ public class GenericUtility  {
           return time;
           
       }
+      
+      
+      public static double roundToOneDecimal(double value) { 
+  		double  roundedOneDigitX = Math.round(value * 10) / 10.0; 
+  		return roundedOneDigitX;
+  }
 }

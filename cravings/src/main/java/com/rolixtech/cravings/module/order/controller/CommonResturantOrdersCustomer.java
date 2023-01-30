@@ -81,8 +81,8 @@ public class CommonResturantOrdersCustomer {
     
     
     @RequestMapping(value=CONTROLLER_URL+"/save",consumes ="application/json" )
-	public ResponseEntity<?> Save(@RequestBody OrderPOJO order)  { 
-			
+	public ResponseEntity<?> Save(@RequestBody OrderPOJO order, @RequestHeader("authorization") String token)  { 
+    	 long UserId=utility.getUserIDByToken(token);
 			ResponseEntityOutput response=new ResponseEntityOutput();
 			Map map=new HashMap<>();
 			
@@ -92,7 +92,7 @@ public class CommonResturantOrdersCustomer {
 				response.CODE="1";
 				response.USER_MESSAGE="Order has been placed Successfully";
 				response.SYSTEM_MESSAGE="";
-				OrdersService.Save(order);
+				OrdersService.Save(order,UserId);
 			
 			}
 

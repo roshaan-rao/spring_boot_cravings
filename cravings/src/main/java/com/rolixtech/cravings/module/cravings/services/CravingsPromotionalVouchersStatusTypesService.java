@@ -35,7 +35,7 @@ public class CravingsPromotionalVouchersStatusTypesService {
 	    
 	}
 	
-	public List<Map> getAll(long countryId) {
+	public List<Map> getAll() {
 		List<Map> list=new ArrayList<>();
 		List<CravingsPromotionalVouchersStatusTypes> types = VouchersStatusTypesDao.findAll();
 		if(!types.isEmpty()) {

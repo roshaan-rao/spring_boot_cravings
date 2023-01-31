@@ -1091,6 +1091,9 @@ public class CommonResturantsService {
 	}
 	
 	
+	
+	
+	
 	public List<Map> bannersView() {
 		List<Map> list=new ArrayList<>();
 //		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
@@ -1112,6 +1115,29 @@ public class CommonResturantsService {
 			}
 		}
 		return list;
+	}
+	
+	
+	public void saveResturantBanner(Date startDate, Date endDate, long resturantId, String imageUrl) throws Exception {
+	
+		CommonResturantsPromotionalBanners Banner= new CommonResturantsPromotionalBanners();
+		Banner.setStartDate(startDate);
+		Banner.setEndDate(endDate);
+		Banner.setIsActive(1);
+		ResturantsPromotionalBannersDao.save(Banner);
+		if(Banner.getId()!=0) {
+			CommonResturantsPromotionalBannersDetail BannerDeatils= new CommonResturantsPromotionalBannersDetail();
+			BannerDeatils.setResturantId(resturantId);
+			BannerDeatils.setImageUrl(imageUrl);
+			BannerDeatils.setPromotionalBannerId(Banner.getId());
+			ResturantsPromotionalBannersDetailsDao.save(BannerDeatils);
+		}	
+	}
+	
+	
+	public void deleteResturantBanner(long promotionalBannerId) throws Exception {
+		ResturantsPromotionalBannersDao.deleteById(promotionalBannerId);
+		ResturantsPromotionalBannersDetailsDao.deleteByPromotionalBannerId(promotionalBannerId);
 	}
 
 

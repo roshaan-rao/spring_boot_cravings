@@ -15,4 +15,6 @@ public interface CommonResturantsPromotionalBannersDetailDao extends JpaReposito
 	
 	List<CommonResturantsPromotionalBannersDetail> findByPromotionalBannerId(long id);
 
+	CommonResturantsPromotionalBannersDetail deleteByPromotionalBannerId(long promotionalBannerId);
+
 }

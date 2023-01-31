@@ -323,7 +323,7 @@ public class CommonUsersService {
 		return Label;
 	}
 	
-	public void setForgotPassword(long userId, String newPassword) {
+	public void setNewPassword(long userId, String newPassword) {
 		CommonUsers user = UsersDao.findById(userId);
 		if(user!=null) {
 			user.setPassword(bcryptEncoder.encode(newPassword));
@@ -332,7 +332,7 @@ public class CommonUsersService {
 	}
 	
 	
-	public void setNewPassword(long mobile, String newPassword) {
+	public void setForgotPassword(long mobile, String newPassword) {
 		CommonUsers user = UsersDao.findByMobile(mobile);
 		if(user!=null) {
 			user.setPassword(bcryptEncoder.encode(newPassword));

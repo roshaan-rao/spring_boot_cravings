@@ -469,6 +469,27 @@ public class GenericUtility  {
       }
       
       
+      /***
+       *@return Date in  "dd-MM-yyyy HH:mm:ss"
+       * */ 
+       public static String getDisplayDateddMMYYYYHHmmss(Date val) {
+     	  
+     	  SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+     	  String date = simpleDateFormat.format(val);
+     	 return date;
+       }
+       
+       /***
+        *@return Date in  "yyyy-MM-dd HH:mm:ss"
+        * */ 
+        public static String getDisplayDateYYYYMMddHHmmss(Date val) {
+      	  
+      	  SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      	  String date = simpleDateFormat.format(val);
+      	 return date;
+        }
+       
+      
       
       /***
        *@return Date in  "HH:mm"
@@ -484,5 +505,9 @@ public class GenericUtility  {
       public static double roundToOneDecimal(double value) { 
   		double  roundedOneDigitX = Math.round(value * 10) / 10.0; 
   		return roundedOneDigitX;
-  }
+      }
+      
+      
+     
+
 }

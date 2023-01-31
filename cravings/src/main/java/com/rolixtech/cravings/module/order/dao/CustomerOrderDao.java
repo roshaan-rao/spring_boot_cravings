@@ -1,5 +1,6 @@
 package com.rolixtech.cravings.module.order.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -50,5 +51,10 @@ public interface CustomerOrderDao extends JpaRepository<CustomerOrder, Long>  {
 	
 
 	List<CustomerOrder> findAllByOrderByIdDesc();
+	
+	
+	@Query(value="SELECT datediff(?1,?2) ;",nativeQuery = true)
+	Integer findDateDiffByOrderDeliveryTimeAndCurrentDate(String dilveryDateTime,String current);
+
 
 }

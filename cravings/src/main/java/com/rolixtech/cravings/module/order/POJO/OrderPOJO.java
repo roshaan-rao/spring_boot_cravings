@@ -24,6 +24,8 @@ public class OrderPOJO {
 	private long resturantId;
 	private double totalAmount;
 	private double totalGst;
+	private double totalGstPercentage;
+	private int deliveryTime;
 	private String orderType;
 	private long userId;
 	private double subtotal;
@@ -93,11 +95,27 @@ public class OrderPOJO {
 	public void setDiscount(double discount) {
 		this.discount = discount;
 	}
+	
+	
+	public double getTotalGstPercentage() {
+		return totalGstPercentage;
+	}
+	public void setTotalGstPercentage(double totalGstPercentage) {
+		this.totalGstPercentage = totalGstPercentage;
+	}
+	public int getDeliveryTime() {
+		return deliveryTime;
+	}
+	public void setDeliveryTime(int deliveryTime) {
+		this.deliveryTime = deliveryTime;
+	}
 	@Override
 	public String toString() {
 		return "OrderPOJO [resturantId=" + resturantId + ", totalAmount=" + totalAmount + ", totalGst=" + totalGst
-				+ ", orderType=" + orderType + ", userId=" + userId + ", subtotal=" + subtotal + ", deliveryFee="
-				+ deliveryFee + ", discount=" + discount + ", address=" + address + ", products=" + products + "]";
+				+ ", totalGstPercentage=" + totalGstPercentage + ", deliveryTime=" + deliveryTime + ", orderType="
+				+ orderType + ", userId=" + userId + ", subtotal=" + subtotal + ", deliveryFee=" + deliveryFee
+				+ ", discount=" + discount + ", address=" + address + ", products=" + products + "]";
 	}
+	
 	
 }

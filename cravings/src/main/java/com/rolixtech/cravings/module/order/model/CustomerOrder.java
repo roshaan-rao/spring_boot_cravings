@@ -36,6 +36,9 @@ public class CustomerOrder {
 	private double subtotal;
 	private double deliveryFee;
 	private double discount;
+	private double totalGstPercentage;
+	private int deliveryTime;
+
 	
 	public long getId() {
 		return id;
@@ -121,15 +124,27 @@ public class CustomerOrder {
 	public void setOrderStatusChangedOn(Date orderStatusChangedOn) {
 		this.orderStatusChangedOn = orderStatusChangedOn;
 	}
+	public double getTotalGstPercentage() {
+		return totalGstPercentage;
+	}
+	public void setTotalGstPercentage(double totalGstPercentage) {
+		this.totalGstPercentage = totalGstPercentage;
+	}
+	public int getDeliveryTime() {
+		return deliveryTime;
+	}
+	public void setDeliveryTime(int deliveryTime) {
+		this.deliveryTime = deliveryTime;
+	}
 	@Override
 	public String toString() {
 		return "CustomerOrder [id=" + id + ", orderNumber=" + orderNumber + ", resturantId=" + resturantId
 				+ ", totalAmount=" + totalAmount + ", totalGst=" + totalGst + ", orderType=" + orderType + ", userId="
 				+ userId + ", createdOn=" + createdOn + ", orderStatusId=" + orderStatusId + ", orderStatusChangedBy="
 				+ orderStatusChangedBy + ", orderStatusChangedOn=" + orderStatusChangedOn + ", subtotal=" + subtotal
-				+ ", deliveryFee=" + deliveryFee + ", discount=" + discount + "]";
+				+ ", deliveryFee=" + deliveryFee + ", discount=" + discount + ", totalGstPercentage="
+				+ totalGstPercentage + ", deliveryTime=" + deliveryTime + "]";
 	}
-	
 	
 	
 	

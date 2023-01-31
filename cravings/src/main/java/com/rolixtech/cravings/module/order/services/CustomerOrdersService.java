@@ -1,6 +1,8 @@
 package com.rolixtech.cravings.module.order.services;
 
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -110,6 +112,8 @@ public class CustomerOrdersService {
 			double subtotal=orderr.getSubtotal();
 			double discount=orderr.getDiscount();
 			double deliveryFee=orderr.getDeliveryFee();
+			int deliveryTime=orderr.getDeliveryTime();
+			double totalGstPercentage=orderr.getTotalGstPercentage();
 			
 			CustomerOrder Order=new CustomerOrder();
 			Order.setResturantId(resturantId);
@@ -124,6 +128,8 @@ public class CustomerOrdersService {
 			Order.setUserId(userId);
 			Order.setCreatedOn(new Date());
 			Order.setOrderStatusId(1);
+			Order.setTotalGstPercentage(totalGstPercentage);
+			Order.setDeliveryTime(deliveryTime);
 			OrderDao.save(Order);
 			
 			OrderAddressPOJO address=orderr.getAddress();
@@ -218,6 +224,10 @@ public class CustomerOrdersService {
 						Row.put("orderNumber", order.getOrderNumber());
 						Row.put("totalAmount", order.getTotalAmount());
 						Row.put("totalGst", order.getTotalGst());
+						Row.put("totalGstPercentage", order.getTotalGstPercentage());
+						
+						Row.put("deliveryTime", order.getDeliveryTime());
+						
 						Row.put("orderType", order.getOrderType());
 						Row.put("createdOn", order.getCreatedOn());
 						Row.put("orderStatusId", order.getOrderStatusId());
@@ -329,6 +339,8 @@ public class CustomerOrdersService {
 						Row.put("subtotal", order.getSubtotal());
 						Row.put("discount", order.getDiscount());
 						Row.put("deliveryFee", order.getDeliveryFee());
+						Row.put("totalGstPercentage", order.getTotalGstPercentage());
+						Row.put("deliveryTime", order.getDeliveryTime());
 						String products = "";
 						List<CustomerOrderProducts> OrderProducts=OrderProductsDao.findAllByOrderId(orderId);
 						if(!OrderProducts.isEmpty()) {
@@ -388,6 +400,24 @@ public class CustomerOrdersService {
 						Row.put("subtotal", order.getSubtotal());
 						Row.put("discount", order.getDiscount());
 						Row.put("deliveryFee", order.getDeliveryFee());
+						Row.put("totalGstPercentage", order.getTotalGstPercentage());
+						if(order.getOrderStatusId()>=3) {
+							
+							Date orderRemainingDateTime=DateUtils.addMinutes(order.getCreatedOn(), order.getDeliveryTime());
+							if(orderRemainingDateTime!=null) {
+								
+								String remainingTime=this.getOrderRemainingDeliverTime(orderRemainingDateTime);
+								
+								
+								Row.put("deliveryTime", remainingTime); 
+							}
+							 
+							
+							
+							
+						}else {
+							Row.put("deliveryTime", "- -");
+						}
 						
 						String products = "";
 						List<CustomerOrderProducts> OrderProducts=OrderProductsDao.findAllByOrderId(orderId);
@@ -442,7 +472,24 @@ public class CustomerOrdersService {
 			Row.put("subtotal", order.getSubtotal());
 			Row.put("discount", order.getDiscount());
 			Row.put("deliveryFee", order.getDeliveryFee());
-			
+			Row.put("totalGstPercentage", order.getTotalGstPercentage());
+			if(order.getOrderStatusId()>=3) {
+				
+				Date orderRemainingDateTime=DateUtils.addMinutes(order.getCreatedOn(), order.getDeliveryTime());
+				if(orderRemainingDateTime!=null) {
+					
+					String remainingTime=this.getOrderRemainingDeliverTime(orderRemainingDateTime);
+					
+					
+					Row.put("deliveryTime", remainingTime); 
+				}
+				 
+				
+				
+				
+			}else {
+				Row.put("deliveryTime", "- -");
+			}
 			CustomerOrderAddress Address=OrderAddressDao.findByOrderId(orderId);
 			if(Address!=null) {	
 				Row.put("cityName", Address.getCityName());
@@ -544,6 +591,24 @@ public class CustomerOrdersService {
 						Row.put("subtotal", order.getSubtotal());
 						Row.put("discount", order.getDiscount());
 						Row.put("deliveryFee", order.getDeliveryFee());
+						Row.put("totalGstPercentage", order.getTotalGstPercentage());
+						if(order.getOrderStatusId()>=3) {
+							
+							Date orderRemainingDateTime=DateUtils.addMinutes(order.getCreatedOn(), order.getDeliveryTime());
+							if(orderRemainingDateTime!=null) {
+								
+								String remainingTime=this.getOrderRemainingDeliverTime(orderRemainingDateTime);
+								
+								
+								Row.put("deliveryTime", remainingTime); 
+							}
+							 
+							
+							
+							
+						}else {
+							Row.put("deliveryTime", "- -");
+						}
 						CustomerOrderAddress Address=OrderAddressDao.findByOrderId(orderId);
 						if(Address!=null) {	
 							Row.put("cityName", Address.getCityName());
@@ -647,6 +712,10 @@ public class CustomerOrdersService {
 						Row.put("subtotal", order.getSubtotal());
 						Row.put("discount", order.getDiscount());
 						Row.put("deliveryFee", order.getDeliveryFee());
+						Row.put("totalGstPercentage", order.getTotalGstPercentage());
+						
+							Row.put("deliveryTime", order.getDeliveryTime());
+						
 						CustomerOrderAddress Address=OrderAddressDao.findByOrderId(orderId);
 						if(Address!=null) {	
 							Row.put("cityName", Address.getCityName());
@@ -747,6 +816,10 @@ public class CustomerOrdersService {
 						Row.put("subtotal", order.getSubtotal());
 						Row.put("discount", order.getDiscount());
 						Row.put("deliveryFee", order.getDeliveryFee());
+						Row.put("totalGstPercentage", order.getTotalGstPercentage());
+						
+							Row.put("deliveryTime", order.getDeliveryTime());
+						
 						CustomerOrderAddress Address=OrderAddressDao.findByOrderId(orderId);
 						if(Address!=null) {	
 							Row.put("cityName", Address.getCityName());
@@ -845,6 +918,10 @@ public class CustomerOrdersService {
 				Row.put("subtotal", order.getSubtotal());
 				Row.put("discount", order.getDiscount());
 				Row.put("deliveryFee", order.getDeliveryFee());
+				Row.put("totalGstPercentage", order.getTotalGstPercentage());
+				
+					Row.put("deliveryTime", order.getDeliveryTime());
+				
 				CustomerOrderAddress Address=OrderAddressDao.findByOrderId(orderId);
 				if(Address!=null) {	
 					Row.put("cityName", Address.getCityName());
@@ -941,7 +1018,9 @@ public class CustomerOrdersService {
 					OrderChangeLog.setLogTypeId(utility.parseLong("1"));
 					OrderChangeLogDao.save(OrderChangeLog);
 					
-			
+			if(order.getOrderStatusId()==3) {
+				order.setDeliveryTime(remmaining);
+			}
 			
 			order.setOrderStatusId(statusId);
 			order.setOrderStatusChangedBy(userId);
@@ -1047,5 +1126,28 @@ public class CustomerOrdersService {
 		return list;
 	}
 	
+	
+	public   String  getOrderRemainingDeliverTime(Date orderRemainingDate) { 
+		
+  	  	String remainingTime="";
+		
+  	  	Date currentdate=DateUtils.addMinutes(new Date(),0); 
+		
+		long diff =  orderRemainingDate.getTime() - currentdate.getTime();
+		long remingTimeMins=0;
+		if(diff>0) {
+			remingTimeMins=(diff/1000)/60;
+			
+		       
+	        remainingTime=remingTimeMins +" minutes.";
+		}
+		
+		
+		
+        
+        
+        return remainingTime;
+    }
+    
 
 }

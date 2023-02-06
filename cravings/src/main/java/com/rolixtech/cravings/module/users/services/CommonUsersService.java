@@ -332,7 +332,7 @@ public class CommonUsersService {
 	}
 	
 	
-	public void setForgotPassword(long mobile, String newPassword) {
+	public void setForgotPassword(String mobile, String newPassword) {
 		CommonUsers user = UsersDao.findByMobile(mobile);
 		if(user!=null) {
 			user.setPassword(bcryptEncoder.encode(newPassword));

@@ -46,6 +46,7 @@ import com.rolixtech.cravings.module.resturant.services.CommonResturantsCategori
 import com.rolixtech.cravings.module.resturant.services.CommonResturantsProductsAddOnService;
 import com.rolixtech.cravings.module.resturant.services.CommonResturantsProductsService;
 import com.rolixtech.cravings.module.resturant.services.CommonResturantsService;
+import com.rolixtech.cravings.module.users.services.CommonUsersService;
 
 @Service
 public class CustomerOrdersService {
@@ -89,6 +90,9 @@ public class CustomerOrdersService {
 	@Autowired
 	private CustomerOrderChangeLogDao OrderChangeLogDao;
 	
+	@Autowired
+	private CommonUsersService UsersService;
+	
 	
 	public String findLabelById(long categoryId) {
 		String label="";
@@ -115,11 +119,15 @@ public class CustomerOrdersService {
 			int deliveryTime=orderr.getDeliveryTime();
 			double totalGstPercentage=orderr.getTotalGstPercentage();
 			
+			double serviceFee=orderr.getServiceFee();
+			String instructions=orderr.getInstructions();
+			
 			CustomerOrder Order=new CustomerOrder();
 			Order.setResturantId(resturantId);
 			Order.setOrderType(orderType);
-			String orderNumber=utility.createRandomCode(6)+utility.getUniqueId().substring(6);
-			Order.setOrderNumber("cra-"+orderNumber);
+			
+			String orderNumber=utility.getDateWithOutSlashesId()+"-"+utility.createRandomCode(4);
+			Order.setOrderNumber("CRA-"+orderNumber);
 			Order.setTotalAmount(totalAmount);
 			Order.setTotalGst(totalGst);
 			Order.setDeliveryFee(deliveryFee);
@@ -130,6 +138,8 @@ public class CustomerOrdersService {
 			Order.setOrderStatusId(1);
 			Order.setTotalGstPercentage(totalGstPercentage);
 			Order.setDeliveryTime(deliveryTime);
+			Order.setServiceFee(serviceFee);
+			Order.setInstructions(instructions);
 			OrderDao.save(Order);
 			
 			OrderAddressPOJO address=orderr.getAddress();
@@ -225,9 +235,7 @@ public class CustomerOrdersService {
 						Row.put("totalAmount", order.getTotalAmount());
 						Row.put("totalGst", order.getTotalGst());
 						Row.put("totalGstPercentage", order.getTotalGstPercentage());
-						
 						Row.put("deliveryTime", order.getDeliveryTime());
-						
 						Row.put("orderType", order.getOrderType());
 						Row.put("createdOn", order.getCreatedOn());
 						Row.put("orderStatusId", order.getOrderStatusId());
@@ -235,6 +243,8 @@ public class CustomerOrdersService {
 						Row.put("subtotal", order.getSubtotal());
 						Row.put("discount", order.getDiscount());
 						Row.put("deliveryFee", order.getDeliveryFee());
+						Row.put("serviceFee", order.getServiceFee());
+						Row.put("instructions", order.getInstructions());
 						
 						CustomerOrderAddress Address=OrderAddressDao.findByOrderId(orderId);
 						if(Address!=null) {	
@@ -341,6 +351,8 @@ public class CustomerOrdersService {
 						Row.put("deliveryFee", order.getDeliveryFee());
 						Row.put("totalGstPercentage", order.getTotalGstPercentage());
 						Row.put("deliveryTime", order.getDeliveryTime());
+						Row.put("serviceFee", order.getServiceFee());
+						Row.put("instructions", order.getInstructions());
 						String products = "";
 						List<CustomerOrderProducts> OrderProducts=OrderProductsDao.findAllByOrderId(orderId);
 						if(!OrderProducts.isEmpty()) {
@@ -401,6 +413,8 @@ public class CustomerOrdersService {
 						Row.put("discount", order.getDiscount());
 						Row.put("deliveryFee", order.getDeliveryFee());
 						Row.put("totalGstPercentage", order.getTotalGstPercentage());
+						Row.put("serviceFee", order.getServiceFee());
+						Row.put("instructions", order.getInstructions());
 						if(order.getOrderStatusId()>=3) {
 							
 							Date orderRemainingDateTime=DateUtils.addMinutes(order.getCreatedOn(), order.getDeliveryTime());
@@ -473,6 +487,8 @@ public class CustomerOrdersService {
 			Row.put("discount", order.getDiscount());
 			Row.put("deliveryFee", order.getDeliveryFee());
 			Row.put("totalGstPercentage", order.getTotalGstPercentage());
+			Row.put("serviceFee", order.getServiceFee());
+			Row.put("instructions", order.getInstructions());
 			if(order.getOrderStatusId()>=3) {
 				
 				Date orderRemainingDateTime=DateUtils.addMinutes(order.getCreatedOn(), order.getDeliveryTime());
@@ -592,6 +608,8 @@ public class CustomerOrdersService {
 						Row.put("discount", order.getDiscount());
 						Row.put("deliveryFee", order.getDeliveryFee());
 						Row.put("totalGstPercentage", order.getTotalGstPercentage());
+						Row.put("serviceFee", order.getServiceFee());
+						Row.put("instructions", order.getInstructions());
 						if(order.getOrderStatusId()>=3) {
 							
 							Date orderRemainingDateTime=DateUtils.addMinutes(order.getCreatedOn(), order.getDeliveryTime());
@@ -714,7 +732,9 @@ public class CustomerOrdersService {
 						Row.put("deliveryFee", order.getDeliveryFee());
 						Row.put("totalGstPercentage", order.getTotalGstPercentage());
 						
-							Row.put("deliveryTime", order.getDeliveryTime());
+						Row.put("deliveryTime", order.getDeliveryTime());
+						Row.put("serviceFee", order.getServiceFee());
+						Row.put("instructions", order.getInstructions());
 						
 						CustomerOrderAddress Address=OrderAddressDao.findByOrderId(orderId);
 						if(Address!=null) {	
@@ -818,7 +838,17 @@ public class CustomerOrdersService {
 						Row.put("deliveryFee", order.getDeliveryFee());
 						Row.put("totalGstPercentage", order.getTotalGstPercentage());
 						
+						Row.put("serviceFee", order.getServiceFee());
+						Row.put("instructions", order.getInstructions());
 							Row.put("deliveryTime", order.getDeliveryTime());
+							Row.put("serviceFee", order.getServiceFee());
+							Row.put("instructions", order.getInstructions());
+							if(order.getRemarks()!=null) {
+								Row.put("cravingsRemarks", order.getRemarks());
+							}else {
+								Row.put("cravingsRemarks", "");
+							}
+							
 						
 						CustomerOrderAddress Address=OrderAddressDao.findByOrderId(orderId);
 						if(Address!=null) {	
@@ -908,6 +938,9 @@ public class CustomerOrdersService {
 				Row.put("resturantId", order.getResturantId());
 				Row.put("resturantLabel",ResturantsService.findLabelById(order.getResturantId()));
 				Row.put("resturantBanner",ResturantsService.findBannerImgById(order.getResturantId()));
+				Row.put("resturantLat",ResturantsService.findResturantLatById(order.getResturantId()));
+				Row.put("resturantLng",ResturantsService.findResturantLngById(order.getResturantId()));
+				Row.put("resturantAddress",ResturantsService.findResturantAddressById(order.getResturantId()));
 				Row.put("orderNumber", order.getOrderNumber());
 				Row.put("totalAmount", order.getTotalAmount());
 				Row.put("totalGst", order.getTotalGst());
@@ -919,8 +952,24 @@ public class CustomerOrdersService {
 				Row.put("discount", order.getDiscount());
 				Row.put("deliveryFee", order.getDeliveryFee());
 				Row.put("totalGstPercentage", order.getTotalGstPercentage());
+				Row.put("deliveryTime", order.getDeliveryTime());
+				Row.put("customerName", UsersService.getUserName(order.getUserId()));
+				Row.put("customerId", order.getUserId());
+				Row.put("customerPreviousOrders",getAllPreviousOrders(order.getUserId()));
+				Row.put("customerContact",UsersService.getUserContactNumber(order.getUserId()));
+				Row.put("resturantContact",ResturantsService.findResturantContactById(order.getResturantId()) );
+				Row.put("resturantContact2",ResturantsService.findResturantContact2ById(order.getResturantId()) );
+				Row.put("resturantContact3",ResturantsService.findResturantContact3ById(order.getResturantId()) );
+				Row.put("resturantContact4",ResturantsService.findResturantContact4ById(order.getResturantId()) );
+				Row.put("serviceFee", order.getServiceFee());
+				Row.put("instructions", order.getInstructions());
+				if(order.getRemarks()!=null) {
+					Row.put("cravingsRemarks", order.getRemarks());
+				}else {
+					Row.put("cravingsRemarks", "");
+				}
 				
-					Row.put("deliveryTime", order.getDeliveryTime());
+				
 				
 				CustomerOrderAddress Address=OrderAddressDao.findByOrderId(orderId);
 				if(Address!=null) {	
@@ -932,8 +981,8 @@ public class CustomerOrdersService {
 				}else {
 					Row.put("cityName", "");
 					Row.put("completeAddress", "");
-					Row.put("lat", Address.getLat());
-					Row.put("lng", Address.getLng());
+					Row.put("lat","" );
+					Row.put("lng", "");
 					
 				}
 				
@@ -1001,6 +1050,42 @@ public class CustomerOrdersService {
 	}
 	
 	
+	private String  getAllPreviousOrders(long userId) {
+		String  purposeList="";
+		
+		List<Long> orderStatusIds=new ArrayList<>();
+		orderStatusIds.add(5l);
+		orderStatusIds.add(6l); 
+		orderStatusIds.add(7l);
+		if(!orderStatusIds.isEmpty()) {
+			
+			for(int i=0;i<orderStatusIds.size();i++){
+				if(purposeList.equals("")) {
+					
+					purposeList= OrderStatusService.findLabelById(orderStatusIds.get(i))+" : "+ getNumberOfSpecificOrderType(userId,orderStatusIds.get(i)) ;
+					
+				}else {
+					
+					purposeList+= ", " +OrderStatusService.findLabelById(orderStatusIds.get(i))+" : "+ getNumberOfSpecificOrderType(userId,orderStatusIds.get(i));
+					
+				}
+						
+			}
+		 
+		}
+		
+		return purposeList;
+	}
+
+	
+	public int getNumberOfSpecificOrderType(long userId,long orderStatusId) {
+		 
+		int totalCount=utility.parseInt(OrderDao.countAllByUserIdAndOrderStatusId(userId,orderStatusId));
+		
+		return totalCount;
+		
+	}
+	
 	public void changeOrderStatus(long orderId,long statusId,int remmaining,long userId) {
 		
 		
@@ -1018,7 +1103,7 @@ public class CustomerOrdersService {
 					OrderChangeLog.setLogTypeId(utility.parseLong("1"));
 					OrderChangeLogDao.save(OrderChangeLog);
 					
-			if(order.getOrderStatusId()==3) {
+			if(statusId==3) {
 				order.setDeliveryTime(remmaining);
 			}
 			
@@ -1107,7 +1192,7 @@ public class CustomerOrdersService {
 							 
 							
 						}						
-						list.add(Row);
+						list.add(ResturantsService.getBasicChargesDetailByResturant(Row,Product.getResturantId()));
 					}
 					
 					
@@ -1148,6 +1233,31 @@ public class CustomerOrdersService {
         
         return remainingTime;
     }
+
+	public void addCravingsComments(long recordId, String cravingsRemarks, long userId) {
+		CustomerOrder order=OrderDao.findById(recordId);
+		if(order!=null) {
+			CustomerOrderChangeLog OrderChangeLog=new CustomerOrderChangeLog();
+			CustomerOrder iRealChange=OrderDao.findById(recordId);
+					BeanUtils.copyProperties(iRealChange, OrderChangeLog);
+					
+					OrderChangeLog.setId(0);
+					OrderChangeLog.setRecordId(recordId);
+					OrderChangeLog.setLogCreatedBy(userId);
+					OrderChangeLog.setLogCreatedOn(new Date());
+					OrderChangeLog.setLogReason("Added Remarks");
+					OrderChangeLog.setLogTypeId(utility.parseLong("1"));
+					OrderChangeLogDao.save(OrderChangeLog);
+					
+			
+			
+			order.setRemarksAddedOn(new Date());
+			order.setRemarksAddedBy(userId);
+			order.setRemarks(cravingsRemarks);
+			OrderDao.save(order);	
+		}
+		
+	}
     
 
 }

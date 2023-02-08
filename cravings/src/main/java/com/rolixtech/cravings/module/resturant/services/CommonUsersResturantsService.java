@@ -30,6 +30,9 @@ public class CommonUsersResturantsService {
 	@Autowired
 	private CommonUsersResturantsDao UsersResturantsDao;
 	
+	@Autowired
+	private CommonResturantsService ResturantsService;
+	
 	
 	@Autowired
 	private CommonUsersService UsersService;
@@ -72,6 +75,30 @@ public class CommonUsersResturantsService {
 		}
 		
 		return list;
+	}
+
+
+	public boolean existsResutantByUserId(long id) {
+		boolean isExists=false;
+		CommonUsersResturants ResturantsUser=UsersResturantsDao.findByUserId(id);
+		if(ResturantsUser!=null) {
+			isExists=true;
+		}
+				
+		return isExists;
+		
+	}
+	
+	
+	public String getResutantByUserId(long id) {
+		String resturantLabel="";
+		CommonUsersResturants ResturantsUser=UsersResturantsDao.findByUserId(id);
+		if(ResturantsUser!=null) {
+			resturantLabel=ResturantsService.findLabelById(ResturantsUser.getResturantId());
+		}
+				
+		return resturantLabel;
+		
 	}
 	
 	

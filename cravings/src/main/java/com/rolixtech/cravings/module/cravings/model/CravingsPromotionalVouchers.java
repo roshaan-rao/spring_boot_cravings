@@ -26,6 +26,7 @@ public class CravingsPromotionalVouchers {
 	private Date validTo;
 	private Date validFrom;
 	private int isRedeemed;
+	private int isPercentage;
 	public long getId() {
 		return id;
 	}
@@ -112,13 +113,23 @@ public class CravingsPromotionalVouchers {
 	public void setStatusChangeBy(Long statusChangeBy) {
 		this.statusChangeBy = statusChangeBy;
 	}
+	
+	
+	
+	public int getIsPercentage() {
+		return isPercentage;
+	}
+	public void setIsPercentage(int isPercentage) {
+		this.isPercentage = isPercentage;
+	}
 	@Override
 	public String toString() {
 		return "CravingsPromotionalVouchers [id=" + id + ", preFixStr=" + preFixStr + ", postFixStr=" + postFixStr
 				+ ", completeString=" + completeString + ", status=" + status + ", createdOn=" + createdOn
 				+ ", createdBy=" + createdBy + ", statusChangedOn=" + statusChangedOn + ", statusChangeBy="
 				+ statusChangeBy + ", amount=" + amount + ", percentageVal=" + percentageVal + ", validTo=" + validTo
-				+ ", validFrom=" + validFrom + ", isRedeemed=" + isRedeemed + "]";
+				+ ", validFrom=" + validFrom + ", isRedeemed=" + isRedeemed + ", isPercentage=" + isPercentage + "]";
 	}
+	
 	
 }

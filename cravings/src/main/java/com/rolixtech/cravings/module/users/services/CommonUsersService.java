@@ -28,6 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.rolixtech.cravings.module.generic.dao.CommonSmsLogDao;
 import com.rolixtech.cravings.module.generic.model.CommonSmsLog;
 import com.rolixtech.cravings.module.generic.services.GenericUtility;
+import com.rolixtech.cravings.module.resturant.services.CommonResturantsService;
+import com.rolixtech.cravings.module.resturant.services.CommonUsersResturantsService;
 import com.rolixtech.cravings.module.users.dao.CommonRoleDao;
 import com.rolixtech.cravings.module.users.dao.CommonUsersAddressDao;
 import com.rolixtech.cravings.module.users.dao.CommonUsersDao;
@@ -58,6 +60,9 @@ public class CommonUsersService {
 	
 	@Autowired
 	private CommonSmsLogDao SmsLogDao;
+	
+	@Autowired
+	private CommonUsersResturantsService UsersResturantsService;
 	
 	public void registerNewUserAccount(long recordId, String firstName,String lastName,String email,String mobile,String password,String completeAddress,
 			long countryId,long provinceId,long cityId,String postalCode,double lat,double lng,double accuracy,long roleId,MultipartFile profileImg) throws Exception {
@@ -241,6 +246,14 @@ public class CommonUsersService {
 				Row.put("categoryId",allusers.get(i).getCategoryId());
 				Row.put("profileImage",allusers.get(i).getProfileImgUrl());
 				Row.put("roles",allusers.get(i).getRoles());
+				
+				if(UsersResturantsService.existsResutantByUserId(allusers.get(i).getId())) {
+					Row.put("resturantLabel",UsersResturantsService.getResutantByUserId(allusers.get(i).getId()));
+					
+				}else {
+					Row.put("resturantLabel","");
+				}
+				
 				List<CommonUsersAddress> userAddress=UsersAddressDao.findByUserId(allusers.get(i).getId());
 				if(!userAddress.isEmpty()) {
 					Row.put("address",userAddress);
@@ -292,6 +305,16 @@ public class CommonUsersService {
 			UsersDao.save(user);
 		}
 	}
+	
+	public String getUserContactNumber(long userId) {
+		String Label="";
+		CommonUsers user=UsersDao.findById(userId);
+		if(user!=null) {
+			
+			Label=user.getMobile();
+		}
+		return Label;
+	}
 
 	public String getUserName(long userId) {
 		String Label="";
@@ -332,7 +355,7 @@ public class CommonUsersService {
 	}
 	
 	
-	public void setForgotPassword(long mobile, String newPassword) {
+	public void setForgotPassword(String mobile, String newPassword) {
 		CommonUsers user = UsersDao.findByMobile(mobile);
 		if(user!=null) {
 			user.setPassword(bcryptEncoder.encode(newPassword));

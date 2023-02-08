@@ -18,8 +18,8 @@ public interface CustomerOrderDao extends JpaRepository<CustomerOrder, Long>  {
 	List<CustomerOrder> findAllByUserId(long userId);
 
 	List<CustomerOrder> findAllById(long orderId);
-
-	List<CustomerOrder> findAllByUserIdAndOrderStatusId(long userId, long i);
+	@Query(value="SELECT count(*) FROM customer_order  where user_id=?1 and order_status_id =?2 ",nativeQuery = true)
+	Integer countAllByUserIdAndOrderStatusId(long userId, long i);
 
 	CustomerOrder findByUserIdAndOrderStatusId(long orderIdd, long i);
 
@@ -44,8 +44,10 @@ public interface CustomerOrderDao extends JpaRepository<CustomerOrder, Long>  {
 
 	List<CustomerOrder> findAllByUserIdAndOrderStatusIdIn(long userId, List<Long> statusIds);
 	
-	
-	@Query(value="SELECT * FROM customer_order  where order_status_id >?1 and order_status_id not in (?2) and user_id=?3 order by id desc",nativeQuery = true)
+	/*
+	 * LIMIT 1 Added on 08/Feb/2023
+	 * **/
+	@Query(value="SELECT * FROM customer_order  where order_status_id >?1 and order_status_id not in (?2) and user_id=?3 order by id desc limit 1",nativeQuery = true)
 	List<CustomerOrder> findAllByOrderStatusIdGreaterThanOrderAndOrderStatusIdNotInAndUserIdOrderByIdDesc(long l,List<Long> statusIdNotIn,long userId);
 
 	

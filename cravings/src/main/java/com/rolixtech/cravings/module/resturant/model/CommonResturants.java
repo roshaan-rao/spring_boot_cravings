@@ -39,6 +39,12 @@ public class CommonResturants {
 	private Long statusChangedBy; 
 	private Date statusChangedOn;
 	private int isDeleted;
+	private int isGst;
+	private Double gstPercentage;
+	private Double deliveryCharges;
+	private String contactNo2;
+	private String contactNo3;
+	private String contactNo4;
 	
 	
 	 
@@ -392,12 +398,96 @@ public class CommonResturants {
 
 
 
+	public int getIsGst() {
+		return isGst;
+	}
+
+
+
+
+	public void setIsGst(int isGst) {
+		this.isGst = isGst;
+	}
+
+
+
+
+	public Double getGstPercentage() {
+		return gstPercentage;
+	}
+
+
+
+
+	public void setGstPercentage(Double gstGstPercentage) {
+		this.gstPercentage = gstGstPercentage;
+	}
+
+
+
+
+	public Double getDeliveryCharges() {
+		return deliveryCharges;
+	}
+
+
+
+
+	public void setDeliveryCharges(Double deliveryCharges) {
+		this.deliveryCharges = deliveryCharges;
+	}
+
+
+
+
+	public String getContactNo2() {
+		return contactNo2;
+	}
+
+
+
+
+	public void setContactNo2(String contactNo2) {
+		this.contactNo2 = contactNo2;
+	}
+
+
+
+
+	public String getContactNo3() {
+		return contactNo3;
+	}
+
+
+
+
+	public void setContactNo3(String contactNo3) {
+		this.contactNo3 = contactNo3;
+	}
+
+
+
+
+	public String getContactNo4() {
+		return contactNo4;
+	}
+
+
+
+
+	public void setContactNo4(String contactNo4) {
+		this.contactNo4 = contactNo4;
+	}
+
+	
+
 
 	public CommonResturants(long id, String label, String address, String contactNo, String email, long countryId,
 			long provinceId, long cityId, double latitude, double longitude, double accuracy, int isActive,
 			String logoImgUrl, String profileImgUrl, String bannerImgUrl, String directoryUrl, double rating,
 			Long activatedBy, Date activatedOn, Long deactivatedBy, Date deactivatedOn, Integer status,
-			Long statusChangedBy, Date statusChangedOn, int isDeleted) {
+			Long statusChangedBy, Date statusChangedOn, int isDeleted, int isGst, Double gstPercentage,
+			Double deliveryCharges, String contactNo2, String contactNo3, String contactNo4) {
 		super();
 		this.id = id;
 		this.label = label;
@@ -424,16 +514,24 @@ public class CommonResturants {
 		this.statusChangedBy = statusChangedBy;
 		this.statusChangedOn = statusChangedOn;
 		this.isDeleted = isDeleted;
+		this.isGst = isGst;
+		this.gstPercentage = gstPercentage;
+		this.deliveryCharges = deliveryCharges;
+		this.contactNo2 = contactNo2;
+		this.contactNo3 = contactNo3;
+		this.contactNo4 = contactNo4;
 	}
-	
-	
-	public CommonResturants( String label, String address, String contactNo, String email, long countryId,
+
+
+
+
+	public CommonResturants(String label, String address, String contactNo, String email, long countryId,
 			long provinceId, long cityId, double latitude, double longitude, double accuracy, int isActive,
 			String logoImgUrl, String profileImgUrl, String bannerImgUrl, String directoryUrl, double rating,
 			Long activatedBy, Date activatedOn, Long deactivatedBy, Date deactivatedOn, Integer status,
-			Long statusChangedBy, Date statusChangedOn, int isDeleted) {
+			Long statusChangedBy, Date statusChangedOn, int isDeleted, int isGst, Double gstPercentage,
+			Double deliveryCharges, String contactNo2, String contactNo3, String contactNo4) {
 		super();
-		
 		this.label = label;
 		this.address = address;
 		this.contactNo = contactNo;
@@ -458,6 +556,12 @@ public class CommonResturants {
 		this.statusChangedBy = statusChangedBy;
 		this.statusChangedOn = statusChangedOn;
 		this.isDeleted = isDeleted;
+		this.isGst = isGst;
+		this.gstPercentage = gstPercentage;
+		this.deliveryCharges = deliveryCharges;
+		this.contactNo2 = contactNo2;
+		this.contactNo3 = contactNo3;
+		this.contactNo4 = contactNo4;
 	}
 
 
@@ -472,7 +576,8 @@ public class CommonResturants {
 				+ bannerImgUrl + ", directoryUrl=" + directoryUrl + ", rating=" + rating + ", activatedBy="
 				+ activatedBy + ", activatedOn=" + activatedOn + ", deactivatedBy=" + deactivatedBy + ", deactivatedOn="
 				+ deactivatedOn + ", status=" + status + ", statusChangedBy=" + statusChangedBy + ", statusChangedOn="
-				+ statusChangedOn + ", isDeleted=" + isDeleted + "]";
+				+ statusChangedOn + ", isDeleted=" + isDeleted + ", isGst=" + isGst + ", gstPercentage="
+				+ gstPercentage + ", deliveryCharges=" + deliveryCharges + "]";
 	}
 
 

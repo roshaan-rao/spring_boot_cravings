@@ -179,7 +179,7 @@ public class CommonUsersCustomerController {
     
     
     @PostMapping(CONTROLLER_URL+"/setForgotPassword")
-	public ResponseEntity<?> FogotPassword(long mobile, String newPassword)  { 
+	public ResponseEntity<?> FogotPassword(String mobile, String newPassword)  { 
 //    		long UserID =Utility.getUserIDByToken(token);
 			ResponseEntityOutput response=new ResponseEntityOutput();
 			try {

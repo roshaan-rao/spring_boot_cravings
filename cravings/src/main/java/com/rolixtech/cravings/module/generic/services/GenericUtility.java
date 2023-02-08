@@ -1,6 +1,8 @@
 package com.rolixtech.cravings.module.generic.services;
 
 import java.security.SecureRandom;
+import java.text.DateFormat;
+import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -37,8 +39,19 @@ public class GenericUtility  {
 	
 	
 	@Autowired
-	private CommonUsersDao UsersDao;
+	private CommonUsersDao UsersDao;	
+
 	
+
+    public static Date removeTime(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
 
 	
 	public   long getUserIDByToken(String token) {
@@ -55,6 +68,13 @@ public class GenericUtility  {
 		  String UniqueNumber="";
 		 Date dNow = new Date();
 	     SimpleDateFormat ft = new SimpleDateFormat("yyMMddhhmmssMs");
+	     UniqueNumber= ft.format(dNow);
+		return UniqueNumber;
+	}
+	public static String getDateWithOutSlashesId() {
+		  String UniqueNumber="";
+		 Date dNow = new Date();
+	     SimpleDateFormat ft = new SimpleDateFormat("ddMMyyyy");
 	     UniqueNumber= ft.format(dNow);
 		return UniqueNumber;
 	}
@@ -492,7 +512,7 @@ public class GenericUtility  {
       
       
       /***
-       *@return Date in  "HH:mm"
+       *@return Date in  "HH:mm:ss"
        * */ 
       public static String getDisplayTimeFromDate(Date date){
           SimpleDateFormat localDateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -501,11 +521,39 @@ public class GenericUtility  {
           
       }
       
+      /***
+       *@return Date in Date Type & in  "HH:mm"
+     * @throws ParseException 
+       * */ 
+      public static Date getDateInyyyyMMddFromDate(Date date) throws ParseException{
+	      Date val =date;
+	      Format formatter;
+	      formatter= new SimpleDateFormat("dd/MM/yyyy");
+	
+	      val = ((DateFormat) formatter).parse(formatter.format(val));
+		return val;
+      }
       
       public static double roundToOneDecimal(double value) { 
   		double  roundedOneDigitX = Math.round(value * 10) / 10.0; 
   		return roundedOneDigitX;
       }
+	public double getCravingsSericeFee() {
+		double ServiceFee=5.0;
+		return ServiceFee;
+	}
+	
+	
+	
+	public int getCravingsDeliveryTime() {
+		int deliveryTime=45;
+		return deliveryTime;
+	}
+      
+	public String isFeatured() {
+		
+		return "true";
+	}
       
       
      

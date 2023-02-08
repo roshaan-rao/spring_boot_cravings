@@ -36,6 +36,9 @@ public class CommonUsersFavProductsService {
 	private CommonUsersService UsersService;
 	
 	@Autowired
+	private CommonResturantsService ResturantService;
+	
+	@Autowired
 	private CommonResturantsProductsService ResturantsProductsService;
 	
 	@Autowired
@@ -137,10 +140,11 @@ public class CommonUsersFavProductsService {
 							}else {
 								Row.put("isExtraLabel","Yes");
 								Row.put("isExtra",Product.getIsExtra());
-								 
-								
 							}
-							list.add(Row);
+							
+							
+							
+							list.add(ResturantService.getBasicChargesDetailByResturant(Row,Product.getResturantId()));
 						}
 						
 						
@@ -164,7 +168,9 @@ public class CommonUsersFavProductsService {
 		return isLiked;
 		
 	}
-
+	
+	
+	
 	
 	
 	

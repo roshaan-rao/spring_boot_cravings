@@ -38,6 +38,11 @@ public class CustomerOrder {
 	private double discount;
 	private double totalGstPercentage;
 	private int deliveryTime;
+	private double serviceFee;
+	private String instructions;
+	private String remarks;
+	private Long remarksAddedBy;
+	private Date remarksAddedOn;
 
 	
 	public long getId() {
@@ -136,6 +141,36 @@ public class CustomerOrder {
 	public void setDeliveryTime(int deliveryTime) {
 		this.deliveryTime = deliveryTime;
 	}
+	public double getServiceFee() {
+		return serviceFee;
+	}
+	public void setServiceFee(double serviceFee) {
+		this.serviceFee = serviceFee;
+	}
+	public String getInstructions() {
+		return instructions;
+	}
+	public void setInstructions(String instructions) {
+		this.instructions = instructions;
+	}
+	public Long getRemarksAddedBy() {
+		return remarksAddedBy;
+	}
+	public void setRemarksAddedBy(Long remarksAddedBy) {
+		this.remarksAddedBy = remarksAddedBy;
+	}
+	public Date getRemarksAddedOn() {
+		return remarksAddedOn;
+	}
+	public void setRemarksAddedOn(Date remarksAddedOn) {
+		this.remarksAddedOn = remarksAddedOn;
+	}
+	public String getRemarks() {
+		return remarks;
+	}
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
 	@Override
 	public String toString() {
 		return "CustomerOrder [id=" + id + ", orderNumber=" + orderNumber + ", resturantId=" + resturantId
@@ -143,9 +178,10 @@ public class CustomerOrder {
 				+ userId + ", createdOn=" + createdOn + ", orderStatusId=" + orderStatusId + ", orderStatusChangedBy="
 				+ orderStatusChangedBy + ", orderStatusChangedOn=" + orderStatusChangedOn + ", subtotal=" + subtotal
 				+ ", deliveryFee=" + deliveryFee + ", discount=" + discount + ", totalGstPercentage="
-				+ totalGstPercentage + ", deliveryTime=" + deliveryTime + "]";
+				+ totalGstPercentage + ", deliveryTime=" + deliveryTime + ", serviceFee=" + serviceFee
+				+ ", instructions=" + instructions + ", remarks=" + remarks + ", remarksAddedBy=" + remarksAddedBy
+				+ ", remarksAddedOn=" + remarksAddedOn + "]";
 	}
-	
 	
 	
 }

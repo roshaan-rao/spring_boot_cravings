@@ -10,6 +10,7 @@ import com.rolixtech.cravings.module.auth.model.ResponseEntityOutput;
 import com.rolixtech.cravings.module.generic.services.GenericUtility;
 import com.rolixtech.cravings.module.resturant.dao.CommonUsersResturantsDao;
 import com.rolixtech.cravings.module.resturant.model.CommonUsersResturants;
+import com.rolixtech.cravings.module.resturant.services.CommonResturantsService;
 import com.rolixtech.cravings.module.users.dao.CommonUsersDao;
 import com.rolixtech.cravings.module.users.models.CommonRole;
 import com.rolixtech.cravings.module.users.models.CommonUsers;
@@ -53,6 +54,10 @@ public class JwtAuthenticationController {
 	
 	@Autowired
 	private CommonUsersResturantsDao UsersResturantsDao;
+	
+	
+	@Autowired
+	private CommonResturantsService ResturantsService;
 	
 	@Autowired
 	private GenericUtility utility;
@@ -102,9 +107,11 @@ public class JwtAuthenticationController {
         CommonUsersResturants resturant=UsersResturantsDao.findByUserId(User.getId());
         if(resturant!=null) {
         	Row.put("resturantId", resturant.getResturantId());
+        	Row.put("resturantLabel", ResturantsService.findLabelById(resturant.getResturantId()));
         }else {
         	
         	Row.put("resturantId",0);
+        	Row.put("resturantLabel", "");
         } 
         
        

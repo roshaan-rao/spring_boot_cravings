@@ -75,7 +75,7 @@ public class CravingsPromotionalVouchersController {
 
 
 	@PostMapping(CONTROLLER_URL+"/save" )
-	public ResponseEntity<?> Save(String prefixStr ,Integer totalNumber,Double amount,Double percentageVal,@DateTimeFormat(pattern="dd/MM/yyyy") Date validFrom,@DateTimeFormat(pattern="dd/MM/yyyy") Date validTo,@RequestHeader("authorization") String token)  { 
+	public ResponseEntity<?> Save(String prefixStr ,Integer totalNumber,Double amount,Double percentageVal,@DateTimeFormat(pattern="dd/MM/yyyy") Date validFrom,@DateTimeFormat(pattern="dd/MM/yyyy") Date validTo,int isPercentage, @RequestHeader("authorization") String token)  { 
     		long AdminUserId=utility.getUserIDByToken(token);
     	
 			ResponseEntityOutput response=new ResponseEntityOutput();
@@ -86,7 +86,7 @@ public class CravingsPromotionalVouchersController {
 				response.CODE="1";
 				response.USER_MESSAGE="";
 				response.SYSTEM_MESSAGE="Saved";
-				VouchersService.savePromtionalVouchers(prefixStr, AdminUserId,totalNumber,utility.parseDouble(amount),utility.parseDouble(percentageVal),validFrom,validTo)	;
+				VouchersService.savePromtionalVouchers(prefixStr, AdminUserId,totalNumber,utility.parseDouble(amount),utility.parseDouble(percentageVal),validFrom,validTo,isPercentage)	;
 				
 			
 			}
@@ -230,7 +230,7 @@ public class CravingsPromotionalVouchersController {
 	    
 	    
 	    @PostMapping(CONTROLLER_URL+"/edit/save")
-	   	public ResponseEntity<?> singleSave(String recordId,String prefixStr ,Double amount,Double percentageVal,@DateTimeFormat(pattern="dd/MM/yyyy") Date validFrom,@DateTimeFormat(pattern="dd/MM/yyyy") Date validTo,@RequestHeader("authorization") String token)  { 
+	   	public ResponseEntity<?> singleSave(String recordId,String prefixStr ,Double amount,Double percentageVal,@DateTimeFormat(pattern="dd/MM/yyyy") Date validFrom,@DateTimeFormat(pattern="dd/MM/yyyy") Date validTo,int isPercentage, @RequestHeader("authorization") String token)  { 
 	       		long UserId=utility.getUserIDByToken(token);
 	       	
 	   			ResponseEntityOutput response=new ResponseEntityOutput();
@@ -241,7 +241,7 @@ public class CravingsPromotionalVouchersController {
 	   				response.CODE="1";
 	   				response.USER_MESSAGE="";
 	   				response.SYSTEM_MESSAGE="Updated";
-	   				VouchersService.EditSave(Long.parseLong(recordId), prefixStr ,amount,percentageVal,validFrom,validTo,UserId);	
+	   				VouchersService.EditSave(Long.parseLong(recordId), prefixStr ,amount,percentageVal,validFrom,validTo,isPercentage,UserId);	
 	   				
 	   			
 	   			}

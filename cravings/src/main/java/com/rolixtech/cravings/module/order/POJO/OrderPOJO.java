@@ -31,6 +31,9 @@ public class OrderPOJO {
 	private double subtotal;
 	private double deliveryFee;
 	private double discount;
+	private double serviceFee;
+	private String instructions;
+	
 	
 	private OrderAddressPOJO address;
 	private ArrayList<OrderProductsPOJO> products = new ArrayList<>();
@@ -109,13 +112,28 @@ public class OrderPOJO {
 	public void setDeliveryTime(int deliveryTime) {
 		this.deliveryTime = deliveryTime;
 	}
+	public double getServiceFee() {
+		return serviceFee;
+	}
+	public void setServiceFee(double serviceFee) {
+		this.serviceFee = serviceFee;
+	}
+	public String getInstructions() {
+		return instructions;
+	}
+	public void setInstructions(String instructions) {
+		this.instructions = instructions;
+	}
 	@Override
 	public String toString() {
 		return "OrderPOJO [resturantId=" + resturantId + ", totalAmount=" + totalAmount + ", totalGst=" + totalGst
 				+ ", totalGstPercentage=" + totalGstPercentage + ", deliveryTime=" + deliveryTime + ", orderType="
 				+ orderType + ", userId=" + userId + ", subtotal=" + subtotal + ", deliveryFee=" + deliveryFee
-				+ ", discount=" + discount + ", address=" + address + ", products=" + products + "]";
+				+ ", discount=" + discount + ", serviceFee=" + serviceFee + ", instructions=" + instructions
+				+ ", address=" + address + ", products=" + products + "]";
 	}
+	
+	
 	
 	
 }

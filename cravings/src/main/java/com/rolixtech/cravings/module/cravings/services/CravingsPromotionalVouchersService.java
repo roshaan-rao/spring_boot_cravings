@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class CravingsPromotionalVouchersService {
 	@Autowired
 	private GenericUtility utility;
 	
-	public void savePromtionalVouchers(String prefixStr,long userId,int totalNumber,double amount,double percetageVal,Date validFrom,Date validTo ) {
+	public void savePromtionalVouchers(String prefixStr,long userId,int totalNumber,double amount,double percetageVal,Date validFrom,Date validTo,int isPercentage ) {
 		
 		if(totalNumber>0) {
 			List<String> alreadyCreatedPromos=new ArrayList<>();
@@ -69,8 +70,14 @@ public class CravingsPromotionalVouchersService {
 						PromotionalVouchers.setStatus(1);
 						PromotionalVouchers.setPostFixStr(postFix);
 						PromotionalVouchers.setPreFixStr(prefixStr);
-						PromotionalVouchers.setPercentageVal(percetageVal);
-						PromotionalVouchers.setAmount(amount);
+						PromotionalVouchers.setIsPercentage(isPercentage);
+						if(isPercentage==1) {
+							PromotionalVouchers.setPercentageVal(percetageVal);
+						}else {
+							PromotionalVouchers.setAmount(amount);
+						}
+						
+						
 						PromotionalVouchers.setValidFrom(validFrom);
 						PromotionalVouchers.setValidTo(validTo);
 						PromotionalVouchersDao.save(PromotionalVouchers);
@@ -118,6 +125,16 @@ public class CravingsPromotionalVouchersService {
 						Row.put("validTo", voucher.getValidTo());
 						Row.put("validFromToDisplay", utility.getDisplayDateddMMYYYY(voucher.getValidFrom()));
 						Row.put("validToToDisplay", utility.getDisplayDateddMMYYYY(voucher.getValidTo()));
+						if(utility.parseInt(voucher.getIsPercentage())==1) {
+							Row.put("percentageVal",voucher.getPercentageVal());
+							Row.put("amount",0.0);
+							
+						}else {
+							Row.put("amount",voucher.getAmount());
+							Row.put("percentageVal",0.0);
+							
+						}
+						
 						Row.put("isRedeemed", voucher.getIsRedeemed());
 						Row.put("statusId", voucher.getStatus());
 						Row.put("statusLabel", VouchersStatusTypesService.findLabelById(voucher.getStatus()));
@@ -165,6 +182,15 @@ public class CravingsPromotionalVouchersService {
 						Row.put("statusLabel", VouchersStatusTypesService.findLabelById(voucher.getStatus()));
 						Row.put("createdOn",voucher.getCreatedOn());
 						Row.put("createdBy",voucher.getCreatedBy());
+						if(utility.parseInt(voucher.getIsPercentage())==1) {
+							Row.put("percentageVal",voucher.getPercentageVal());
+							Row.put("amount",0.0);
+							
+						}else {
+							Row.put("amount",voucher.getAmount());
+							Row.put("percentageVal",0.0);
+							
+						}
 						
 						list.add(Row);
 				}
@@ -204,7 +230,7 @@ public class CravingsPromotionalVouchersService {
 
 
 
-	public void EditSave(long recordId, String prefixStr, Double amount, Double percentageVal,Date validFrom,Date validTo, long userId) {
+	public void EditSave(long recordId, String prefixStr, Double amount, Double percentageVal,Date validFrom,Date validTo,int isPercentage ,long userId) {
 		CravingsPromotionalVouchers PromotionalVouchers=PromotionalVouchersDao.findById(recordId);
 		if(PromotionalVouchers!=null) {
 			
@@ -242,8 +268,13 @@ public class CravingsPromotionalVouchersService {
 			PromotionalVouchers.setStatus(1);
 			PromotionalVouchers.setPostFixStr(postFix);
 			PromotionalVouchers.setPreFixStr(prefixStr);
-			PromotionalVouchers.setPercentageVal(percentageVal);
-			PromotionalVouchers.setAmount(amount);
+			PromotionalVouchers.setIsPercentage(isPercentage);
+			if(isPercentage==1) {
+				PromotionalVouchers.setPercentageVal(percentageVal);
+			}else {
+				PromotionalVouchers.setAmount(amount);
+			}
+			
 			PromotionalVouchers.setValidFrom(validFrom);
 			PromotionalVouchers.setValidTo(validTo);
 			PromotionalVouchersDao.save(PromotionalVouchers);
@@ -273,6 +304,53 @@ public class CravingsPromotionalVouchersService {
 				
 				
 				PromotionalVouchersDao.deleteById(recordId);
+	}
+
+
+
+
+
+	public List<Map> validateVoucher(String voucherCode) throws Exception {
+		List<Map> list=new ArrayList<>();
+		CravingsPromotionalVouchers voucher=PromotionalVouchersDao.findByCompleteString(voucherCode);
+		if(voucher!=null) {
+			
+			
+			if(voucher.getIsRedeemed()==1) {
+				throw new Exception("Voucher has already been used.");
+			}else {
+				System.out.println(utility.removeTime(new Date()));
+				System.out.println(utility.getDateInyyyyMMddFromDate(new Date()));
+				System.out.println("VALID FROM"+utility.removeTime(voucher.getValidFrom()));
+				System.out.println("VALID To"+utility.removeTime(voucher.getValidTo()));
+				
+				
+				if(DateUtils.addDays(new Date(), 0).after(DateUtils.addDays(voucher.getValidFrom(), 0)) && DateUtils.addDays(voucher.getValidTo(), 0).before(DateUtils.addDays(new Date(), 0))) {
+					Map Row=new HashMap<>();
+					Row.put("voucherId", voucher.getId());
+					
+					if(voucher.getIsPercentage()==1) { 
+						Row.put("percentageVal",voucher.getPercentageVal());
+						
+					}else {
+						Row.put("amountVal",voucher.getAmount());
+					}
+					
+					list.add(Row);
+				}else {
+					
+					throw new Exception("Voucher has been expired.");
+					
+				}
+			} 
+			
+			
+			
+			
+		}else{
+			throw new Exception("Voucher is not valid.");
+		}
+		return list;
 	}
 
 

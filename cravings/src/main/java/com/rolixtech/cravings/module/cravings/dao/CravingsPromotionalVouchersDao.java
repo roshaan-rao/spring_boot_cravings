@@ -21,5 +21,7 @@ public interface CravingsPromotionalVouchersDao extends JpaRepository<CravingsPr
 
 	List<CravingsPromotionalVouchers> findAllByPreFixStr(String prefixString);
 
+	CravingsPromotionalVouchers findByCompleteString(String voucherCode);
+
 	
 }

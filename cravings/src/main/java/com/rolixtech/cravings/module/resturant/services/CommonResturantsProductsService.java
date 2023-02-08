@@ -284,7 +284,7 @@ public class CommonResturantsProductsService {
 							 
 							
 						}						
-						list.add(Row);
+						list.add(ResturantsService.getBasicChargesDetailByResturant(Row,Product.getResturantId()));
 				}
 				
 			);
@@ -477,8 +477,8 @@ public class CommonResturantsProductsService {
 			ExtraProducts.stream().forEach(
 				Product->{
 					Map Row=new HashMap<>();
-					Row.put("id", Product.getId());
-					Row.put("label","Extra - "+Product.getLabel());
+					Row.put("productId", Product.getId());
+					Row.put("productLabel","Extra - "+Product.getLabel());
 					Row.put("price",Product.getGrossAmount());
 					listExtraProducts.add(Row);
 				}
@@ -729,7 +729,7 @@ public class CommonResturantsProductsService {
 							 
 							
 						}						
-						list.add(Row);
+						list.add(ResturantsService.getBasicChargesDetailByResturant(Row,Product.getResturantId()));
 				}
 				
 			);
@@ -863,8 +863,7 @@ public class CommonResturantsProductsService {
 	}
 
 
-	public List<CommonResturantsProducts> findAllByLabelContainingAndIsActiveAndIsDeleted(String keyword, int i,
-			int j) {
+	public List<CommonResturantsProducts> findAllByLabelContainingAndIsActiveAndIsDeleted(String keyword, int i,int j) {
 		// TODO Auto-generated method stub
 		return null;
 	} 

@@ -49,7 +49,8 @@ public class CommonResturantsAdminController {
     
     @PostMapping(CONTROLLER_URL+"/register")
 	public ResponseEntity<?> Save(String recordId,Long userId,String label,String address,Long countryId,Long provinceId,Long cityId,Double lat,Double lng,Double accuracy,@RequestParam(name ="logo_img_url") MultipartFile logoImg,
-			@RequestParam(name ="profile_img_url") MultipartFile profileImg ,@RequestParam(name ="banner_img_url") MultipartFile bannerImg,Long dayId[], @DateTimeFormat(pattern="HH:mm") Date openTimings[],@DateTimeFormat(pattern="HH:mm") Date closeTimings[],String contactNo,String email,@RequestHeader("authorization") String token)  { 
+			@RequestParam(name ="profile_img_url") MultipartFile profileImg ,@RequestParam(name ="banner_img_url") MultipartFile bannerImg,Long dayId[], @DateTimeFormat(pattern="HH:mm") Date openTimings[],@DateTimeFormat(pattern="HH:mm") Date closeTimings[],String contactNo,String email,Integer isActive,
+			Integer isGst,Double gstPercentage,Double deliveryCharges,String contactNo2,String contactNo3,String contactNo4,@RequestHeader("authorization") String token)  { 
     		long AdminUserId=utility.getUserIDByToken(token);
     	
 			ResponseEntityOutput response=new ResponseEntityOutput();
@@ -60,7 +61,7 @@ public class CommonResturantsAdminController {
 				response.CODE="1";
 				response.USER_MESSAGE="";
 				response.SYSTEM_MESSAGE="Saved";
-				ResturantsService.saveResturantAdmin(Long.parseLong(recordId),userId.longValue(),label,address,(countryId).longValue(),(provinceId).longValue(),(cityId).longValue(),lat.doubleValue(),lng.doubleValue(),accuracy.doubleValue(),logoImg,profileImg,bannerImg,utility.toPrimitives(dayId),openTimings,closeTimings,contactNo,email,AdminUserId);	
+				ResturantsService.saveResturantAdmin(Long.parseLong(recordId),userId.longValue(),label,address,(countryId).longValue(),(provinceId).longValue(),(cityId).longValue(),lat.doubleValue(),lng.doubleValue(),accuracy.doubleValue(),logoImg,profileImg,bannerImg,utility.toPrimitives(dayId),openTimings,closeTimings,contactNo,email,utility.parseInt(isActive),utility.parseInt(isGst),utility.parseDouble(gstPercentage),utility.parseDouble(deliveryCharges), contactNo2, contactNo3, contactNo4,AdminUserId);	
 				
 			
 			}

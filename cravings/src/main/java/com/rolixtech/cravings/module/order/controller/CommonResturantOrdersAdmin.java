@@ -199,6 +199,35 @@ public class CommonResturantOrdersAdmin {
 			return ResponseEntity.ok(response);
 	}
     
+    @PostMapping(value=CONTROLLER_URL+"/add-comments" )
+   	public ResponseEntity<?> addComments(long recordId,String cravingsRemarks,@RequestHeader("authorization") String token)  { 
+       	    long UserId=utility.getUserIDByToken(token);
+   			ResponseEntityOutput response=new ResponseEntityOutput();
+   			Map map=new HashMap<>();
+   			
+   			try {
+   				
+
+   				response.CODE="1";
+   				response.USER_MESSAGE="Updated";
+   				response.SYSTEM_MESSAGE="";
+   				OrdersService.addCravingsComments(recordId,cravingsRemarks,UserId);
+   			
+   			}
+
+   			catch (Exception e) {
+   				// TODO: handle exception
+   				e.printStackTrace();
+   				response.CODE="2";
+   				response.USER_MESSAGE="Error";
+   				response.SYSTEM_MESSAGE=e.toString();
+   				
+   			}
+   			
+   			
+   			return ResponseEntity.ok(response);
+   	}
+    
    
 	 
 	 

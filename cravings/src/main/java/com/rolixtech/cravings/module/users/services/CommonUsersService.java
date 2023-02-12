@@ -280,7 +280,7 @@ public class CommonUsersService {
 					
 					Map Row=new HashMap();
 					Row.put("id",User.get(i).getId());
-					Row.put("label",User.get(i).getFirstName()+" "+User.get(i).getLastName());
+					Row.put("label",getUserName(User.get(i).getId()));
 					
 					purposeList.add(Row);
 					
@@ -320,8 +320,13 @@ public class CommonUsersService {
 		String Label="";
 		CommonUsers user=UsersDao.findById(userId);
 		if(user!=null) {
+			if(user.getLastName()!=null) {
+				Label=user.getFirstName()+" "+user.getLastName();
+			}else {
+				Label=user.getFirstName();
+			}
 			
-			Label=user.getFirstName()+" "+user.getLastName();
+		
 		}
 		return Label;
 	}

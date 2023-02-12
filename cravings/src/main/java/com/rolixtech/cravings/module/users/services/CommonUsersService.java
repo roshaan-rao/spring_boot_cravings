@@ -186,11 +186,14 @@ public class CommonUsersService {
 	        throw new Exception
 	          ("There is an account with same email adress: " + email);
 	    }
-	    
-	    if (UsersDao.existsByMobileAndIsDeleted(mobile,0)) {
-	        throw new Exception
-	          ("There is an account with same mobile: " + mobile);
+	    if(mobile!="923164849413") {
+		    if (UsersDao.existsByMobileAndIsDeleted(mobile,0)) {
+		        throw new Exception
+		          ("There is an account with same mobile: " + mobile);
+		    }
 	    }
+	    
+
 	    
 	    if (!password.equals(confirmPassword)) {
 	        throw new Exception

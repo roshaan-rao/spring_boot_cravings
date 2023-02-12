@@ -7,23 +7,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.rolixtech.cravings.module.cravings.model.CravingsPromotionalVouchers;
+import com.rolixtech.cravings.module.cravings.model.CravingsPromotionalVouchersPurposeTypes;
+import com.rolixtech.cravings.module.cravings.model.CravingsPromotionalVouchersStatusTypes;
 import com.rolixtech.cravings.module.order.model.CustomerOrder;
 import com.rolixtech.cravings.module.resturant.model.CommonCategories;
 
 @Repository
-public interface CravingsPromotionalVouchersDao extends JpaRepository<CravingsPromotionalVouchers, Long>  {
+public interface CravingsPromotionalVouchersPurposeTypesDao extends JpaRepository<CravingsPromotionalVouchersPurposeTypes, Long>  {
 
-	CravingsPromotionalVouchers findById(long id);
+	CravingsPromotionalVouchersPurposeTypes findById(long id);
 
-	boolean existsByPostFixStr(String postFix);
 
-	boolean existsByCompleteString(String compeleteStr);
-
-	List<CravingsPromotionalVouchers> findAllByPreFixStr(String prefixString);
-
-	CravingsPromotionalVouchers findByCompleteString(String voucherCode);
-
-	boolean existsByGroupTitle(String groupTitle);
 
 	
 }

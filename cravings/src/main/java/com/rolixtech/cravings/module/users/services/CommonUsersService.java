@@ -420,6 +420,48 @@ public class CommonUsersService {
 		OTPResponse.add(Row);
         return OTPResponse;
     }
+    
+    
+    
+    public void updateProfileImage(long recordId,MultipartFile profileImg) throws Exception {
+		
+	    CommonUsers user = new CommonUsers();
+	    String TargetFileName = "";
+	    if(recordId!=0) {
+	    	
+	    	user = UsersDao.findById(recordId);
+	    	if(user!=null) {
+		    	if (profileImg != null ) {
+		    		if (!profileImg.getOriginalFilename().equals("")) {
+					
+						String OldFile=Utility.getSecureFileDirectoryPath()+File.separator+"common"+File.separator+user.getProfileImgUrl();
+						File f = new File(OldFile); 
+						
+						if(f.delete()) {
+							System.out.println("File Delteted");
+						}else {
+							System.out.println("File Could not be Delteted");
+						}
+						
+						 TargetFileName = "profile_Img_"+"user_"+user.getId()+"_"+ Utility.getUniqueId()
+								
+								+ profileImg.getOriginalFilename().substring(profileImg.getOriginalFilename().lastIndexOf("."));
+						Path copyLocation = Paths.get(StringUtils.cleanPath(Utility.getSecureFileDirectoryPath()+File.separator+"common"+File.separator+TargetFileName));
+						Files.copy(profileImg.getInputStream(), copyLocation);
+						
+						user.setProfileImgUrl(TargetFileName);
+						UsersDao.save(user);
+		    		} 
+		    		else {
+						throw new Exception("Please select a valid file");
+					}
+					
+		    		
+		    	}
+	    	} 
+	    } 
+	 
+	}
 	
 	
 	

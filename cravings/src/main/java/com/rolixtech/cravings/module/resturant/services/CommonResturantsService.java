@@ -1149,6 +1149,7 @@ public class CommonResturantsService {
 			Row.put("serviceFee", utility.getCravingsSericeFee());
 			
 		}
+		Row.put("deliveryTime", utility.getCravingsDeliveryTime());
 		return Row;
 	}
 

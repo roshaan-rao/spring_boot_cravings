@@ -26,7 +26,12 @@ public class CravingsPromotionalVouchers {
 	private Date validTo;
 	private Date validFrom;
 	private int isRedeemed;
-	private int isPercentage;
+	private long valueType;
+	private String groupTitle;
+	private int isGroup;
+	private long voucherPurposeId;
+	
+	
 	public long getId() {
 		return id;
 	}
@@ -113,14 +118,29 @@ public class CravingsPromotionalVouchers {
 	public void setStatusChangeBy(Long statusChangeBy) {
 		this.statusChangeBy = statusChangeBy;
 	}
-	
-	
-	
-	public int getIsPercentage() {
-		return isPercentage;
+	public long getValueType() {
+		return valueType;
 	}
-	public void setIsPercentage(int isPercentage) {
-		this.isPercentage = isPercentage;
+	public void setValueType(long valueType) {
+		this.valueType = valueType;
+	}
+	public String getGroupTitle() {
+		return groupTitle;
+	}
+	public void setGroupTitle(String groupTitle) {
+		this.groupTitle = groupTitle;
+	}
+	public int getIsGroup() {
+		return isGroup;
+	}
+	public void setIsGroup(int isGroup) {
+		this.isGroup = isGroup;
+	}
+	public long getVoucherPurposeId() {
+		return voucherPurposeId;
+	}
+	public void setVoucherPurposeId(long voucherPurposeId) {
+		this.voucherPurposeId = voucherPurposeId;
 	}
 	@Override
 	public String toString() {
@@ -128,8 +148,13 @@ public class CravingsPromotionalVouchers {
 				+ ", completeString=" + completeString + ", status=" + status + ", createdOn=" + createdOn
 				+ ", createdBy=" + createdBy + ", statusChangedOn=" + statusChangedOn + ", statusChangeBy="
 				+ statusChangeBy + ", amount=" + amount + ", percentageVal=" + percentageVal + ", validTo=" + validTo
-				+ ", validFrom=" + validFrom + ", isRedeemed=" + isRedeemed + ", isPercentage=" + isPercentage + "]";
+				+ ", validFrom=" + validFrom + ", isRedeemed=" + isRedeemed + ", valueType=" + valueType
+				+ ", groupTitle=" + groupTitle + ", isGroup=" + isGroup + ", voucherPurpose=" + voucherPurposeId + "]";
 	}
+	
+	
+	
+	
 	
 	
 }

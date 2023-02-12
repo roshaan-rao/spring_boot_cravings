@@ -43,6 +43,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.rolixtech.cravings.module.auth.model.ResponseEntityOutput;
 import com.rolixtech.cravings.module.cravings.services.CravingsPromotionalVouchersService;
 import com.rolixtech.cravings.module.cravings.services.CravingsPromotionalVouchersStatusTypesService;
+import com.rolixtech.cravings.module.cravings.services.CravingsPromotionalVouchersValueTypesService;
 import com.rolixtech.cravings.module.generic.model.CommonCountries;
 import com.rolixtech.cravings.module.generic.services.CommonCitiesService;
 import com.rolixtech.cravings.module.generic.services.CommonCountriesService;
@@ -58,7 +59,7 @@ import com.rolixtech.cravings.module.generic.services.CustomFileNotFoundExceptio
 
 
 @RestController
-public class CravingsPromotionalVouchersController {
+public class CravingsPromotionalVouchersAdminController {
 	
 	
 	@Autowired
@@ -71,11 +72,16 @@ public class CravingsPromotionalVouchersController {
 	@Autowired
 	private CravingsPromotionalVouchersStatusTypesService VouchersStatusTypesService;
 	
+	@Autowired
+	private CravingsPromotionalVouchersValueTypesService VouchersValueTypesService;
+	
+	
+	
 	public static final String CONTROLLER_URL = GenericUtility.APPLICATION_CONTEXT + "/promotional/voucher";
 
 
 	@PostMapping(CONTROLLER_URL+"/save" )
-	public ResponseEntity<?> Save(String prefixStr ,Integer totalNumber,Double amount,Double percentageVal,@DateTimeFormat(pattern="dd/MM/yyyy") Date validFrom,@DateTimeFormat(pattern="dd/MM/yyyy") Date validTo,int isPercentage, @RequestHeader("authorization") String token)  { 
+	public ResponseEntity<?> Save(String groupTitle,String prefixStr ,Integer totalNumber,Double amount,Double percentageVal,@DateTimeFormat(pattern="dd/MM/yyyy") Date validFrom,@DateTimeFormat(pattern="dd/MM/yyyy") Date validTo,long valueType,long voucherPurposeId, @RequestHeader("authorization") String token)  { 
     		long AdminUserId=utility.getUserIDByToken(token);
     	
 			ResponseEntityOutput response=new ResponseEntityOutput();
@@ -86,7 +92,7 @@ public class CravingsPromotionalVouchersController {
 				response.CODE="1";
 				response.USER_MESSAGE="";
 				response.SYSTEM_MESSAGE="Saved";
-				VouchersService.savePromtionalVouchers(prefixStr, AdminUserId,totalNumber,utility.parseDouble(amount),utility.parseDouble(percentageVal),validFrom,validTo,isPercentage)	;
+				VouchersService.savePromtionalVouchers(groupTitle,prefixStr, AdminUserId,totalNumber,utility.parseDouble(amount),utility.parseDouble(percentageVal),validFrom,validTo,valueType,voucherPurposeId)	;
 				
 			
 			}
@@ -289,4 +295,35 @@ public class CravingsPromotionalVouchersController {
 		   			
 		   			return ResponseEntity.ok(response);
 		   	}
+	    
+	    
+	    @GetMapping(GenericUtility.APPLICATION_CONTEXT +"/generic/voucher/values-drop-down/view")
+	   public ResponseEntity<?> ViewAllValueTypes()  { 
+	       		
+	       	
+	   			ResponseEntityOutput response=new ResponseEntityOutput();
+	   			Map map=new HashMap<>();
+	   			
+	   			try {
+	   				
+	   				response.CODE="1";
+	   				response.USER_MESSAGE="";
+	   				response.SYSTEM_MESSAGE="Success";
+	   				response.DATA=VouchersValueTypesService.getAll();
+	   				
+	   			
+	   			}
+
+	   			catch (Exception e) {
+	   				// TODO: handle exception
+	   				e.printStackTrace();
+	   				response.CODE="2";
+	   				response.USER_MESSAGE="Error";
+	   				response.SYSTEM_MESSAGE=e.toString();
+	   				
+	   			}
+	   			
+	   			
+	   			return ResponseEntity.ok(response);
+	   	}
 }

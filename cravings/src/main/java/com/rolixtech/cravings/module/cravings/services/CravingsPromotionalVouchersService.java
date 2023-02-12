@@ -38,53 +38,65 @@ public class CravingsPromotionalVouchersService {
 	
 	@Autowired
 	private CravingsPromotionalVouchersStatusTypesService VouchersStatusTypesService;
+	
+	@Autowired
+	private CravingsPromotionalVouchersPurposeTypesService VouchersPurposeTypesService;
+	
 	@Autowired
 	private GenericUtility utility;
 	
-	public void savePromtionalVouchers(String prefixStr,long userId,int totalNumber,double amount,double percetageVal,Date validFrom,Date validTo,int isPercentage ) {
+	public void savePromtionalVouchers(String groupTitle,String prefixStr,long userId,int totalNumber,double amount,double percetageVal,Date validFrom,Date validTo,long valueType,long purposeId ) throws Exception {
+		
+		if(PromotionalVouchersDao.existsByGroupTitle(groupTitle)) {
+			throw new Exception("Group Title Already Exists.");
+		} 
 		
 		if(totalNumber>0) {
 			List<String> alreadyCreatedPromos=new ArrayList<>();
 			for(int i=1;i<totalNumber;i++) {
-				CravingsPromotionalVouchers PromotionalVouchers=new CravingsPromotionalVouchers();
-				
-				
 				
 				String uniqueVoucherCode="";
 				String  postFix="";
 				
 				while(true) {
-					  postFix=utility.createRandomCode(8);
-					  String CompeleteStr=prefixStr+postFix;
-					   if(!PromotionalVouchersDao.existsByCompleteString(CompeleteStr)) {
-						   uniqueVoucherCode=CompeleteStr; 
-					      break;
-					   }
+				  postFix=utility.createRandomCode(8);
+				  String CompeleteStr=prefixStr+postFix;
+				  if(!PromotionalVouchersDao.existsByCompleteString(CompeleteStr)) {
+					   uniqueVoucherCode=CompeleteStr; 
+				      break;
+				   }
 				}
 					
-					if(!alreadyCreatedPromos.contains(uniqueVoucherCode)) { 
-						
-						PromotionalVouchers.setCompleteString(uniqueVoucherCode);
-						PromotionalVouchers.setCreatedBy(userId);
-						PromotionalVouchers.setCreatedOn(new Date());
-						PromotionalVouchers.setStatus(1);
-						PromotionalVouchers.setPostFixStr(postFix);
-						PromotionalVouchers.setPreFixStr(prefixStr);
-						PromotionalVouchers.setIsPercentage(isPercentage);
-						if(isPercentage==1) {
-							PromotionalVouchers.setPercentageVal(percetageVal);
-						}else {
-							PromotionalVouchers.setAmount(amount);
-						}
-						
-						
-						PromotionalVouchers.setValidFrom(validFrom);
-						PromotionalVouchers.setValidTo(validTo);
-						PromotionalVouchersDao.save(PromotionalVouchers);
-						
-						alreadyCreatedPromos.add(uniqueVoucherCode);
-					
+				if(!alreadyCreatedPromos.contains(uniqueVoucherCode)) { 
+					CravingsPromotionalVouchers PromotionalVouchers=new CravingsPromotionalVouchers();
+					if(groupTitle!=null && !groupTitle.equals("")) {
+						PromotionalVouchers.setGroupTitle(groupTitle);
+						PromotionalVouchers.setIsGroup(1);
+					}else {
+						PromotionalVouchers.setIsGroup(0);
 					}
+					
+					PromotionalVouchers.setCompleteString(uniqueVoucherCode);
+					PromotionalVouchers.setCreatedBy(userId);
+					PromotionalVouchers.setCreatedOn(new Date());
+					PromotionalVouchers.setStatus(0);
+					PromotionalVouchers.setPostFixStr(postFix);
+					PromotionalVouchers.setPreFixStr(prefixStr);
+					PromotionalVouchers.setValueType(valueType);
+					if(valueType==1) {
+						PromotionalVouchers.setAmount(amount);
+					}else {
+						PromotionalVouchers.setPercentageVal(percetageVal);
+					}
+					
+					PromotionalVouchers.setValidFrom(validFrom);
+					PromotionalVouchers.setValidTo(validTo);
+					PromotionalVouchers.setVoucherPurposeId(valueType);
+					PromotionalVouchersDao.save(PromotionalVouchers);
+					
+					alreadyCreatedPromos.add(uniqueVoucherCode);
+				
+				}
 				
 				
 			}	
@@ -125,14 +137,25 @@ public class CravingsPromotionalVouchersService {
 						Row.put("validTo", voucher.getValidTo());
 						Row.put("validFromToDisplay", utility.getDisplayDateddMMYYYY(voucher.getValidFrom()));
 						Row.put("validToToDisplay", utility.getDisplayDateddMMYYYY(voucher.getValidTo()));
-						if(utility.parseInt(voucher.getIsPercentage())==1) {
-							Row.put("percentageVal",voucher.getPercentageVal());
-							Row.put("amount",0.0);
+						Row.put("isGroup", voucher.getIsGroup());
+						if(utility.parseInt(voucher.getIsGroup())!=0) {
 							
+							Row.put("isGroupLabel","Yes");
+							Row.put("groupTitle",voucher.getGroupTitle());
 						}else {
+							
+							Row.put("isGrouplabel","No");
+							Row.put("groupTitle","Yes");
+						}
+						
+						if(utility.parseLong(voucher.getValueType())==1) {
 							Row.put("amount",voucher.getAmount());
 							Row.put("percentageVal",0.0);
+						
 							
+						}else {
+							Row.put("percentageVal",voucher.getPercentageVal());
+							Row.put("amount",0.0);
 						}
 						
 						Row.put("isRedeemed", voucher.getIsRedeemed());
@@ -140,6 +163,8 @@ public class CravingsPromotionalVouchersService {
 						Row.put("statusLabel", VouchersStatusTypesService.findLabelById(voucher.getStatus()));
 						Row.put("createdOn",voucher.getCreatedOn());
 						Row.put("createdBy",voucher.getCreatedBy());
+						Row.put("purposelabel",(voucher.getVoucherPurposeId()));
+						Row.put("purposeId",VouchersPurposeTypesService.findLabelById(voucher.getVoucherPurposeId()));
 					
 						
 						list.add(Row);
@@ -182,15 +207,28 @@ public class CravingsPromotionalVouchersService {
 						Row.put("statusLabel", VouchersStatusTypesService.findLabelById(voucher.getStatus()));
 						Row.put("createdOn",voucher.getCreatedOn());
 						Row.put("createdBy",voucher.getCreatedBy());
-						if(utility.parseInt(voucher.getIsPercentage())==1) {
-							Row.put("percentageVal",voucher.getPercentageVal());
-							Row.put("amount",0.0);
+						Row.put("isGroup",voucher.getIsGroup());
+						if(utility.parseInt(voucher.getIsGroup())!=0) {
 							
+							Row.put("isGroupLabel","Yes");
+							Row.put("groupTitle",voucher.getGroupTitle());
 						}else {
+							
+							Row.put("isGrouplabel","No");
+							Row.put("groupTitle","Yes");
+						}
+						
+						if(utility.parseLong(voucher.getValueType())==1) {
 							Row.put("amount",voucher.getAmount());
 							Row.put("percentageVal",0.0);
+						
 							
+						}else {
+							Row.put("percentageVal",voucher.getPercentageVal());
+							Row.put("amount",0.0);
 						}
+						Row.put("purposeId",voucher.getVoucherPurposeId());
+						Row.put("purposeLabel",VouchersPurposeTypesService.findLabelById(voucher.getVoucherPurposeId()));
 						
 						list.add(Row);
 				}
@@ -230,7 +268,7 @@ public class CravingsPromotionalVouchersService {
 
 
 
-	public void EditSave(long recordId, String prefixStr, Double amount, Double percentageVal,Date validFrom,Date validTo,int isPercentage ,long userId) {
+	public void EditSave(long recordId, String prefixStr, Double amount, Double percentageVal,Date validFrom,Date validTo,long valueType ,long userId) {
 		CravingsPromotionalVouchers PromotionalVouchers=PromotionalVouchersDao.findById(recordId);
 		if(PromotionalVouchers!=null) {
 			
@@ -268,11 +306,12 @@ public class CravingsPromotionalVouchersService {
 			PromotionalVouchers.setStatus(1);
 			PromotionalVouchers.setPostFixStr(postFix);
 			PromotionalVouchers.setPreFixStr(prefixStr);
-			PromotionalVouchers.setIsPercentage(isPercentage);
-			if(isPercentage==1) {
-				PromotionalVouchers.setPercentageVal(percentageVal);
-			}else {
+			PromotionalVouchers.setValueType(valueType);;
+			if(valueType==1) {
 				PromotionalVouchers.setAmount(amount);
+			}else {
+				PromotionalVouchers.setPercentageVal(percentageVal);
+				
 			}
 			
 			PromotionalVouchers.setValidFrom(validFrom);
@@ -319,29 +358,37 @@ public class CravingsPromotionalVouchersService {
 			if(voucher.getIsRedeemed()==1) {
 				throw new Exception("Voucher has already been used.");
 			}else {
-				System.out.println(utility.removeTime(new Date()));
-				System.out.println(utility.getDateInyyyyMMddFromDate(new Date()));
-				System.out.println("VALID FROM"+utility.removeTime(voucher.getValidFrom()));
-				System.out.println("VALID To"+utility.removeTime(voucher.getValidTo()));
+//				System.out.println(utility.removeTime(new Date()));
+//				System.out.println(utility.getDateInyyyyMMddFromDate(new Date()));
+//				System.out.println("VALID FROM"+utility.removeTime(voucher.getValidFrom()));
+//				System.out.println("VALID To"+utility.removeTime(voucher.getValidTo()));
 				
 				
-				if(DateUtils.addDays(new Date(), 0).after(DateUtils.addDays(voucher.getValidFrom(), 0)) && DateUtils.addDays(voucher.getValidTo(), 0).before(DateUtils.addDays(new Date(), 0))) {
+				//if(DateUtils.addDays(new Date(), 0).after(DateUtils.addDays(voucher.getValidFrom(), 0)) && DateUtils.addDays(voucher.getValidTo(), 0).before(DateUtils.addDays(new Date(), 0))) {
 					Map Row=new HashMap<>();
 					Row.put("voucherId", voucher.getId());
-					
-					if(voucher.getIsPercentage()==1) { 
+					if(voucher.getValueType()==1) {
+						Row.put("isPercentage",false);
+						Row.put("amount",voucher.getAmount());
+					}else if(voucher.getValueType()==2){
+						Row.put("isPercentage",true);
 						Row.put("percentageVal",voucher.getPercentageVal());
 						
-					}else {
-						Row.put("amountVal",voucher.getAmount());
 					}
 					
+//					if(voucher.getValueType()==1) { 
+//						
+//						
+//					}else {
+//						
+//					}
+//					
 					list.add(Row);
-				}else {
-					
-					throw new Exception("Voucher has been expired.");
-					
-				}
+//				}else {
+//					
+//					throw new Exception("Voucher has been expired.");
+//					
+//				}
 			} 
 			
 			

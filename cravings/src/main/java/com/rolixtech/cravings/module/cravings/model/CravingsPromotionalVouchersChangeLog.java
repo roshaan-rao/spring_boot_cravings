@@ -27,6 +27,10 @@ public class CravingsPromotionalVouchersChangeLog {
 	private Date validTo;
 	private Date validFrom;
 	private int isRedeemed;
+	private long valueType;
+	private String groupTitle;
+	private int isGroup;
+	private long voucherPurposeId;
 	private Long logTypeId; 
 	private String logReason;
 	private long logCreatedBy;
@@ -149,15 +153,46 @@ public class CravingsPromotionalVouchersChangeLog {
 	public void setStatusChangeBy(Long statusChangeBy) {
 		this.statusChangeBy = statusChangeBy;
 	}
+	public long getValueType() {
+		return valueType;
+	}
+	public void setValueType(long valueType) {
+		this.valueType = valueType;
+	}
+	public String getGroupTitle() {
+		return groupTitle;
+	}
+	public void setGroupTitle(String groupTitle) {
+		this.groupTitle = groupTitle;
+	}
+	public int getIsGroup() {
+		return isGroup;
+	}
+	public void setIsGroup(int isGroup) {
+		this.isGroup = isGroup;
+	}
+	
+	
+	public long getVoucherPurposeid() {
+		return voucherPurposeId;
+	}
+	public void setVoucherPurposeId(long voucherPurposeId) {
+		this.voucherPurposeId = voucherPurposeId;
+	}
 	@Override
 	public String toString() {
 		return "CravingsPromotionalVouchersChangeLog [id=" + id + ", recordId=" + recordId + ", preFixStr=" + preFixStr
 				+ ", postFixStr=" + postFixStr + ", completeString=" + completeString + ", status=" + status
 				+ ", statusChangedOn=" + statusChangedOn + ", statusChangeBy=" + statusChangeBy + ", createdOn="
 				+ createdOn + ", createdBy=" + createdBy + ", amount=" + amount + ", percentageVal=" + percentageVal
-				+ ", validTo=" + validTo + ", validFrom=" + validFrom + ", isRedeemed=" + isRedeemed + ", logTypeId="
-				+ logTypeId + ", logReason=" + logReason + ", logCreatedBy=" + logCreatedBy + ", logCreatedOn="
-				+ logCreatedOn + "]";
+				+ ", validTo=" + validTo + ", validFrom=" + validFrom + ", isRedeemed=" + isRedeemed + ", valueType="
+				+ valueType + ", groupTitle=" + groupTitle + ", isGroup=" + isGroup + ", voucherPurposeId="
+				+ voucherPurposeId + ", logTypeId=" + logTypeId + ", logReason=" + logReason + ", logCreatedBy="
+				+ logCreatedBy + ", logCreatedOn=" + logCreatedOn + "]";
 	}
+	
+	
+	
+	
 	
 }

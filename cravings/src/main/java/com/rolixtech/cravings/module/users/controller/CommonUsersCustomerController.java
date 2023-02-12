@@ -53,6 +53,7 @@ public class CommonUsersCustomerController {
 				response.USER_MESSAGE="Saved";
 				response.SYSTEM_MESSAGE="";
 				UsersService.registerNewCustomerUserAccount( name, email, mobile, password,confirmPassword);
+				
 			
 			}
 
@@ -241,4 +242,30 @@ public class CommonUsersCustomerController {
 			return ResponseEntity.ok(response);
 	}
     
+    @PostMapping(CONTROLLER_URL+"/update-profile-img")
+   	public ResponseEntity<?> updateProfilePicture(String recordId,@RequestParam(name ="profileImage") MultipartFile profileImage,@RequestHeader("authorization") String token)  { 
+       		long UserID =Utility.getUserIDByToken(token);
+   			ResponseEntityOutput response=new ResponseEntityOutput();
+   			Map map=new HashMap<>();
+   			
+   			try {
+   				
+   				response.CODE="1";
+   				response.USER_MESSAGE="Saved";
+   				response.SYSTEM_MESSAGE="";
+   				UsersService.updateProfileImage(Long.parseLong(recordId),profileImage);
+   			
+   			}
+
+   			catch (Exception e) {
+   				// TODO: handle exception
+   				e.printStackTrace();
+   				response.CODE="2";
+   				response.USER_MESSAGE=e.getMessage();
+   				response.SYSTEM_MESSAGE=e.toString();
+   				
+   			}
+   			
+   			return ResponseEntity.ok(response);
+   	}
 }

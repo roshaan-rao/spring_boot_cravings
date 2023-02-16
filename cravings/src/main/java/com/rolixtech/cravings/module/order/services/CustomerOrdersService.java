@@ -122,7 +122,7 @@ public class CustomerOrdersService {
 			double serviceFee=orderr.getServiceFee();
 			String instructions=orderr.getInstructions();
 			
-			CustomerOrder Order=new CustomerOrder();
+			CustomerOrder Order=new CustomerOrder(); 
 			Order.setResturantId(resturantId);
 			Order.setOrderType(orderType);
 			
@@ -140,6 +140,7 @@ public class CustomerOrdersService {
 			Order.setDeliveryTime(deliveryTime);
 			Order.setServiceFee(serviceFee);
 			Order.setInstructions(instructions);
+			
 			OrderDao.save(Order);
 			
 			OrderAddressPOJO address=orderr.getAddress();
@@ -150,6 +151,9 @@ public class CustomerOrdersService {
 				Address.setLat(address.getLat());
 				Address.setLng(address.getLng());
 				Address.setOrderId(Order.getId());
+				Address.setArea(address.getArea());
+				Address.setHouseNo(address.getHouseNo());
+				Address.setStreetNo(address.getStreetNo());
 				OrderAddressDao.save(Address);
 				
 			}

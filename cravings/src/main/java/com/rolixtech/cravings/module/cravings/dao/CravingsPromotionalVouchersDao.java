@@ -23,7 +23,14 @@ public interface CravingsPromotionalVouchersDao extends JpaRepository<CravingsPr
 
 	CravingsPromotionalVouchers findByCompleteString(String voucherCode);
 
-	boolean existsByGroupTitle(String groupTitle);
+	
+
+	@Query(value="select * from cravings_promotional_vouchers where is_group=?1 and group_id in (select cpgv.id from cravings_promotional_group_vouchers cpgv where cpgv.group_title=?2)",nativeQuery = true)
+	List<CravingsPromotionalVouchers> findAllByIsGroupAndGroupTitle(int i, String groupTitle);
+
+	
+
+	List<CravingsPromotionalVouchers> findAllByIsGroupAndCompleteString(int i, String keyWord);
 
 	
 }

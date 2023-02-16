@@ -33,6 +33,7 @@ public class OrderPOJO {
 	private double discount;
 	private double serviceFee;
 	private String instructions;
+	private long voucherId;
 	
 	
 	private OrderAddressPOJO address;
@@ -124,15 +125,23 @@ public class OrderPOJO {
 	public void setInstructions(String instructions) {
 		this.instructions = instructions;
 	}
+	
+	
+	
+	public long getVoucherId() {
+		return voucherId;
+	}
+	public void setVoucherId(long voucherId) {
+		this.voucherId = voucherId;
+	}
 	@Override
 	public String toString() {
 		return "OrderPOJO [resturantId=" + resturantId + ", totalAmount=" + totalAmount + ", totalGst=" + totalGst
 				+ ", totalGstPercentage=" + totalGstPercentage + ", deliveryTime=" + deliveryTime + ", orderType="
 				+ orderType + ", userId=" + userId + ", subtotal=" + subtotal + ", deliveryFee=" + deliveryFee
 				+ ", discount=" + discount + ", serviceFee=" + serviceFee + ", instructions=" + instructions
-				+ ", address=" + address + ", products=" + products + "]";
+				+ ", voucherId=" + voucherId + ", address=" + address + ", products=" + products + "]";
 	}
-	
 	
 	
 	

@@ -14,6 +14,7 @@ import com.rolixtech.cravings.module.resturant.services.CommonResturantsService;
 import com.rolixtech.cravings.module.users.dao.CommonUsersDao;
 import com.rolixtech.cravings.module.users.models.CommonRole;
 import com.rolixtech.cravings.module.users.models.CommonUsers;
+import com.rolixtech.cravings.module.users.services.CommonUsersService;
 //import com.rolixtech.cravings.module.auth.model.;
 import com.rolixtech.cravings.module.auth.config.JwtUserDetailsService;
 
@@ -61,6 +62,9 @@ public class JwtAuthenticationController {
 	
 	@Autowired
 	private GenericUtility utility;
+	
+	@Autowired
+	private CommonUsersService UsersService;
 
 	public static final String CONTROLLER_URL = GenericUtility.APPLICATION_CONTEXT + "/authentication";
 	
@@ -94,7 +98,7 @@ public class JwtAuthenticationController {
         Map Row=new HashMap<>();
         Row.put("token", token);
         Row.put("userId",  User.getId());
-        Row.put("userName", User.getFirstName()+" "+User.getLastName());
+        Row.put("userName", UsersService.getUserName(User.getId()));
         Row.put("userEmail", User.getEmail());
         Row.put("profileImage", User.getProfileImgUrl());
         Row.put("mobileNumber", User.getMobile());

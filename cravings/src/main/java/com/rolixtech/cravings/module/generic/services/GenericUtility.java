@@ -534,6 +534,30 @@ public class GenericUtility  {
 		return val;
       }
       
+      
+      /***
+       *@return Date in Date Type & in  "HH:mm"
+     * @throws ParseException 
+       * */ 
+      public static Date getDateInyyyyMMddFromDateV2(Date date) throws ParseException{
+	      Date val =date;
+	      Format formatter;
+	      formatter= new SimpleDateFormat("yyyy/MM/dd");
+	
+	      val = ((DateFormat) formatter).parse(formatter.format(val));
+		return val;
+      }
+      
+      public static Date parseDate(String date) throws ParseException{
+	      Date val =new Date();
+	      
+	
+	      val=new SimpleDateFormat("dd/MM/yyyy").parse(date);  
+		return val;
+      }
+      
+     
+      
       public static double roundToOneDecimal(double value) { 
   		double  roundedOneDigitX = Math.round(value * 10) / 10.0; 
   		return roundedOneDigitX;

@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.rolixtech.cravings.module.auth.model.ResponseEntityOutput;
+import com.rolixtech.cravings.module.cravings.services.CravingsPromotionalVouchersPurposeTypesService;
 import com.rolixtech.cravings.module.cravings.services.CravingsPromotionalVouchersService;
 import com.rolixtech.cravings.module.cravings.services.CravingsPromotionalVouchersStatusTypesService;
 import com.rolixtech.cravings.module.cravings.services.CravingsPromotionalVouchersValueTypesService;
@@ -75,13 +76,14 @@ public class CravingsPromotionalVouchersAdminController {
 	@Autowired
 	private CravingsPromotionalVouchersValueTypesService VouchersValueTypesService;
 	
-	
+	@Autowired
+	private CravingsPromotionalVouchersPurposeTypesService VouchersPurposeTypesService;
 	
 	public static final String CONTROLLER_URL = GenericUtility.APPLICATION_CONTEXT + "/promotional/voucher";
 
 
 	@PostMapping(CONTROLLER_URL+"/save" )
-	public ResponseEntity<?> Save(String groupTitle,String prefixStr ,Integer totalNumber,Double amount,Double percentageVal,@DateTimeFormat(pattern="dd/MM/yyyy") Date validFrom,@DateTimeFormat(pattern="dd/MM/yyyy") Date validTo,long valueType,long voucherPurposeId, @RequestHeader("authorization") String token)  { 
+	public ResponseEntity<?> Save(String groupTitle,String prefixStr ,Integer totalNumber,Double amount,Double percentageVal,@DateTimeFormat(pattern="yyyy-MM-dd") Date validFrom,@DateTimeFormat(pattern="yyyy-MM-dd") Date validTo,long valueType,long voucherPurposeId, @RequestHeader("authorization") String token)  { 
     		long AdminUserId=utility.getUserIDByToken(token);
     	
 			ResponseEntityOutput response=new ResponseEntityOutput();
@@ -89,6 +91,7 @@ public class CravingsPromotionalVouchersAdminController {
 			
 			try {
 				
+				System.out.println("validFrom"+validFrom);
 				response.CODE="1";
 				response.USER_MESSAGE="";
 				response.SYSTEM_MESSAGE="Saved";
@@ -155,6 +158,37 @@ public class CravingsPromotionalVouchersAdminController {
 	   				response.USER_MESSAGE="";
 	   				response.SYSTEM_MESSAGE="Success";
 	   				response.DATA=VouchersService.view(utility.parseLong(recordId));	
+	   				
+	   			
+	   			}
+
+	   			catch (Exception e) {
+	   				// TODO: handle exception
+	   				e.printStackTrace();
+	   				response.CODE="2";
+	   				response.USER_MESSAGE="Error";
+	   				response.SYSTEM_MESSAGE=e.toString();
+	   				
+	   			}
+	   			
+	   			
+	   			return ResponseEntity.ok(response);
+	   	}
+	  
+	  
+	  @PostMapping(CONTROLLER_URL+"/search-view")
+	  public ResponseEntity<?> ViewAll(int isGroup,String voucherKeyWord,@RequestHeader("authorization") String token)  { 
+	       		long UserId=utility.getUserIDByToken(token);
+	       	
+	   			ResponseEntityOutput response=new ResponseEntityOutput();
+	   			Map map=new HashMap<>();
+	   			
+	   			try {
+	   				
+	   				response.CODE="1";
+	   				response.USER_MESSAGE="";
+	   				response.SYSTEM_MESSAGE="Success";
+	   				response.DATA=VouchersService.searchView(utility.parseInt(isGroup),voucherKeyWord);	
 	   				
 	   			
 	   			}
@@ -297,7 +331,7 @@ public class CravingsPromotionalVouchersAdminController {
 		   	}
 	    
 	    
-	    @GetMapping(GenericUtility.APPLICATION_CONTEXT +"/generic/voucher/values-drop-down/view")
+	   @GetMapping(GenericUtility.APPLICATION_CONTEXT +"/generic/voucher/values-drop-down/view")
 	   public ResponseEntity<?> ViewAllValueTypes()  { 
 	       		
 	       	
@@ -310,6 +344,36 @@ public class CravingsPromotionalVouchersAdminController {
 	   				response.USER_MESSAGE="";
 	   				response.SYSTEM_MESSAGE="Success";
 	   				response.DATA=VouchersValueTypesService.getAll();
+	   				
+	   			
+	   			}
+
+	   			catch (Exception e) {
+	   				// TODO: handle exception
+	   				e.printStackTrace();
+	   				response.CODE="2";
+	   				response.USER_MESSAGE="Error";
+	   				response.SYSTEM_MESSAGE=e.toString();
+	   				
+	   			}
+	   			
+	   			
+	   			return ResponseEntity.ok(response);
+	   	}
+	   
+	   @GetMapping(GenericUtility.APPLICATION_CONTEXT +"/generic/voucher/purposes-drop-down/view")
+	   public ResponseEntity<?> ViewAllPurposeTypes()  { 
+	       		
+	       	
+	   			ResponseEntityOutput response=new ResponseEntityOutput();
+	   			Map map=new HashMap<>();
+	   			
+	   			try {
+	   				
+	   				response.CODE="1";
+	   				response.USER_MESSAGE="";
+	   				response.SYSTEM_MESSAGE="Success";
+	   				response.DATA=VouchersPurposeTypesService.getAll();
 	   				
 	   			
 	   			}

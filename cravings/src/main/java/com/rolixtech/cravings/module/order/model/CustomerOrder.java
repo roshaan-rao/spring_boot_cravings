@@ -43,6 +43,7 @@ public class CustomerOrder {
 	private String remarks;
 	private Long remarksAddedBy;
 	private Date remarksAddedOn;
+	private long voucherId;
 
 	
 	public long getId() {
@@ -171,6 +172,12 @@ public class CustomerOrder {
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
+	public long getVoucherId() {
+		return voucherId;
+	}
+	public void setVoucherId(long voucherId) {
+		this.voucherId = voucherId;
+	}
 	@Override
 	public String toString() {
 		return "CustomerOrder [id=" + id + ", orderNumber=" + orderNumber + ", resturantId=" + resturantId
@@ -180,7 +187,7 @@ public class CustomerOrder {
 				+ ", deliveryFee=" + deliveryFee + ", discount=" + discount + ", totalGstPercentage="
 				+ totalGstPercentage + ", deliveryTime=" + deliveryTime + ", serviceFee=" + serviceFee
 				+ ", instructions=" + instructions + ", remarks=" + remarks + ", remarksAddedBy=" + remarksAddedBy
-				+ ", remarksAddedOn=" + remarksAddedOn + "]";
+				+ ", remarksAddedOn=" + remarksAddedOn + ", voucherId=" + voucherId + "]";
 	}
 	
 	

@@ -243,7 +243,7 @@ public class CommonUsersCustomerController {
 	}
     
     @PostMapping(CONTROLLER_URL+"/update-profile-img")
-   	public ResponseEntity<?> updateProfilePicture(String recordId,@RequestParam(name ="profileImage") MultipartFile profileImage,@RequestHeader("authorization") String token)  { 
+   	public ResponseEntity<?> updateProfilePicture(@RequestParam(name ="profileImage") MultipartFile profileImage,@RequestHeader("authorization") String token)  { 
        		long UserID =Utility.getUserIDByToken(token);
    			ResponseEntityOutput response=new ResponseEntityOutput();
    			Map map=new HashMap<>();
@@ -253,7 +253,7 @@ public class CommonUsersCustomerController {
    				response.CODE="1";
    				response.USER_MESSAGE="Saved";
    				response.SYSTEM_MESSAGE="";
-   				UsersService.updateProfileImage(Long.parseLong(recordId),profileImage);
+   				UsersService.updateProfileImage((UserID),profileImage);
    			
    			}
 

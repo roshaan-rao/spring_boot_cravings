@@ -27,9 +27,9 @@ public class CravingsPromotionalVouchers {
 	private Date validFrom;
 	private int isRedeemed;
 	private long valueType;
-	private String groupTitle;
 	private int isGroup;
 	private long voucherPurposeId;
+	private long groupId;
 	
 	
 	public long getId() {
@@ -124,12 +124,7 @@ public class CravingsPromotionalVouchers {
 	public void setValueType(long valueType) {
 		this.valueType = valueType;
 	}
-	public String getGroupTitle() {
-		return groupTitle;
-	}
-	public void setGroupTitle(String groupTitle) {
-		this.groupTitle = groupTitle;
-	}
+	
 	public int getIsGroup() {
 		return isGroup;
 	}
@@ -142,16 +137,21 @@ public class CravingsPromotionalVouchers {
 	public void setVoucherPurposeId(long voucherPurposeId) {
 		this.voucherPurposeId = voucherPurposeId;
 	}
+	public long getGroupId() {
+		return groupId;
+	}
+	public void setGroupId(long groupId) {
+		this.groupId = groupId;
+	}
 	@Override
 	public String toString() {
 		return "CravingsPromotionalVouchers [id=" + id + ", preFixStr=" + preFixStr + ", postFixStr=" + postFixStr
 				+ ", completeString=" + completeString + ", status=" + status + ", createdOn=" + createdOn
 				+ ", createdBy=" + createdBy + ", statusChangedOn=" + statusChangedOn + ", statusChangeBy="
 				+ statusChangeBy + ", amount=" + amount + ", percentageVal=" + percentageVal + ", validTo=" + validTo
-				+ ", validFrom=" + validFrom + ", isRedeemed=" + isRedeemed + ", valueType=" + valueType
-				+ ", groupTitle=" + groupTitle + ", isGroup=" + isGroup + ", voucherPurpose=" + voucherPurposeId + "]";
+				+ ", validFrom=" + validFrom + ", isRedeemed=" + isRedeemed + ", valueType=" + valueType + ", isGroup="
+				+ isGroup + ", voucherPurposeId=" + voucherPurposeId + ", groupId=" + groupId + "]";
 	}
-	
 	
 	
 	

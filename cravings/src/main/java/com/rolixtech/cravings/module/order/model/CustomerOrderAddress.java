@@ -27,6 +27,9 @@ public class CustomerOrderAddress {
 	private double lng;
 	private double lat;
 	private String completeAddress;
+	private String houseNo;
+	private String streetNo;
+	private String area;
 	
 	public String getCityName() {
 		return cityName;
@@ -66,10 +69,29 @@ public class CustomerOrderAddress {
 	public void setOrderId(long orderId) {
 		this.orderId = orderId;
 	}
+	public String getHouseNo() {
+		return houseNo;
+	}
+	public void setHouseNo(String houseNo) {
+		this.houseNo = houseNo;
+	}
+	public String getStreetNo() {
+		return streetNo;
+	}
+	public void setStreetNo(String streetNo) {
+		this.streetNo = streetNo;
+	}
+	public String getArea() {
+		return area;
+	}
+	public void setArea(String area) {
+		this.area = area;
+	}
 	@Override
 	public String toString() {
 		return "CustomerOrderAddress [id=" + id + ", orderId=" + orderId + ", cityName=" + cityName + ", lng=" + lng
-				+ ", lat=" + lat + ", completeAddress=" + completeAddress + "]";
+				+ ", lat=" + lat + ", completeAddress=" + completeAddress + ", houseNo=" + houseNo + ", streetNo="
+				+ streetNo + ", area=" + area + "]";
 	}
 	
 	

@@ -12,13 +12,17 @@ import com.rolixtech.cravings.module.resturant.dao.CommonUsersResturantsDao;
 import com.rolixtech.cravings.module.resturant.model.CommonUsersResturants;
 import com.rolixtech.cravings.module.resturant.services.CommonResturantsService;
 import com.rolixtech.cravings.module.users.dao.CommonUsersDao;
+import com.rolixtech.cravings.module.users.dao.CommonUsersDevicesDao;
 import com.rolixtech.cravings.module.users.models.CommonRole;
 import com.rolixtech.cravings.module.users.models.CommonUsers;
+import com.rolixtech.cravings.module.users.models.CommonUsersDevices;
+import com.rolixtech.cravings.module.users.services.CommonUsersFeaturesService;
 import com.rolixtech.cravings.module.users.services.CommonUsersService;
 //import com.rolixtech.cravings.module.auth.model.;
 import com.rolixtech.cravings.module.auth.config.JwtUserDetailsService;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,15 +69,22 @@ public class JwtAuthenticationController {
 	
 	@Autowired
 	private CommonUsersService UsersService;
+	
+	
+	@Autowired
+	private CommonUsersFeaturesService UsersFeaturesService;
+	
+	@Autowired
+	private CommonUsersDevicesDao DevicesDao;
 
 	public static final String CONTROLLER_URL = GenericUtility.APPLICATION_CONTEXT + "/authentication";
 	
 	
 	
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused" })
 	@RequestMapping(value = CONTROLLER_URL, method = RequestMethod.POST)
-	public ResponseEntity<?> createAuthenticationToken(String email, String password, String portal) throws Exception {
+	public ResponseEntity<?> createAuthenticationToken(String email, String password, String portal,@RequestParam(name="deviceId",required = false) String deviceId) throws Exception {
 		//System.out.println(authenticationRequest.getUsername()+ " - "+ authenticationRequest.getPassword());
 		
 		
@@ -90,7 +101,16 @@ public class JwtAuthenticationController {
 		final UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 		 final String token = jwtTokenUtil.generateToken(userDetails);
 		CommonUsers User=UsersDao.findByEmailAndIsDeleted(email,0);
-
+		if(User!=null) {
+			CommonUsersDevices device=DevicesDao.findByUserId(User.getId());
+			if(device==null) {
+				device=new CommonUsersDevices();
+			}
+			device.setCreatedOn(new Date());
+			device.setDeviceId(deviceId);
+			device.setUserId(User.getId());
+			DevicesDao.save(device);
+		}
         
         ResponseEntityOutput response=new ResponseEntityOutput();
         
@@ -102,7 +122,7 @@ public class JwtAuthenticationController {
         Row.put("userEmail", User.getEmail());
         Row.put("profileImage", User.getProfileImgUrl());
         Row.put("mobileNumber", User.getMobile());
-       
+//        Row.put("navigation", UsersFeaturesService.getAllFeaturesGroupWise()); 
         
         Set<CommonRole> role= User.getRoles();
         List<CommonRole> list = new ArrayList<CommonRole>(role);
@@ -117,6 +137,9 @@ public class JwtAuthenticationController {
         	Row.put("resturantId",0);
         	Row.put("resturantLabel", "");
         } 
+        
+        
+        
         
        
     	if(utility.parseLong(obj.getId())!=utility.parseLong(portal)) {

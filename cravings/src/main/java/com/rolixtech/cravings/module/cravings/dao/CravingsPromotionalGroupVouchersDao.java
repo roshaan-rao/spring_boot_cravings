@@ -19,5 +19,8 @@ public interface CravingsPromotionalGroupVouchersDao extends JpaRepository<Cravi
 	
 	boolean existsByGroupTitle(String groupTitle);
 
+
+	boolean existsByGroupTitleAndIdNot(String groupTitle, long recordId);
+
 	
 }

@@ -9,21 +9,31 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 import org.springframework.stereotype.Repository;
 
+import com.rolixtech.cravings.module.users.models.CommonFeatures;
 import com.rolixtech.cravings.module.users.models.CommonRole;
 import com.rolixtech.cravings.module.users.models.CommonUsers;
+import com.rolixtech.cravings.module.users.models.CommonUsersFeatures;
 
 @Repository
-public interface CommonRoleDao extends JpaRepository<CommonRole, Long>  {
+public interface CommonUsersFeaturesDao extends JpaRepository<CommonUsersFeatures, Long>  {
 
-	CommonRole findById(long Id);
+	CommonUsersFeatures findById(long Id);
 
-	CommonRole findByName(String username);
+	boolean existsByUserId(long userId);
+
+	void deleteAllByUserId(long userId);
+
+	@Query(value="select distinct user_id from common_users_features",nativeQuery = true)
+	List<Long> findAllUserIds();
+
+	boolean existsByUserIdAndFeatureId(long userId, long featureId);
 
 	
 
-	List<CommonRole> findAllByIdNotIn(List<Long> ids);
+	
 
 }

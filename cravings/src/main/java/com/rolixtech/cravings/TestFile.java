@@ -1,31 +1,61 @@
 package com.rolixtech.cravings;
-
-import java.util.*;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.rolixtech.cravings.module.generic.services.GenericUtility;
-
-import java.lang.*;
 import java.io.*;
+import java.math.*;
+import java.security.*;
+import java.text.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.regex.*;
+import java.util.stream.*;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
-class TestFile
+class Result {
 
-{
-	
-	@Autowired 
-	private static GenericUtility utitlity;
-	
-	
-	public static void main (String[] args) throws java.lang.Exception
-	{
-		
-		System.out.println(utitlity.distanceCalculate(31.451911300783454, 74.26635672455583, 31.43642210, 74.26879316, 'k'));
-//		System.out.println(distance(31.451911300783454, -74.26635672455583, 31.461030198227387, -74.26034809711437));
-//		System.out.println(distance(31.451911300783454, -74.26635672455583, 31.470312399815075, -74.25203367317675));
-//		//System.out.println(distance(31.451911300783454, -74.26635672455583, 31.461030198227387, -74.26034809711437, "N") + " Nautical Miles\n");
-	}
+    /*
+     * Complete the 'diagonalDifference' function below.
+     *
+     * The function is expected to return an INTEGER.
+     * The function accepts 2D_INTEGER_ARRAY arr as parameter.
+     */
 
-	
+	public static int chocolateFeast(int n, int c, int m) {
+	    // Initialize bars with money
+	    int countBars = n / c;
+	    // Initial bars = wrappers
+	    int wrappers = countBars;
 
+	    while (wrappers >= m) {
+	        // Exchange bars with wrappers
+	        int bars = wrappers / m;
+
+	        countBars += bars;
+
+	        // Calculate wrappers with exchange bars and leave wrappers
+	        wrappers -= (bars * m);
+	        wrappers += bars;
+	    }
+
+	    return countBars;
+	}   
+
+}
+
+public class TestFile {
+    public static void main(String[] args) throws IOException {
+    	
+
+
+
+       System.out.println(Result.chocolateFeast(15,3,2));
+        
+        
+
+//        bufferedWriter.write(String.valueOf(result));
+//        bufferedWriter.newLine();
+//
+//        bufferedReader.close();
+//        bufferedWriter.close();
+    }
 }

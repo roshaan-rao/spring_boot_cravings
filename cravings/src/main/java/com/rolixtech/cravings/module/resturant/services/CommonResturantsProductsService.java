@@ -24,6 +24,7 @@ import com.rolixtech.cravings.module.resturant.dao.CommonResturantsDao;
 import com.rolixtech.cravings.module.resturant.dao.CommonResturantsProductsDao;
 import com.rolixtech.cravings.module.resturant.model.CommonResturants;
 import com.rolixtech.cravings.module.resturant.model.CommonResturantsProducts;
+import com.rolixtech.cravings.module.resturant.model.CommonResturantsProductsAddOnDetail;
 
 @Service
 public class CommonResturantsProductsService {
@@ -177,11 +178,11 @@ public class CommonResturantsProductsService {
 	
 		List<CommonResturantsProducts> Products=new ArrayList<>();
 		if(recordId!=0) {
-			CommonResturantsProducts Product=ResturantsProductsDao.findByIdAndIsActiveAndIsDeleted(recordId,1,0);
+			CommonResturantsProducts Product=ResturantsProductsDao.findByIdAndIsAvailableAndIsDeleted(recordId,1,0);
 			Products.add(Product);
 			
 		}else {
-			Products=ResturantsProductsDao.findAllByResturantIdAndResturantCategoryIdAndIsExtraAndIsActiveAndIsDeleted(resturantId,resturantCategoryId,0,1,0);
+			Products=ResturantsProductsDao.findAllByResturantIdAndResturantCategoryIdAndIsExtraAndIsAvailableAndIsDeleted(resturantId,resturantCategoryId,0,1,0);
 		}		
 				
 				
@@ -202,13 +203,13 @@ public class CommonResturantsProductsService {
 						Row.put("netAmount", Product.getNetAmount());
 						Row.put("discount", Product.getDiscount());
 						Row.put("rate", Product.getRate());
-						//Row.put("isTimingEnable", Product.getIsTimingEnable());
 						
 						if(Product.getIsTimingEnable()==0) {
 							Row.put("isTimingEnable", Product.getIsActive());
 							Row.put("isTimingEnableLable", "No");
 							Row.put("availabilityFrom", "");
 							Row.put("availabilityTo", "");
+							Row.put("isClosed", "false");
 							
 						}else {
 							Row.put("isTimingEnable", Product.getIsActive());
@@ -229,36 +230,8 @@ public class CommonResturantsProductsService {
 							
 							Row.put("availabilityTo", DateUtils.addHours(Product.getAvailabilityTo(), 5).getTime());
 							
-//							try { 
-//								Row.put("availabilityToDisplay", utility.millisecondstoTime(DateUtils.addHours(Product.getAvailabilityTo(), 5).getTime()));
-//							} catch (ParseException e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//								Row.put("availabilityToDisplay", "00:00:00");
-//								
-//							}
-							
-//							Row.put("availabilityFrom", DateUtils.addHours(Product.getAvailabilityFrom(), 5).getTime());
-//							
-//							try { 
-//								Row.put("availabilityFromDisplay", utility.millisecondstoTime(DateUtils.addHours(Product.getAvailabilityFrom(), 5).getTime()));
-//							} catch (ParseException e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//								Row.put("availabilityFromDisplay", "00:00:00");
-//								
-//							}
-//							
-//							Row.put("availabilityTo", DateUtils.addHours(Product.getAvailabilityTo(), 5).getTime());
-//							
-//							try { 
-//								Row.put("availabilityToDisplay", utility.millisecondstoTime(DateUtils.addHours(Product.getAvailabilityTo(), 5).getTime()));
-//							} catch (ParseException e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//								Row.put("availabilityToDisplay", "00:00:00");
-//								
-//							}
+//							Row.put("isClosed", getIsClosedTimingsByProductId(Product.getId()));
+							Row.put("isClosed","false");
 						}
 						
 						
@@ -283,7 +256,8 @@ public class CommonResturantsProductsService {
 							Row.put("isExtra",Product.getIsExtra());
 							 
 							
-						}						
+						}	
+						
 						list.add(ResturantsService.getBasicChargesDetailByResturant(Row,Product.getResturantId()));
 				}
 				
@@ -407,7 +381,8 @@ public class CommonResturantsProductsService {
 							Row.put("isExtra",Product.getIsExtra());
 							 
 							
-						}						
+						}
+						Row.put("isClosed", "false");
 						list.add(Row);
 				}
 				
@@ -434,7 +409,8 @@ public class CommonResturantsProductsService {
 				
 					Map Row=new HashMap<>();
 					Row.put("id", Product.getId());
-					Row.put("label",Product.getLabel());						
+					Row.put("label",Product.getLabel());	
+					Row.put("price",Product.getRate());	
 					list.add(Row);
 				}
 				
@@ -462,6 +438,7 @@ public class CommonResturantsProductsService {
 					Row.put("productId", Product.getId());
 					Row.put("productLabel","Normal - "+Product.getLabel());
 					Row.put("price",Product.getGrossAmount());
+					
 					listProducts.add(Row);
 				}
 				
@@ -488,6 +465,23 @@ public class CommonResturantsProductsService {
 			listAllProducts.addAll(listExtraProducts);
 		}
 		
+		
+		
+		return listAllProducts;
+		
+	}
+	
+	
+	
+	public List<Map> specificProductaddOnDropDownView(long productId) {
+
+		List<Map> listAllProducts=new ArrayList<>();
+		List<Map> listProducts=new ArrayList<>();
+		
+		List<Long> addOnIds=ProductsAddOnService.getProductsAddOnIdByProductId(productId);
+		if(!addOnIds.isEmpty()) {
+			listAllProducts=ProductsAddOnService.getProductsAddOnDetailByProductId(addOnIds);
+		}
 		
 		
 		return listAllProducts;
@@ -532,7 +526,7 @@ public class CommonResturantsProductsService {
 		
 		List<CommonResturantsProducts> Products=new ArrayList<>();
 		if(resturantId!=0) {
-			Products=ResturantsProductsDao.findAllByResturantIdAndResturantCategoryIdAndIsExtraAndIsActiveAndIsDeleted(resturantId,resturantCategoryId,0,1,0);
+			Products=ResturantsProductsDao.findAllByResturantIdAndResturantCategoryIdAndIsExtraAndIsAvailableAndIsDeleted(resturantId,resturantCategoryId,0,1,0);
 			
 		}		
 				
@@ -604,7 +598,8 @@ public class CommonResturantsProductsService {
 							Row.put("isExtra",Product.getIsExtra());
 							 
 							
-						}						
+						}	
+						Row.put("isClosed", "false");
 						list.add(Row);
 				}
 				
@@ -650,7 +645,7 @@ public class CommonResturantsProductsService {
 	
 		List<CommonResturantsProducts> Products=new ArrayList<>();
 		if(recordId!=0) {
-			CommonResturantsProducts Product=ResturantsProductsDao.findByIdAndIsActiveAndIsDeleted(recordId,1,0);
+			CommonResturantsProducts Product=ResturantsProductsDao.findByIdAndIsAvailableAndIsDeleted(recordId,1,0);
 			if(Product!=null) {
 				Products.add(Product);
 			}
@@ -702,8 +697,8 @@ public class CommonResturantsProductsService {
 							}
 							
 							Row.put("availabilityTo", DateUtils.addHours(Product.getAvailabilityTo(), 5).getTime());
-							
-//						
+							Row.put("isClosed","false");
+							//Row.put("isClosed", getIsClosedTimingsByProductId(Product.getId()));
 						}
 						
 						
@@ -728,7 +723,8 @@ public class CommonResturantsProductsService {
 							Row.put("isExtra",Product.getIsExtra());
 							 
 							
-						}						
+						}
+						//Row.put("isClosed", "false");
 						list.add(ResturantsService.getBasicChargesDetailByResturant(Row,Product.getResturantId()));
 				}
 				
@@ -866,6 +862,26 @@ public class CommonResturantsProductsService {
 	public List<CommonResturantsProducts> findAllByLabelContainingAndIsActiveAndIsDeleted(String keyword, int i,int j) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+	public double getProuctRateByProductId(long productId) {
+		double productPrice=0;
+		CommonResturantsProducts ResturantsProducts=ResturantsProductsDao.findById(productId);
+		if(ResturantsProducts!=null) {
+			productPrice=ResturantsProducts.getRate();
+		}
+		return productPrice;
+	} 
+	
+	
+	public String getIsClosedTimingsByProductId(long productId) {
+		String isClosed="true";
+		CommonResturantsProducts ResturantsProducts=ResturantsProductsDao.findByIdAndIsAvailableAndIsDeletedAndCurrentDateBetweenAvailabilityFromAndAvailabilityTo(productId, 1, 0);
+		if(ResturantsProducts!=null) {
+			isClosed="false";
+		}
+		return isClosed;
 	} 
 
 	

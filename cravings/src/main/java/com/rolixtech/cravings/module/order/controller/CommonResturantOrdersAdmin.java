@@ -51,10 +51,37 @@ public class CommonResturantOrdersAdmin {
 	private GenericUtility utility;
 	//consumes
 	
+	@RequestMapping(value=CONTROLLER_URL+"/save",consumes ="application/json" )
+	public ResponseEntity<?> Save(@RequestBody OrderPOJO order, @RequestHeader("authorization") String token)  { 
+    	 long UserId=utility.getUserIDByToken(token);
+			ResponseEntityOutput response=new ResponseEntityOutput();
+			Map map=new HashMap<>();
+			
+			try {
+				
+
+				response.CODE="1";
+				response.USER_MESSAGE="Order has been placed Successfully";
+				response.SYSTEM_MESSAGE="";
+				OrdersService.SaveAdmin(order,UserId);
+			
+			}
+
+			catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				response.CODE="2";
+				response.USER_MESSAGE="Error";
+				response.SYSTEM_MESSAGE=e.toString();
+				
+			}
+			
+			
+			return ResponseEntity.ok(response);
+	}
     
-    
-    @GetMapping(value=CONTROLLER_URL+"/active/view" )
-   	public ResponseEntity<?> ActiveAllView(@RequestHeader("authorization") String token)  { 
+    @PostMapping(value=CONTROLLER_URL+"/active/view" )
+   	public ResponseEntity<?> ActiveAllView(@RequestParam(name="orderStatusIds",required = false)  Long[] orderStatusIds, @RequestHeader("authorization") String token)  { 
        	    long UserId=utility.getUserIDByToken(token);
    			ResponseEntityOutput response=new ResponseEntityOutput();
    			Map map=new HashMap<>();
@@ -65,7 +92,7 @@ public class CommonResturantOrdersAdmin {
    				response.CODE="1";
    				response.USER_MESSAGE="Success";
    				response.SYSTEM_MESSAGE="";
-   				response.DATA= OrdersService.getAllActiveOrders();
+   				response.DATA= OrdersService.getAllActiveOrders(orderStatusIds);
    			
    			}
 
@@ -153,7 +180,7 @@ public class CommonResturantOrdersAdmin {
 				response.CODE="1";
 				response.USER_MESSAGE="Success";
 				response.SYSTEM_MESSAGE="";
-				response.DATA= OrdersStatusService.getAll();
+				response.DATA= OrdersStatusService.getAllAdmin();
 			
 			}
 

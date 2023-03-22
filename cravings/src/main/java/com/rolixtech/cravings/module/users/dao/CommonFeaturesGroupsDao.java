@@ -12,12 +12,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
 import org.springframework.stereotype.Repository;
 
-import com.rolixtech.cravings.module.users.models.CommonUsersAddress;
+import com.rolixtech.cravings.module.users.models.CommonFeatures;
+import com.rolixtech.cravings.module.users.models.CommonFeaturesGroups;
+import com.rolixtech.cravings.module.users.models.CommonRole;
+import com.rolixtech.cravings.module.users.models.CommonUsers;
 
 @Repository
-public interface CommonUsersAddressDao extends JpaRepository<CommonUsersAddress, Long>  {
+public interface CommonFeaturesGroupsDao extends JpaRepository<CommonFeaturesGroups, Long>  {
 
-	CommonUsersAddress findByUserId(long id);
+	CommonFeaturesGroups findById(long Id);
 
 	
 

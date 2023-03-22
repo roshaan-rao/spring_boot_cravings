@@ -102,6 +102,18 @@ public class CommonUsersResturantsService {
 	}
 	
 	
+	public long getUserIdByResturantId(long id) {
+		long UserId=0l;
+		CommonUsersResturants ResturantsUser=UsersResturantsDao.findByResturantId(id);
+		if(ResturantsUser!=null) {
+			UserId=ResturantsUser.getUserId();
+		}
+				
+		return UserId;
+		
+	}
+	
+	
 
 
 	

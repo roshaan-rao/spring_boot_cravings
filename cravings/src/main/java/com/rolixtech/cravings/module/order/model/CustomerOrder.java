@@ -40,10 +40,10 @@ public class CustomerOrder {
 	private int deliveryTime;
 	private double serviceFee;
 	private String instructions;
-	private String remarks;
-	private Long remarksAddedBy;
-	private Date remarksAddedOn;
 	private long voucherId;
+	private Integer isHelpRequired;
+	private Integer isAdmin;
+	private Long orderCreatedByAdminId;
 
 	
 	public long getId() {
@@ -154,29 +154,34 @@ public class CustomerOrder {
 	public void setInstructions(String instructions) {
 		this.instructions = instructions;
 	}
-	public Long getRemarksAddedBy() {
-		return remarksAddedBy;
-	}
-	public void setRemarksAddedBy(Long remarksAddedBy) {
-		this.remarksAddedBy = remarksAddedBy;
-	}
-	public Date getRemarksAddedOn() {
-		return remarksAddedOn;
-	}
-	public void setRemarksAddedOn(Date remarksAddedOn) {
-		this.remarksAddedOn = remarksAddedOn;
-	}
-	public String getRemarks() {
-		return remarks;
-	}
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
+	
 	public long getVoucherId() {
 		return voucherId;
 	}
 	public void setVoucherId(long voucherId) {
 		this.voucherId = voucherId;
+	}
+	
+	
+	public Integer getIsHelpRequired() {
+		return isHelpRequired;
+	}
+	public void setIsHelpRequired(Integer isHelpRequired) {
+		this.isHelpRequired = isHelpRequired;
+	}
+	public Integer getIsAdmin() {
+		return isAdmin;
+	}
+	public void setIsAdmin(Integer isAdmin) {
+		this.isAdmin = isAdmin;
+	}
+	
+	
+	public Long getOrderCreatedByAdminId() {
+		return orderCreatedByAdminId;
+	}
+	public void setOrderCreatedByAdminId(Long orderCreatedByAdminId) {
+		this.orderCreatedByAdminId = orderCreatedByAdminId;
 	}
 	@Override
 	public String toString() {
@@ -186,9 +191,10 @@ public class CustomerOrder {
 				+ orderStatusChangedBy + ", orderStatusChangedOn=" + orderStatusChangedOn + ", subtotal=" + subtotal
 				+ ", deliveryFee=" + deliveryFee + ", discount=" + discount + ", totalGstPercentage="
 				+ totalGstPercentage + ", deliveryTime=" + deliveryTime + ", serviceFee=" + serviceFee
-				+ ", instructions=" + instructions + ", remarks=" + remarks + ", remarksAddedBy=" + remarksAddedBy
-				+ ", remarksAddedOn=" + remarksAddedOn + ", voucherId=" + voucherId + "]";
+				+ ", instructions=" + instructions + ", voucherId=" + voucherId + ", isHelpRequired=" + isHelpRequired
+				+ ", isAdmin=" + isAdmin + ", orderCreatedByAdminId=" + orderCreatedByAdminId + "]";
 	}
+	
 	
 	
 }

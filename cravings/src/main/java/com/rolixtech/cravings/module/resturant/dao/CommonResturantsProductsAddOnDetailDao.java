@@ -25,4 +25,8 @@ public interface CommonResturantsProductsAddOnDetailDao extends JpaRepository<Co
 
 	
 
+	List<CommonResturantsProductsAddOnDetail> findAllByProductAddOnIdIn(List<Long> addonIds);
+
+	
+
 }

@@ -72,33 +72,33 @@ public class CommonUsersCustomerController {
     
     
     
-    @PostMapping(CONTROLLER_URL+"/view")
-	public ResponseEntity<?> View(String recordId,@RequestHeader("authorization") String token)  { 
-			
-			ResponseEntityOutput response=new ResponseEntityOutput();
-			Map map=new HashMap<>();
-			
-			try {
-				
-				response.CODE="1";
-				response.USER_MESSAGE="";
-				response.SYSTEM_MESSAGE="";
-				response.DATA=UsersService.findAllUsers(Long.parseLong(recordId));
-			
-			}
-
-			catch (Exception e) {
-				// TODO: handle exception
-				e.printStackTrace();
-				response.CODE="2";
-				response.USER_MESSAGE=e.getMessage();
-				response.SYSTEM_MESSAGE=e.toString();
-				
-			}
-			
-			
-			return ResponseEntity.ok(response);
-	}
+//    @PostMapping(CONTROLLER_URL+"/view")
+//	public ResponseEntity<?> View(String recordId,@RequestHeader("authorization") String token)  { 
+//			
+//			ResponseEntityOutput response=new ResponseEntityOutput();
+//			Map map=new HashMap<>();
+//			
+//			try {
+//				
+//				response.CODE="1";
+//				response.USER_MESSAGE="";
+//				response.SYSTEM_MESSAGE="";
+//				response.DATA=UsersService.findAllUsers(Long.parseLong(recordId));
+//			
+//			}
+//
+//			catch (Exception e) {
+//				// TODO: handle exception
+//				e.printStackTrace();
+//				response.CODE="2";
+//				response.USER_MESSAGE=e.getMessage();
+//				response.SYSTEM_MESSAGE=e.toString();
+//				
+//			}
+//			
+//			
+//			return ResponseEntity.ok(response);
+//	}
     
     
     @GetMapping(CONTROLLER_URL+"/resturantRole/view")
@@ -253,7 +253,7 @@ public class CommonUsersCustomerController {
    				response.CODE="1";
    				response.USER_MESSAGE="Saved";
    				response.SYSTEM_MESSAGE="";
-   				UsersService.updateProfileImage((UserID),profileImage);
+   				response.DATA= UsersService.updateProfileImage((UserID),profileImage);
    			
    			}
 

@@ -15,10 +15,10 @@ public class CommonFeatures {
 	private long id;
 	private String label;
 	private int isVisible;
-	private int shortCode;
+	private String shortCode;
 	private String url;
 	private int sortOrder;
-	private int groupId;
+	private long groupId;
 	public long getId() {
 		return id;
 	}
@@ -37,10 +37,10 @@ public class CommonFeatures {
 	public void setIsVisible(int isVisible) {
 		this.isVisible = isVisible;
 	}
-	public int getShortCode() {
+	public String getShortCode() {
 		return shortCode;
 	}
-	public void setShortCode(int shortCode) {
+	public void setShortCode(String shortCode) {
 		this.shortCode = shortCode;
 	}
 	public String getUrl() {
@@ -55,10 +55,10 @@ public class CommonFeatures {
 	public void setSortOrder(int sortOrder) {
 		this.sortOrder = sortOrder;
 	}
-	public int getGroupId() {
+	public long getGroupId() {
 		return groupId;
 	}
-	public void setGroupId(int groupId) {
+	public void setGroupId(long groupId) {
 		this.groupId = groupId;
 	}
 	@Override

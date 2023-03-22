@@ -117,6 +117,8 @@ public class CommonUsersFavProductsService {
 								}
 								
 								Row.put("availabilityTo", DateUtils.addHours(Product.getAvailabilityTo(), 5).getTime());
+								Row.put("isClosed","false");
+								//Row.put("isClosed",ResturantsProductsService.getIsClosedTimingsByProductId(Product.getId()));
 								
 							}
 							

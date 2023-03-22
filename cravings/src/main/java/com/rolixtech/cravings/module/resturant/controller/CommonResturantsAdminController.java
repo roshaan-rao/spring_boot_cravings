@@ -29,6 +29,7 @@ import com.rolixtech.cravings.module.auth.model.JwtRequest;
 import com.rolixtech.cravings.module.auth.model.ResponseEntityOutput;
 import com.rolixtech.cravings.module.generic.services.GenericUtility;
 import com.rolixtech.cravings.module.resturant.services.CommonCategoriesService;
+import com.rolixtech.cravings.module.resturant.services.CommonResturantsProductsService;
 import com.rolixtech.cravings.module.resturant.services.CommonResturantsService;
 import com.rolixtech.cravings.module.users.dao.CommonUsersDao;
 import com.rolixtech.cravings.module.users.services.CommonUsersService;
@@ -43,6 +44,9 @@ public class CommonResturantsAdminController {
 	@Autowired
 	private CommonResturantsService ResturantsService;
 	
+	@Autowired
+	private CommonResturantsProductsService ResturantsProductsService;
+	
 
 	@Autowired
 	private GenericUtility utility;
@@ -50,7 +54,7 @@ public class CommonResturantsAdminController {
     @PostMapping(CONTROLLER_URL+"/register")
 	public ResponseEntity<?> Save(String recordId,Long userId,String label,String address,Long countryId,Long provinceId,Long cityId,Double lat,Double lng,Double accuracy,@RequestParam(name ="logo_img_url") MultipartFile logoImg,
 			@RequestParam(name ="profile_img_url") MultipartFile profileImg ,@RequestParam(name ="banner_img_url") MultipartFile bannerImg,Long dayId[], @DateTimeFormat(pattern="HH:mm") Date openTimings[],@DateTimeFormat(pattern="HH:mm") Date closeTimings[],String contactNo,String email,Integer isActive,
-			Integer isGst,Double gstPercentage,Double deliveryCharges,String contactNo2,String contactNo3,String contactNo4,@RequestHeader("authorization") String token)  { 
+			Integer isGst,Double gstPercentage,Double deliveryCharges,String contactNo2,String contactNo3,String contactNo4,Integer deliveryTime,Double discount,@RequestHeader("authorization") String token)  { 
     		long AdminUserId=utility.getUserIDByToken(token);
     	
 			ResponseEntityOutput response=new ResponseEntityOutput();
@@ -61,7 +65,7 @@ public class CommonResturantsAdminController {
 				response.CODE="1";
 				response.USER_MESSAGE="";
 				response.SYSTEM_MESSAGE="Saved";
-				ResturantsService.saveResturantAdmin(Long.parseLong(recordId),userId.longValue(),label,address,(countryId).longValue(),(provinceId).longValue(),(cityId).longValue(),lat.doubleValue(),lng.doubleValue(),accuracy.doubleValue(),logoImg,profileImg,bannerImg,utility.toPrimitives(dayId),openTimings,closeTimings,contactNo,email,utility.parseInt(isActive),utility.parseInt(isGst),utility.parseDouble(gstPercentage),utility.parseDouble(deliveryCharges), contactNo2, contactNo3, contactNo4,AdminUserId);	
+				ResturantsService.saveResturantAdmin(Long.parseLong(recordId),userId.longValue(),label,address,(countryId).longValue(),(provinceId).longValue(),(cityId).longValue(),lat.doubleValue(),lng.doubleValue(),accuracy.doubleValue(),logoImg,profileImg,bannerImg,utility.toPrimitives(dayId),openTimings,closeTimings,contactNo,email,utility.parseInt(isActive),utility.parseInt(isGst),utility.parseDouble(gstPercentage),utility.parseDouble(deliveryCharges), contactNo2, contactNo3, contactNo4,utility.parseInt(deliveryTime) ,utility.parseDouble(discount) ,AdminUserId);	
 				
 			
 			}
@@ -205,7 +209,159 @@ public class CommonResturantsAdminController {
     
    
     
-   
+    @GetMapping(CONTROLLER_URL+"/existing-resturants/drop-down")
+   	public ResponseEntity<?> Save(@RequestHeader("authorization") String token)  { 
+       		long UserId=utility.getUserIDByToken(token);
+       	
+   			ResponseEntityOutput response=new ResponseEntityOutput();
+   			Map map=new HashMap<>();
+   			
+   			try {
+   				
+   				response.CODE="1";
+   				response.USER_MESSAGE="";
+   				response.SYSTEM_MESSAGE="Success";
+   				response.DATA=ResturantsService.viewDropDown();	
+   				
+   			
+   			}
+
+   			catch (Exception e) {
+   				// TODO: handle exception
+   				e.printStackTrace();
+   				response.CODE="2";
+   				response.USER_MESSAGE="Error";
+   				response.SYSTEM_MESSAGE=e.toString();
+   				
+   			}
+   			
+   			
+   			return ResponseEntity.ok(response);
+   	}
+    
+    @PostMapping(CONTROLLER_URL+"/existing-resturants/view")
+   	public ResponseEntity<?> Save(Long recordId,@RequestHeader("authorization") String token)  { 
+       		long UserId=utility.getUserIDByToken(token);
+       	
+   			ResponseEntityOutput response=new ResponseEntityOutput();
+   			Map map=new HashMap<>();
+   			
+   			try {
+   				
+   				response.CODE="1";
+   				response.USER_MESSAGE="";
+   				response.SYSTEM_MESSAGE="Success";
+   				response.DATA=ResturantsService.viewSingleResturant(utility.parseLong(recordId));	
+   				
+   			
+   			}
+
+   			catch (Exception e) {
+   				// TODO: handle exception
+   				e.printStackTrace();
+   				response.CODE="2";
+   				response.USER_MESSAGE="Error";
+   				response.SYSTEM_MESSAGE=e.toString();
+   				
+   			}
+   			
+   			
+   			return ResponseEntity.ok(response);
+   	}
+    
+    
+    @PostMapping(CONTROLLER_URL+"/products/drop-down/view")
+   	public ResponseEntity<?> View(Long resturantId,@RequestHeader("authorization") String token)  { 
+       		long UserId=utility.getUserIDByToken(token);
+       	
+   			ResponseEntityOutput response=new ResponseEntityOutput();
+   			Map map=new HashMap<>();
+   			
+   			try {
+   				
+   				response.CODE="1";
+   				response.USER_MESSAGE="";
+   				response.SYSTEM_MESSAGE="Success";
+   				response.DATA=ResturantsProductsService.dropDownView(resturantId.longValue());	
+   				
+   			
+   			}
+
+   			catch (Exception e) {
+   				// TODO: handle exception
+   				e.printStackTrace();
+   				response.CODE="2";
+   				response.USER_MESSAGE="Error";
+   				response.SYSTEM_MESSAGE=e.toString();
+   				
+   			}
+   			
+   			
+   			return ResponseEntity.ok(response);
+   	}
+    
+    @PostMapping(CONTROLLER_URL+"/products/add-on/drop-down/view")
+   	public ResponseEntity<?> viewProductsSpecificAddOn(Long productId,@RequestHeader("authorization") String token)  { 
+       		long UserId=utility.getUserIDByToken(token);
+       	
+   			ResponseEntityOutput response=new ResponseEntityOutput();
+   			Map map=new HashMap<>();
+   			
+   			try {
+   				
+   				response.CODE="1";
+   				response.USER_MESSAGE="";
+   				response.SYSTEM_MESSAGE="Success";
+   				response.DATA=ResturantsProductsService.specificProductaddOnDropDownView(utility.parseLong(productId));	
+   				
+   			
+   			}
+
+   			catch (Exception e) {
+   				// TODO: handle exception
+   				e.printStackTrace();
+   				response.CODE="2";
+   				response.USER_MESSAGE="Error";
+   				response.SYSTEM_MESSAGE=e.toString();
+   				
+   			}
+   			
+   			
+   			return ResponseEntity.ok(response);
+   	}
+    
+    @PostMapping(CONTROLLER_URL+"/add-on/drop-down/view")
+   	public ResponseEntity<?> viewProductsForAddOn(Long resturantId,@RequestHeader("authorization") String token)  { 
+       		long UserId=utility.getUserIDByToken(token);
+       	
+   			ResponseEntityOutput response=new ResponseEntityOutput();
+   			Map map=new HashMap<>();
+   			
+   			try {
+   				
+   				response.CODE="1";
+   				response.USER_MESSAGE="";
+   				response.SYSTEM_MESSAGE="Success";
+   				response.DATA=ResturantsProductsService.addOnDropDownView(resturantId.longValue());	
+   				
+   			
+   			}
+
+   			catch (Exception e) {
+   				// TODO: handle exception
+   				e.printStackTrace();
+   				response.CODE="2";
+   				response.USER_MESSAGE="Error";
+   				response.SYSTEM_MESSAGE=e.toString();
+   				
+   			}
+   			
+   			
+   			return ResponseEntity.ok(response);
+   	}
+    
+    
+    
 	 
 	 
 }

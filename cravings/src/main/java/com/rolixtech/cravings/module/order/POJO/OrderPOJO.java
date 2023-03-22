@@ -34,6 +34,8 @@ public class OrderPOJO {
 	private double serviceFee;
 	private String instructions;
 	private long voucherId;
+	private Integer isAdmin; 
+	
 	
 	
 	private OrderAddressPOJO address;
@@ -126,8 +128,12 @@ public class OrderPOJO {
 		this.instructions = instructions;
 	}
 	
-	
-	
+	public Integer getIsAdmin() {
+		return isAdmin;
+	}
+	public void setIsAdmin(Integer isAdmin) {
+		this.isAdmin = isAdmin;
+	}
 	public long getVoucherId() {
 		return voucherId;
 	}
@@ -140,7 +146,8 @@ public class OrderPOJO {
 				+ ", totalGstPercentage=" + totalGstPercentage + ", deliveryTime=" + deliveryTime + ", orderType="
 				+ orderType + ", userId=" + userId + ", subtotal=" + subtotal + ", deliveryFee=" + deliveryFee
 				+ ", discount=" + discount + ", serviceFee=" + serviceFee + ", instructions=" + instructions
-				+ ", voucherId=" + voucherId + ", address=" + address + ", products=" + products + "]";
+				+ ", voucherId=" + voucherId + ", isAdmin=" + isAdmin + ", address=" + address + ", products="
+				+ products + "]";
 	}
 	
 	

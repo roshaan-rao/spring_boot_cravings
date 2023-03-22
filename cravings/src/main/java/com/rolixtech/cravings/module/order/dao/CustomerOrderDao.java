@@ -3,7 +3,9 @@ package com.rolixtech.cravings.module.order.dao;
 import java.util.Date;
 import java.util.List;
 
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -40,14 +42,14 @@ public interface CustomerOrderDao extends JpaRepository<CustomerOrder, Long>  {
 	
 
 	@Query(value="SELECT * FROM customer_order  where order_status_id >?1 and order_status_id not in (?2) order by id desc",nativeQuery = true)
-	List<CustomerOrder> findAllByOrderStatusIdGreaterThanOrderAndOrderStatusIdNotByIdDesc(long l,List<Integer> statusIdNotIn);
+	List<CustomerOrder> findAllByOrderStatusIdGreaterThanOrderAndOrderStatusIdNotByIdDesc(long l,List<Long> statusIdNotIn);
 
 	List<CustomerOrder> findAllByUserIdAndOrderStatusIdIn(long userId, List<Long> statusIds);
 	
 	/*
 	 * LIMIT 1 Added on 08/Feb/2023
 	 * **/
-	@Query(value="SELECT * FROM customer_order  where order_status_id >?1 and order_status_id not in (?2) and user_id=?3 order by id desc limit 1",nativeQuery = true)
+	@Query(value="SELECT * FROM customer_order  where order_status_id >?1 and order_status_id not in (?2) and user_id=?3 order by id desc",nativeQuery = true)
 	List<CustomerOrder> findAllByOrderStatusIdGreaterThanOrderAndOrderStatusIdNotInAndUserIdOrderByIdDesc(long l,List<Long> statusIdNotIn,long userId);
 
 	
@@ -57,6 +59,23 @@ public interface CustomerOrderDao extends JpaRepository<CustomerOrder, Long>  {
 	
 	@Query(value="SELECT datediff(?1,?2) ;",nativeQuery = true)
 	Integer findDateDiffByOrderDeliveryTimeAndCurrentDate(String dilveryDateTime,String current);
+
+	
+
+	List<CustomerOrder> findAllByOrderStatusIdAndResturantIdOrderByIdDesc(long l, long resturantId);
+
+	List<CustomerOrder> findAllByOrderStatusIdInAndResturantIdOrderByIdDesc(List<Long> orderStatuslist,
+			long resturantId);
+
+	@Modifying
+	@Query(value="update customer_order set is_help_required=1 where id=?1",nativeQuery = true)
+	void UpdateIsHelpRequiredById(long i);
+
+	@Query(value="SELECT * FROM customer_order  where order_status_id in (?1) order by id desc",nativeQuery = true)
+	List<CustomerOrder> findAllByOrderStatusIdInOrderByIdDesc(List<Long> orderStatusIds);
+
+	@Query(value="SELECT * FROM customer_order  where order_status_id in (?1) and resturant_id=?2 and created_on between STR_TO_DATE(CONCAT(CURDATE(), '00:00:00'), '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(CONCAT(CURDATE(), '23:59:00'), '%Y-%m-%d %H:%i:%s') order by id desc",nativeQuery = true)
+	List<CustomerOrder> findAllByOrderStatusIdInAndResturantIdAndCreatedOnBetween24hrsOrderByIdDesc(List<Long> orderStatuslist, long resturantId);
 
 
 }

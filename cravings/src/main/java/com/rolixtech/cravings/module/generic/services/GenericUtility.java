@@ -5,6 +5,8 @@ import java.text.DateFormat;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -53,6 +55,15 @@ public class GenericUtility  {
         return cal.getTime();
     }
 
+    
+    
+    public static int getDayNumberOfWeekCurrentDate() {
+        LocalDate date = LocalDate.now(); // get the current date
+        DayOfWeek dayOfWeek = date.getDayOfWeek(); // get the day of the week
+        int dayNumber = dayOfWeek.getValue(); // get the day number from the week
+        return dayNumber;
+        
+    }
 	
 	public   long getUserIDByToken(String token) {
 		long UserID=0;

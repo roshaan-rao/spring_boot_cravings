@@ -14,7 +14,11 @@ public class CommonFeaturesGroups {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;
 	private String label;
-	private int isActive;
+	private String iconClass;
+	private String iconName;
+	private String ariaLabel;
+	
+	
 	
 	public long getId() {
 		return id;
@@ -36,22 +40,44 @@ public class CommonFeaturesGroups {
 	}
 
 
-	public int getIsActive() {
-		return isActive;
+	public String getIconClass() {
+		return iconClass;
 	}
 
 
-	public void setIsActive(int isActive) {
-		this.isActive = isActive;
+	public void setIconClass(String iconClass) {
+		this.iconClass = iconClass;
+	}
+
+
+	public String getAriaLabel() {
+		return ariaLabel;
+	}
+
+
+	public void setAriaLabel(String ariaLabel) {
+		this.ariaLabel = ariaLabel;
+	}
+
+
+	public String getIconName() {
+		return iconName;
+	}
+
+
+	public void setIconName(String iconName) {
+		this.iconName = iconName;
 	}
 
 
 	@Override
 	public String toString() {
-		return "CommonFeaturesGroups [id=" + id + ", label=" + label + ", isActive=" + isActive + "]";
+		return "CommonFeaturesGroups [id=" + id + ", label=" + label + ", iconClass=" + iconClass + ", iconName="
+				+ iconName + ", ariaLabel=" + ariaLabel + "]";
 	}
 
 
+	
 	
 	 
 	

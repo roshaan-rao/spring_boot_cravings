@@ -138,6 +138,26 @@ public class CommonResturantsProductsAddOnService {
 		return list;
 	}
 	
+	
+	
+	public List<Long> getProductsAddOnIdByProductId(long productId){
+		
+		List<Long> list=new ArrayList<>();
+		List<CommonResturantsProductsAddOn> ProductsAddOns=ProductsAddODao.findAllByProductIdAndIsDeleted(productId,0);
+		if(!ProductsAddOns.isEmpty()) {
+			ProductsAddOns.stream().forEach(
+					ProductsAddOn->{
+					
+					
+					list.add(ProductsAddOn.getId());
+				}
+			
+			);
+		}
+		
+		return list;
+	}
+	
 	public List<Map> getProductsAddOnDetail(long id){
 		
 		List<Map> list=new ArrayList<>();
@@ -146,11 +166,14 @@ public class CommonResturantsProductsAddOnService {
 			ProductsAddOnsDetails.stream().forEach(
 					detail->{
 					Map Row=new HashMap<>();
+					
 					Row.put("id", detail.getId());
+					
 					Row.put("productId", detail.getProductId());
 					Row.put("productLabel",ProductsService.findLabelById(detail.getProductId()));
 					Row.put("ProductsAddOnId",detail.getProductAddOnId());
-					Row.put("price",detail.getPrice());
+					double price=ProductsService.getProuctRateByProductId(detail.getProductId());
+					Row.put("price",price);
 					list.add(Row);
 				}
 			
@@ -160,6 +183,27 @@ public class CommonResturantsProductsAddOnService {
 		return list;
 	}
 	
+	
+	public List<Map> getProductsAddOnDetailByProductId(List<Long> addonIds){
+		
+		List<Map> list=new ArrayList<>();
+		List<CommonResturantsProductsAddOnDetail> ProductsAddOnsDetails=ProductsAddODaoDetail.findAllByProductAddOnIdIn(addonIds);
+		if(!ProductsAddOnsDetails.isEmpty()) {
+			ProductsAddOnsDetails.stream().forEach(
+					detail->{ 
+					Map Row=new HashMap<>();
+					Row.put("productId", detail.getProductId());
+					Row.put("productLabel",ProductsService.findLabelById(detail.getProductId()));
+					double price=ProductsService.getProuctRateByProductId(detail.getProductId());
+					Row.put("price",price);
+					list.add(Row);
+				}
+			
+			);
+		}
+		
+		return list;
+	}
 	
 	public List<Map> getProductAddOnGroup(long id){
 		

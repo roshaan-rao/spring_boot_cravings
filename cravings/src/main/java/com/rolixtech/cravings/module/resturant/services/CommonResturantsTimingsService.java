@@ -121,21 +121,39 @@ public class CommonResturantsTimingsService {
 	}
 	
 	
-	public Integer checkResturantOpenStatus(long resturantId){
+	public String checkResturantOpenStatus(long resturantId){
 		
-		Integer isOpen=0;
+		String isClosed="true";
 		int dayOfWeek=utility.getDayNumberOFWeek();
-		System.out.println(dayOfWeek);
-		
-		CommonResturantsTimings ResturantsTimings=ResturantsTimingsDao.findByResturantIdAndDayId(resturantId,dayOfWeek);
-		if(ResturantsTimings!=null) {
-			//currentDate.getTime();
+		String TimeScale= ResturantsTimingsDao.isClosingTimeOfResturantIsPMOrAM(resturantId, dayOfWeek);
+		if(TimeScale!=null) {
+			if(TimeScale.equals("PM")) {
+				CommonResturantsTimings ResturantsTimings=ResturantsTimingsDao.isOpenResturantNowWithInPMAndPM(resturantId, dayOfWeek);
+				if(ResturantsTimings!=null) {
+					isClosed="false";
+					
+				}
+			}else if(TimeScale.equals("AM")){
+				CommonResturantsTimings ResturantsTimings=ResturantsTimingsDao.isOpenResturantNowWithInPMAndAM(resturantId, dayOfWeek);
+				if(ResturantsTimings!=null) {
+					isClosed="false";
+					
+				}
+			}
+		}else {
+			isClosed="false";
 		}
 		
 		
 		
-		return isOpen;
+		
+		
+		
+		
+		return isClosed;
 	}
+	
+	
 	
 	
 	

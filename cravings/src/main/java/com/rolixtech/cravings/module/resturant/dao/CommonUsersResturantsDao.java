@@ -18,6 +18,8 @@ public interface CommonUsersResturantsDao extends JpaRepository<CommonUsersRestu
 
 	CommonUsersResturants findByUserId(long id);
 
+	CommonUsersResturants findByResturantId(long id);
+
 	
 
 	

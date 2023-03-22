@@ -45,7 +45,8 @@ public class CommonResturants {
 	private String contactNo2;
 	private String contactNo3;
 	private String contactNo4;
-	
+	private Integer deliveryTime;
+	private Double discount;
 	
 	 
 
@@ -487,7 +488,8 @@ public class CommonResturants {
 			String logoImgUrl, String profileImgUrl, String bannerImgUrl, String directoryUrl, double rating,
 			Long activatedBy, Date activatedOn, Long deactivatedBy, Date deactivatedOn, Integer status,
 			Long statusChangedBy, Date statusChangedOn, int isDeleted, int isGst, Double gstPercentage,
-			Double deliveryCharges, String contactNo2, String contactNo3, String contactNo4) {
+			Double deliveryCharges, String contactNo2, String contactNo3, String contactNo4, Integer deliveryTime,
+			Double discount) {
 		super();
 		this.id = id;
 		this.label = label;
@@ -520,6 +522,36 @@ public class CommonResturants {
 		this.contactNo2 = contactNo2;
 		this.contactNo3 = contactNo3;
 		this.contactNo4 = contactNo4;
+		this.deliveryTime = deliveryTime;
+		this.discount = discount;
+	}
+
+
+
+
+	public Integer getDeliveryTime() {
+		return deliveryTime;
+	}
+
+
+
+
+	public void setDeliveryTime(Integer deliveryTime) {
+		this.deliveryTime = deliveryTime;
+	}
+
+
+
+
+	public Double getDiscount() {
+		return discount;
+	}
+
+
+
+
+	public void setDiscount(Double discount) {
+		this.discount = discount;
 	}
 
 
@@ -530,7 +562,8 @@ public class CommonResturants {
 			String logoImgUrl, String profileImgUrl, String bannerImgUrl, String directoryUrl, double rating,
 			Long activatedBy, Date activatedOn, Long deactivatedBy, Date deactivatedOn, Integer status,
 			Long statusChangedBy, Date statusChangedOn, int isDeleted, int isGst, Double gstPercentage,
-			Double deliveryCharges, String contactNo2, String contactNo3, String contactNo4) {
+			Double deliveryCharges, String contactNo2, String contactNo3, String contactNo4, Integer deliveryTime,
+			Double discount) {
 		super();
 		this.label = label;
 		this.address = address;
@@ -562,6 +595,8 @@ public class CommonResturants {
 		this.contactNo2 = contactNo2;
 		this.contactNo3 = contactNo3;
 		this.contactNo4 = contactNo4;
+		this.deliveryTime = deliveryTime;
+		this.discount = discount;
 	}
 
 

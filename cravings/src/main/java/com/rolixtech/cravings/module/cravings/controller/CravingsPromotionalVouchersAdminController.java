@@ -83,7 +83,7 @@ public class CravingsPromotionalVouchersAdminController {
 
 
 	@PostMapping(CONTROLLER_URL+"/save" )
-	public ResponseEntity<?> Save(String groupTitle,String prefixStr ,Integer totalNumber,Double amount,Double percentageVal,@DateTimeFormat(pattern="yyyy-MM-dd") Date validFrom,@DateTimeFormat(pattern="yyyy-MM-dd") Date validTo,long valueType,long voucherPurposeId, @RequestHeader("authorization") String token)  { 
+	public ResponseEntity<?> Save(Long recordId,int isGroup, String groupTitle,String prefixStr ,Integer totalNumber,Double amount,Double percentageVal,@DateTimeFormat(pattern="yyyy-MM-dd") Date validFrom,@DateTimeFormat(pattern="yyyy-MM-dd") Date validTo,long valueType,long voucherPurposeId, int statusId,@RequestHeader("authorization") String token)  { 
     		long AdminUserId=utility.getUserIDByToken(token);
     	
 			ResponseEntityOutput response=new ResponseEntityOutput();
@@ -95,7 +95,7 @@ public class CravingsPromotionalVouchersAdminController {
 				response.CODE="1";
 				response.USER_MESSAGE="";
 				response.SYSTEM_MESSAGE="Saved";
-				VouchersService.savePromtionalVouchers(groupTitle,prefixStr, AdminUserId,totalNumber,utility.parseDouble(amount),utility.parseDouble(percentageVal),validFrom,validTo,valueType,voucherPurposeId)	;
+				VouchersService.savePromtionalVouchers(isGroup,recordId,groupTitle,prefixStr, AdminUserId,totalNumber,utility.parseDouble(amount),utility.parseDouble(percentageVal),validFrom,validTo,valueType,voucherPurposeId,statusId)	;
 				
 			
 			}
@@ -209,7 +209,7 @@ public class CravingsPromotionalVouchersAdminController {
 	    
 	    
 	    @PutMapping(CONTROLLER_URL+"/changeStatus")
-	   	public ResponseEntity<?> changeStatus(String recordId,Integer statusId,@RequestHeader("authorization") String token)  { 
+	   	public ResponseEntity<?> changeStatus(int isGroup, Long recordId,Integer statusId,@RequestHeader("authorization") String token)  { 
 	       		long UserId=utility.getUserIDByToken(token);
 	       	
 	   			ResponseEntityOutput response=new ResponseEntityOutput();
@@ -218,9 +218,9 @@ public class CravingsPromotionalVouchersAdminController {
 	   			try {
 	   				
 	   				response.CODE="1";
-	   				response.USER_MESSAGE="";
+	   				response.USER_MESSAGE="Updated";
 	   				response.SYSTEM_MESSAGE="Updated";
-	   				VouchersService.ChangeStatus(Long.parseLong(recordId),statusId.intValue(),UserId);	
+	   				VouchersService.ChangeStatus(isGroup,utility.parseLong(recordId),statusId.intValue(),UserId);	
 	   				
 	   			
 	   			}
@@ -239,7 +239,7 @@ public class CravingsPromotionalVouchersAdminController {
 	   	}
 	    
 	    @DeleteMapping(CONTROLLER_URL+"/delete")
-	   	public ResponseEntity<?> delete(String recordId,@RequestHeader("authorization") String token)  { 
+	   	public ResponseEntity<?> delete(int isGroup, Long recordId,@RequestHeader("authorization") String token)  { 
 	       		long UserId=utility.getUserIDByToken(token);
 	       	
 	   			ResponseEntityOutput response=new ResponseEntityOutput();
@@ -250,7 +250,7 @@ public class CravingsPromotionalVouchersAdminController {
 	   				response.CODE="1";
 	   				response.USER_MESSAGE="";
 	   				response.SYSTEM_MESSAGE="Deleted";
-	   				VouchersService.deleteVoucher(Long.parseLong(recordId),UserId);	
+	   				VouchersService.deleteVoucher(isGroup,utility.parseLong(recordId),UserId);	
 	   				
 	   			
 	   			}

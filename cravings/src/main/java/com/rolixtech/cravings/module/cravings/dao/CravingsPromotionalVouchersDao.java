@@ -32,5 +32,13 @@ public interface CravingsPromotionalVouchersDao extends JpaRepository<CravingsPr
 
 	List<CravingsPromotionalVouchers> findAllByIsGroupAndCompleteString(int i, String keyWord);
 
+	List<CravingsPromotionalVouchers> findAllByGroupId(long recordId);
+
+	List<CravingsPromotionalVouchers> findAllByGroupIdAndIsRedeemed(long groupId,int isRedeemed);
+
+
+
+	boolean existsByGroupId(long recordId);
+
 	
 }

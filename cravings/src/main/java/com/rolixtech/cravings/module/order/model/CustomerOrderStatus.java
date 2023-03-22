@@ -23,34 +23,38 @@ public class CustomerOrderStatus {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;
-	private String label;
+	private String adminLabel;
+	private String customerLabel;
+	private String resturantLabel;
 	public long getId() {
 		return id;
 	}
 	public void setId(long id) {
 		this.id = id;
 	}
-	public String getLabel() { 
-		return label;
+	public String getAdminLabel() {
+		return adminLabel;
 	}
-	public void setLabel(String label) {
-		this.label = label;
+	public void setAdminLabel(String adminLabel) {
+		this.adminLabel = adminLabel;
 	}
-	
-	
-	public CustomerOrderStatus() {
-		super();
+	public String getCustomerLabel() {
+		return customerLabel;
 	}
-	public CustomerOrderStatus(long id, String label) {
-		super();
-		this.id = id;
-		this.label = label;
+	public void setCustomerLabel(String customerLabel) {
+		this.customerLabel = customerLabel;
+	}
+	public String getResturantLabel() {
+		return resturantLabel;
+	}
+	public void setResturantLabel(String resturantLabel) {
+		this.resturantLabel = resturantLabel;
 	}
 	@Override
 	public String toString() {
-		return "CustomerOrderStatus [id=" + id + ", label=" + label + "]";
+		return "CustomerOrderStatus [id=" + id + ", adminLabel=" + adminLabel + ", customerLabel=" + customerLabel
+				+ ", resturantLabel=" + resturantLabel + "]";
 	}
-	
 	
 	
 	

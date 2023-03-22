@@ -46,6 +46,21 @@ public interface CommonUsersDao extends JpaRepository<CommonUsers, Long>  {
 	boolean existsByMobileAndIsDeletedAndIdNot(String mobile, int i, long recordId);
 
 	List<CommonUsers> findAllByIdIn(List<Long> allIds);
-	
 
+	List<CommonUsers> findAllByIsActiveAndIsDeletedAndIdIn(int isActive, int isDeleted, List<Long> riderIds);
+
+	CommonUsers findByMobileAndIsActiveAndIsDeleted(String mobile, int i, int j);
+	
+	@Query(value="SELECT distinct cu.id FROM common_users cu join common_user_role cur on cu.id=cur.user_id where cu.is_active=?1 and cu.is_deleted=?2 and cur.role_id=?3 ",nativeQuery = true)
+	List<Long> findAllUserIdsByIsActiveAndIsDeletedAndRoleId(int isAcive,int isDeleted,long roleId);
+
+	@Query(value="SELECT distinct cu.id FROM common_users cu join common_user_role cur on cu.id=cur.user_id where cu.is_active=?1 and cu.is_deleted=?2 and cur.role_id not in (?3)",nativeQuery = true)
+	List<Long> findAllByIsActiveAndIsDeletedAndRoleIdNot(int i, int j, int k);
+	
+	
+	@Query(value="SELECT distinct cu.id FROM common_users cu join common_user_role cur on cu.id=cur.user_id where cu.is_active=?1 and cu.is_deleted=?2 and cur.role_id in (?3) ",nativeQuery = true)
+	List<Long> findAllUserIdsByIsActiveAndIsDeletedAndRoleIdIn(int isAcive,int isDeleted,List<Long> roleIds);
+	
+	@Query(value="SELECT distinct cu.id FROM common_users cu join common_user_role cur on cu.id=cur.user_id where cu.is_active=?1 and cu.is_deleted=?2 and cur.role_id not in (?3) ",nativeQuery = true)
+	List<Long> findAllUserIdsByIsActiveAndIsDeletedAndRoleIdNotIn(int isAcive,int isDeleted,List<Long> roleIds);
 }

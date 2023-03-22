@@ -42,4 +42,12 @@ public class CommonRole {
     public void setDescription(String description) {
         this.description = description;
     }
+
+	@Override
+	public String toString() {
+		return "CommonRole [id=" + id + ", name=" + name + ", description=" + description + "]";
+	}
+    
+    
+    
 }

@@ -41,4 +41,12 @@ public interface CommonResturantsProductsDao extends JpaRepository<CommonRestura
 
 	List<CommonResturantsProducts> findAllByLabelContainingAndIsActiveAndIsDeleted(String keyword, int i, int j);
 
+	List<CommonResturantsProducts> findAllByResturantIdAndResturantCategoryIdAndIsExtraAndIsAvailableAndIsDeleted(
+			long resturantId, long resturantCategoryId, int i, int j, int k);
+
+	CommonResturantsProducts findByIdAndIsAvailableAndIsDeleted(long recordId, int i, int j);
+	
+	@Query(value="SELECT * FROM common_resturants_products WHERE id=?1 and is_avaliable=?2 and is_deleted=?3 AND CURRENT_TIME() BETWEEN availability_from AND availability_to",nativeQuery = true)
+	CommonResturantsProducts findByIdAndIsAvailableAndIsDeletedAndCurrentDateBetweenAvailabilityFromAndAvailabilityTo(long recordId, int isAvaliable, int isDeleted);
+
 }

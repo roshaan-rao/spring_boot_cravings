@@ -117,7 +117,7 @@ public class CommonResturantsService {
 						Row.put("totalNumberOfRatings", resturant.getRating());
 						Row.put("foodCategory", getMostlyAddedProductsCatgoryByResturant(resturant.getId()));
 						Row.put("deliveryTime", utility.getCravingsDeliveryTime()+" mins");
-						//Row.put("distance", utility.distanceCalculate(resturant.getLatitude(), resturant.getLongitude(), lat, lng, 'k')+"km away");
+					 //   Row.put("distance", utility.distanceCalculate(resturant.getLatitude(), resturant.getLongitude(), lat, lng, 'k')+"km away");
 						Row.put("minOrderPrice", "Rs.250");						
 						
 						if(resturant.getIsActive()==0) {
@@ -161,8 +161,9 @@ public class CommonResturantsService {
 						}else {
 							Row.put("contactNo4", "");
 						}
-						
+						Row.put("resturantDiscount", resturant.getDiscount());
 						Row.put("isFeatured",utility.isFeatured());
+						Row.put("isClosed", ResturantsTimingsService.checkResturantOpenStatus(resturant.getId()));
 						list.add(Row);
 					}
 				
@@ -258,8 +259,9 @@ public class CommonResturantsService {
 						}else {
 							Row.put("contactNo4", "");
 						}
-						
+						Row.put("resturantDiscount", resturant.getDiscount());
 						Row.put("isFeatured",utility.isFeatured());
+						Row.put("isClosed", "false");
 						list.add(Row);
 					}
 				
@@ -282,7 +284,7 @@ public class CommonResturantsService {
 			
 			List<CommonResturants> Resturants=new ArrayList<>();
 			Resturants=ResturantsTOShow.stream()
-			.filter(distance -> utility.distanceCalculate(distance.getLatitude(), distance.getLongitude(), lat, lng, 'k') <= 10.0  )
+			.filter(distance -> utility.distanceCalculate(distance.getLatitude(), distance.getLongitude(), lat, lng, 'k') <= 5.0  )
 			.sorted((p1, p2) -> ((Double)p2.getRating()).compareTo(p1.getRating()))
 			.collect(Collectors.toList());
 			int counter=0;
@@ -336,11 +338,14 @@ public class CommonResturantsService {
 					}
 					
 					Row.put("isFeatured",utility.isFeatured());
-					Row.put("resturantDiscount", 10.0);
+					Row.put("resturantDiscount", Resturants.get(i).getDiscount());
 					Row.put("serviceFee", utility.getCravingsSericeFee());
 					Row.put("isFeatured",utility.isFeatured());
 					Row.put("deliverCharges",utility.parseDouble(Resturants.get(i).getDeliveryCharges()));
+					//if(Resturants.get(i).get) {}
 					
+					
+					Row.put("isClosed", ResturantsTimingsService.checkResturantOpenStatus(Resturants.get(i).getId()));
 					list.add(Row);
 					counter++;
 					
@@ -395,10 +400,11 @@ public class CommonResturantsService {
 					}
 					
 					Row.put("isFeatured",utility.isFeatured());
-					Row.put("resturantDiscount", 10.0);
+					Row.put("resturantDiscount", Resturants.get(i).getDiscount());
 					Row.put("serviceFee", utility.getCravingsSericeFee());
 					Row.put("isFeatured",utility.isFeatured());
 					Row.put("deliverCharges",utility.parseDouble(Resturants.get(i).getDeliveryCharges()));
+					Row.put("isClosed", ResturantsTimingsService.checkResturantOpenStatus(Resturants.get(i).getId()));
 					list.add(Row);
 					
 				}
@@ -425,7 +431,7 @@ public class CommonResturantsService {
 			Resturants=ResturantsDao.findAllByLabelContainingAndIsActiveAndIsDeleted(keyword,1,0);
 			
 		}else if(searchType==2) {
-			Products=ProductsService.findAllByLabelContaining(keyword);
+			Products=ProductsService.findAllByLabelContainingAndIsActiveAndIsDeleted(keyword,1,0);
 		}		
 				
 				
@@ -480,10 +486,11 @@ public class CommonResturantsService {
 						}
 						
 						
-						Row.put("resturantDiscount", 10.0);
+						Row.put("resturantDiscount", resturant.getDiscount());
 						Row.put("serviceFee", utility.getCravingsSericeFee());
 						Row.put("isFeatured",utility.isFeatured());
 						Row.put("deliverCharges",utility.parseDouble(resturant.getDeliveryCharges()));
+						Row.put("isClosed", ResturantsTimingsService.checkResturantOpenStatus(resturant.getId()));
 						list.add(Row);
 					}
 				
@@ -493,25 +500,32 @@ public class CommonResturantsService {
 		if(!Products.isEmpty()) {
 			Products.stream().forEach(
 					product->{
-							Map Row=new HashMap<>();
-							Row.put("id", product.getId());
-							Row.put("label", product.getLabel());
-							Row.put("description", product.getDescription());
-							Row.put("resturantId", product.getResturantId());
-							Row.put("resturantLabel", findLabelById(product.getResturantId()));
-//							CommonResturants Resturant=ResturantsDao.findById(product.getResturantId());
-//							if(Resturant!=null) {
-//								Row.put("resturantDiscount", 10.0);
-//								Row.put("gstPercentage", Resturant.getGstPercentage());
-//								Row.put("serviceFee", utility.getCravingsSericeFee());
-//							} 
-							
-							
-							Row.put("discount", product.getDiscount());
-							Row.put("productImgUrl", product.getProductImgUrl());
-							Row.put("rate", product.getRate());
-							Row.put("rating", product.getRating());
-							list.add(getBasicChargesDetailByResturant(Row,product.getResturantId()));
+						
+						   if(ResturantsTimingsService.checkResturantOpenStatus(product.getResturantId()).equals("true")) {
+							   
+						   
+								Map Row=new HashMap<>();
+								Row.put("id", product.getId());
+								Row.put("label", product.getLabel());
+								Row.put("description", product.getDescription());
+								Row.put("resturantId", product.getResturantId());
+								Row.put("resturantLabel", findLabelById(product.getResturantId()));
+	//							CommonResturants Resturant=ResturantsDao.findById(product.getResturantId());
+	//							if(Resturant!=null) {
+	//								Row.put("resturantDiscount", 10.0);
+	//								Row.put("gstPercentage", Resturant.getGstPercentage());
+	//								Row.put("serviceFee", utility.getCravingsSericeFee());
+	//							} 
+								
+								
+								Row.put("discount", product.getDiscount());
+								Row.put("productImgUrl", product.getProductImgUrl());
+								Row.put("rate", product.getRate());
+								Row.put("rating", product.getRating());
+								//Row.put("isClosed", ProductsService.getIsClosedTimingsByProductId(product.getId()));
+								Row.put("isClosed","false");
+								list.add(getBasicChargesDetailByResturant(Row,product.getResturantId()));
+						   }
 					}
 				
 			);
@@ -628,7 +642,7 @@ public class CommonResturantsService {
 	/********************************************************************************************************/
 	
 	public void saveResturantAdmin(long recordId,long userId,String label,String address,long countryId,long provinceId,long cityId,double lat,double lng,double accuracy,
-			MultipartFile logoImg,MultipartFile profileImg,MultipartFile bannerImg,long dayIds[],Date openTimings[],Date closeTimings[],String contactNo,String email,int isActive,int isGst,double gstGstPercentage,double deliveryCharges,String contactNo2,String contactNo3,String contactNo4,long createdBy) throws Exception {
+			MultipartFile logoImg,MultipartFile profileImg,MultipartFile bannerImg,long dayIds[],Date openTimings[],Date closeTimings[],String contactNo,String email,int isActive,int isGst,double gstGstPercentage,double deliveryCharges,String contactNo2,String contactNo3,String contactNo4,int deliveryTime,double discount,long createdBy) throws Exception {
 	
 		CommonResturants Resturants=null;
 		if(recordId==0) {
@@ -668,7 +682,8 @@ public class CommonResturantsService {
 			Resturants.setContactNo4(contactNo4);
 		}
 		
-		
+		Resturants.setDeliveryTime(deliveryTime);
+		Resturants.setDiscount(discount);
 		
 		ResturantsDao.save(Resturants);
 		
@@ -818,7 +833,10 @@ public class CommonResturantsService {
 		List<CommonResturants> Resturants=new ArrayList<>();
 		if(recordId!=0) {
 			CommonResturants Resturant=ResturantsDao.findByIdAndIsDeleted(recordId,0);
-			Resturants.add(Resturant);
+			if(Resturant!=null){
+				Resturants.add(Resturant);
+			}
+			
 			
 		}else {
 			Resturants=ResturantsDao.findAllByIsDeleted(0);
@@ -897,8 +915,11 @@ public class CommonResturantsService {
 							Row.put("gstPercentage",0.0);
 							
 						}
-						
+						Row.put("isClosed", ResturantsTimingsService.checkResturantOpenStatus(resturant.getId()));
 						Row.put("deliverCharges", resturant.getDeliveryCharges());
+						Row.put("deliveryTime", utility.parseInt(resturant.getDeliveryTime()));
+						Row.put("discount",utility.parseDouble(resturant.getDiscount()));
+						
 						list.add(Row);
 				}
 				
@@ -918,10 +939,13 @@ public class CommonResturantsService {
 		List<CommonResturants> Resturants=new ArrayList<>();
 		if(recordId!=0) {
 			CommonResturants resturant=ResturantsDao.findByIdAndIsActiveAndIsDeleted(recordId,1,0);
-			Resturants.add(resturant);
+			if(resturant!=null) {
+				Resturants.add(resturant);
+			}
+			
 			
 		}else {
-			Resturants=ResturantsDao.findAllByIsDeleted(0);
+			Resturants=ResturantsDao.findAllByIsActiveAndIsDeleted(1,0);
 		}	 	
 			
 		
@@ -995,7 +1019,7 @@ public class CommonResturantsService {
 					}
 				
 				}
-				
+				Row.put("isClosed", ResturantsTimingsService.checkResturantOpenStatus(resturant.getId()));
 				Row.put("resturant-categories",ResturantsCategoriesService.getAllCategoriesWithProducts(resturant.getId()));
 				
 				list.add(Row);	
@@ -1083,6 +1107,7 @@ public class CommonResturantsService {
 					}else {
 						Row.put("contactNo4", "");
 					}
+					Row.put("isClosed", ResturantsTimingsService.checkResturantOpenStatus(resturant.getId()));
 					list.add(Row);
 				}
 				
@@ -1153,6 +1178,133 @@ public class CommonResturantsService {
 		return Row;
 	}
 
+	
+	
+	
+
+	public List<Map> viewSingleResturant(long recordId) {
+
+		
+		List<Map> list=new ArrayList<>();
+	
+		CommonResturants resturant=ResturantsDao.findByIdAndIsActiveAndIsDeleted(recordId,1,0);
+		if(resturant!=null) {	
+				
+		
+						Map Row=new HashMap<>();
+						Row.put("id", resturant.getId());
+						Row.put("label", resturant.getLabel());
+						Row.put("directory", resturant.getDirectoryUrl());
+						Row.put("address", resturant.getAddress());
+						Row.put("countryId", resturant.getCountryId());
+						Row.put("countryLabel",CountriesService.findLabelById(resturant.getCountryId()));
+						Row.put("provinceId", resturant.getProvinceId());
+						Row.put("provinceLabel",ProvincesService.findLabelById(resturant.getProvinceId()));
+						Row.put("cityId", resturant.getCityId());
+						Row.put("cityLabel",CitiesService.findLabelById(resturant.getCityId()));
+						Row.put("latitude", resturant.getLatitude());
+						Row.put("longitude", resturant.getLongitude());
+						Row.put("accuracy", resturant.getAccuracy());
+						Row.put("logoImgUrl", resturant.getLogoImgUrl());
+						Row.put("profileImgUrl", resturant.getProfileImgUrl());
+						Row.put("bannerImgUrl", resturant.getBannerImgUrl());
+						Row.put("contactNo", resturant.getContactNo());
+						if(resturant.getContactNo2()!=null && !resturant.getContactNo2().equals("") )  {
+							Row.put("contactNo2", resturant.getContactNo2());
+						}else {
+							Row.put("contactNo2", "");
+						}
+						
+						if(resturant.getContactNo3()!=null && !resturant.getContactNo3().equals("") ) {
+							Row.put("contactNo3", resturant.getContactNo3());
+						}else {
+							Row.put("contactNo3", "");
+						}
+						
+						
+						if(resturant.getContactNo4()!=null && !resturant.getContactNo4().equals("") ) {
+							Row.put("contactNo4", resturant.getContactNo4());
+						}else {
+							Row.put("contactNo4", "");
+						}
+						
+						
+						
+						Row.put("email", resturant.getEmail());
+						Row.put("rating", resturant.getRating());
+						Row.put("totalNumberOfRatings", resturant.getRating());
+						Row.put("foodCategory", getMostlyAddedProductsCatgoryByResturant( resturant.getId()));
+						Row.put("deliveryTime", utility.getCravingsDeliveryTime()+" mins");
+						//Row.put("distance", utility.distanceCalculate(Resturants.get(i).getLatitude(), Resturants.get(i).getLongitude(), lat, lng, 'k')+"km away");
+						Row.put("minOrderPrice", "Rs.250");	
+						if(resturant.getIsActive()==0) {
+							Row.put("isActive", resturant.getIsActive());
+							Row.put("isActiveLabel", "In-Active");
+						}else {
+							Row.put("isActive", resturant.getIsActive());
+							Row.put("isActiveLabel", "Active");
+						}
+						
+						Row.put("status", resturant.getStatus());
+						Row.put("statusLabel", StatusService.findLabelById(resturant.getStatus()));
+						Row.put("users",UsersResturantsService.getUsersOfResturant(resturant.getId()));
+						List<Map> ResturantsTimings=ResturantsTimingsService.getResturantTimings((resturant.getId()));
+						Row.put("resturantTimings", ResturantsTimings);
+						Row.put("isGst", resturant.getIsGst());
+						if(utility.parseInt(resturant.getIsGst())==1) {
+							Row.put("isGstLabel","Yes" );
+							Row.put("gstPercentage", resturant.getGstPercentage());
+						}else {
+							
+							Row.put("isGstLabel","No" );
+							Row.put("gstPercentage",0.0);
+							
+						}
+						Row.put("isClosed", ResturantsTimingsService.checkResturantOpenStatus(resturant.getId()));
+						Row.put("deliverCharges", resturant.getDeliveryCharges());
+						
+						Row.put("resturantDiscount", resturant.getDiscount());
+						Row.put("serviceFee", utility.getCravingsSericeFee());
+						list.add(Row);
+			
+		}
+		
+		return list;
+		
+	}
+	
+	
+
+	public List<Map> viewDropDown() {
+
+		
+		List<Map> list=new ArrayList<>();
+	
+		List<CommonResturants> Resturants=ResturantsDao.findAllByIsActiveAndIsDeleted(1,0);
+				
+				
+		if(!Resturants.isEmpty()) {
+			Resturants.stream().forEach(
+				resturant->{
+						Map Row=new HashMap<>();
+						Row.put("id", resturant.getId());
+						Row.put("label", resturant.getLabel());
+						
+						list.add(Row);
+				}
+				
+			);
+		}
+		
+		return list;
+		
+	}
+	
+	
+	
+
+	
+	
 
 	/********************************************************************************************************/
 	/************************************Resturant Admin Ends**********************************************/
@@ -1392,6 +1544,7 @@ public class CommonResturantsService {
 							}else {
 								Row.put("contactNo4", "");
 							}
+							Row.put("isClosed", "false");
 							list.add(Row);
 					}
 					
@@ -1470,6 +1623,14 @@ public class CommonResturantsService {
 	public void deleteResturantBanner(long promotionalBannerId) throws Exception {
 		ResturantsPromotionalBannersDao.deleteById(promotionalBannerId);
 		ResturantsPromotionalBannersDetailsDao.deleteByPromotionalBannerId(promotionalBannerId);
+	}
+
+
+
+	public long getResturantUserIdByResturantId(long resturantId) {
+		long resturantUserId=utility.parseLong(UsersResturantsService.getUserIdByResturantId(resturantId));
+	
+		return resturantUserId;
 	}
 
 

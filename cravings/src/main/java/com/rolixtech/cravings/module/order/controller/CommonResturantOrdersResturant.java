@@ -51,182 +51,97 @@ public class CommonResturantOrdersResturant {
 	private GenericUtility utility;
 	//consumes
 	
-    
-    
-    @GetMapping(value=CONTROLLER_URL+"/active/view" )
-   	public ResponseEntity<?> ActiveAllView(long resturantId, @RequestHeader("authorization") String token)  { 
-       	    long UserId=utility.getUserIDByToken(token);
-   			ResponseEntityOutput response=new ResponseEntityOutput();
-   			Map map=new HashMap<>();
-   			
-   			try {
-   				
+	 @PostMapping(value=CONTROLLER_URL+"/status-wise-active/view" )
+	 public ResponseEntity<?> ActiveAllView(Long resturantId,Long orderStatusId,@RequestHeader("authorization") String token)  { 
+	       	    long UserId=utility.getUserIDByToken(token);
+	   			ResponseEntityOutput response=new ResponseEntityOutput();
+	   			Map map=new HashMap<>();
+	   			
+	   			try {
+	   				
 
-   				response.CODE="1";
-   				response.USER_MESSAGE="Success";
-   				response.SYSTEM_MESSAGE="";
-   				response.DATA= OrdersService.getAllActiveOrders();
-   			
-   			}
+	   				response.CODE="1";
+	   				response.USER_MESSAGE="Success";
+	   				response.SYSTEM_MESSAGE="";
+	   				response.DATA= OrdersService.getAllActiveOrdersByResturantId(utility.parseLong(resturantId),utility.parseLong(orderStatusId));
+	   			
+	   			}
 
-   			catch (Exception e) {
-   				// TODO: handle exception
-   				e.printStackTrace();
-   				response.CODE="2";
-   				response.USER_MESSAGE="Error";
-   				response.SYSTEM_MESSAGE=e.toString();
-   				
-   			}
-   			
-   			
-   			return ResponseEntity.ok(response);
-   	}
-    
-    @GetMapping(value=CONTROLLER_URL+"/all-orders/view" )
-   	public ResponseEntity<?> ActiveOrdersView(@RequestHeader("authorization") String token)  { 
-       	    long UserId=utility.getUserIDByToken(token);
-   			ResponseEntityOutput response=new ResponseEntityOutput();
-   			Map map=new HashMap<>();
-   			
-   			try {
-   				
-
-   				response.CODE="1";
-   				response.USER_MESSAGE="Success";
-   				response.SYSTEM_MESSAGE="";
-   				response.DATA= OrdersService.getAllOrders();
-   			
-   			}
-
-   			catch (Exception e) {
-   				// TODO: handle exception
-   				e.printStackTrace();
-   				response.CODE="2";
-   				response.USER_MESSAGE="Error";
-   				response.SYSTEM_MESSAGE=e.toString();
-   				
-   			}
-   			
-   			
-   			return ResponseEntity.ok(response);
-   	}
-    
-    @PostMapping(value=CONTROLLER_URL+"/active-order-summary/view" ) 
-   	public ResponseEntity<?> ActiveAllViewDetail(Long recordId,@RequestHeader("authorization") String token)  { 
-       	    long UserId=utility.getUserIDByToken(token);
-   			ResponseEntityOutput response=new ResponseEntityOutput();
-   			Map map=new HashMap<>();
-   			
-   			try {
-   				
-
-   				response.CODE="1";
-   				response.USER_MESSAGE="Success";
-   				response.SYSTEM_MESSAGE="";
-   				response.DATA= OrdersService.getActiveOrdersByOrderIdAdmin(utility.parseLong(recordId));
-   			
-   			}
-
-   			catch (Exception e) {
-   				// TODO: handle exception
-   				e.printStackTrace();
-   				response.CODE="2";
-   				response.USER_MESSAGE="Error";
-   				response.SYSTEM_MESSAGE=e.toString();
-   				
-   			}
-   			
-   			
-   			return ResponseEntity.ok(response);
-   	}
-    
-
-    @GetMapping(value=CONTROLLER_URL+"/change-active-status/drop-down" )
-	public ResponseEntity<?> statusDropDownView(@RequestHeader("authorization") String token)  { 
-    	    long UserId=utility.getUserIDByToken(token);
-			ResponseEntityOutput response=new ResponseEntityOutput();
-			Map map=new HashMap<>();
-			
-			try {
+	   			catch (Exception e) {
+	   				// TODO: handle exception
+	   				e.printStackTrace();
+	   				response.CODE="2";
+	   				response.USER_MESSAGE="Error";
+	   				response.SYSTEM_MESSAGE=e.toString();
+	   				
+	   			}
+	   			
+	   			
+	   			return ResponseEntity.ok(response);
+	   	}
+	   
+	 @PostMapping(value=CONTROLLER_URL+"/change-status" )
+		public ResponseEntity<?> detailedView(long orderId,long statusId,@RequestHeader("authorization") String token)  { 
+	    	    long UserId=utility.getUserIDByToken(token);
+				ResponseEntityOutput response=new ResponseEntityOutput();
+				Map map=new HashMap<>();
 				
+				try {
+					
 
-				response.CODE="1";
-				response.USER_MESSAGE="Success";
-				response.SYSTEM_MESSAGE="";
-				response.DATA= OrdersStatusService.getAll();
-			
-			}
-
-			catch (Exception e) {
-				// TODO: handle exception
-				e.printStackTrace();
-				response.CODE="2";
-				response.USER_MESSAGE="Error";
-				response.SYSTEM_MESSAGE=e.toString();
+					response.CODE="1";
+					response.USER_MESSAGE="Updated";
+					response.SYSTEM_MESSAGE="";
+					OrdersService.changeOrderStatusByResturant(orderId,statusId,UserId);
 				
-			}
-			
-			
-			return ResponseEntity.ok(response);
-	}
+				}
+
+				catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+					response.CODE="2";
+					response.USER_MESSAGE="Error";
+					response.SYSTEM_MESSAGE=e.toString();
+					
+				}
+				
+				
+				return ResponseEntity.ok(response);
+		}
+	 
+	 
+	 
+	 @PostMapping(value=CONTROLLER_URL+"/get-help" )
+		public ResponseEntity<?> getHelp(long orderId,@RequestHeader("authorization") String token)  { 
+	    	    long UserId=utility.getUserIDByToken(token);
+				ResponseEntityOutput response=new ResponseEntityOutput();
+				Map map=new HashMap<>();
+				
+				try {
+					
+
+					response.CODE="1";
+					response.USER_MESSAGE="Updated";
+					response.SYSTEM_MESSAGE="";
+					OrdersService.getHelp(orderId);
+				
+				}
+
+				catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+					response.CODE="2";
+					response.USER_MESSAGE="Error";
+					response.SYSTEM_MESSAGE=e.toString();
+					
+				}
+				
+				
+				return ResponseEntity.ok(response);
+		}
     
-    @PostMapping(value=CONTROLLER_URL+"/change-active/status" )
-	public ResponseEntity<?> detailedView(long recordId,long statusId,int remainingTime,@RequestHeader("authorization") String token)  { 
-    	    long UserId=utility.getUserIDByToken(token);
-			ResponseEntityOutput response=new ResponseEntityOutput();
-			Map map=new HashMap<>();
-			
-			try {
-				
-
-				response.CODE="1";
-				response.USER_MESSAGE="Updated";
-				response.SYSTEM_MESSAGE="";
-				OrdersService.changeOrderStatus(recordId,statusId,remainingTime,UserId);
-			
-			}
-
-			catch (Exception e) {
-				// TODO: handle exception
-				e.printStackTrace();
-				response.CODE="2";
-				response.USER_MESSAGE="Error";
-				response.SYSTEM_MESSAGE=e.toString();
-				
-			}
-			
-			
-			return ResponseEntity.ok(response);
-	}
-    
-    @PostMapping(value=CONTROLLER_URL+"/add-comments" )
-   	public ResponseEntity<?> addComments(long recordId,String cravingsRemarks,@RequestHeader("authorization") String token)  { 
-       	    long UserId=utility.getUserIDByToken(token);
-   			ResponseEntityOutput response=new ResponseEntityOutput();
-   			Map map=new HashMap<>();
-   			
-   			try {
-   				
-
-   				response.CODE="1";
-   				response.USER_MESSAGE="Updated";
-   				response.SYSTEM_MESSAGE="";
-   				OrdersService.addCravingsComments(recordId,cravingsRemarks,UserId);
-   			
-   			}
-
-   			catch (Exception e) {
-   				// TODO: handle exception
-   				e.printStackTrace();
-   				response.CODE="2";
-   				response.USER_MESSAGE="Error";
-   				response.SYSTEM_MESSAGE=e.toString();
-   				
-   			}
-   			
-   			
-   			return ResponseEntity.ok(response);
-   	}
+	 
+	 
     
    
 	 

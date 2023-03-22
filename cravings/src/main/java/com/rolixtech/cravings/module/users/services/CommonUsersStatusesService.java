@@ -10,35 +10,37 @@ import org.springframework.stereotype.Service;
 
 import com.rolixtech.cravings.module.generic.model.CommonCities;
 import com.rolixtech.cravings.module.users.dao.CommonRoleDao;
+import com.rolixtech.cravings.module.users.dao.CommonUsersStatusesDao;
 import com.rolixtech.cravings.module.users.models.CommonRole;
+import com.rolixtech.cravings.module.users.models.CommonUsersStatuses;
 
 @Service
-public class CommonRoleService {
+public class CommonUsersStatusesService {
 
 	
 	@Autowired
-	private CommonRoleDao roleDao;
+	private CommonUsersStatusesDao StatusesDao;
 	
 	
-	public CommonRole findByName(String name) {
-	    CommonRole role = roleDao.findByName(name);
-	    return role;
+	public String findLabelById(long id) {
+		String label="";
+		CommonUsersStatuses statuses = StatusesDao.findById(id);
+		if(statuses!=null) {
+			label=statuses.getLabel();
+		}
+	    return label;
 	}
 	
 	
 	public List<Map> getAll() {
 		List<Map> list=new ArrayList<>();
-		List<Long> ids=new ArrayList<>();
-		ids.add(2l);
-		ids.add(3l);
-		ids.add(4l);
-		List<CommonRole> Roles = roleDao.findAllByIdNotIn(ids); 
+		List<CommonUsersStatuses> Roles = StatusesDao.findAll();
 		if(!Roles.isEmpty()) {
 			Roles.forEach(
 					Role-> {
 						Map Row=new HashMap<>();
 						Row.put("id", Role.getId());
-						Row.put("label", Role.getName());
+						Row.put("label", Role.getLabel());
 						list.add(Row);
 					}
 			);

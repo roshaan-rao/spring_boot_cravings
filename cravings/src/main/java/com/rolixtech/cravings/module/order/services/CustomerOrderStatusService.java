@@ -16,7 +16,7 @@ public class CustomerOrderStatusService {
 	@Autowired
 	private CustomerOrderStatusDao OrderStatusDao; 
 	
-	public List<Map> getAll(){
+	public List<Map> getAllAdmin(){
 		
 		List<Map> list=new ArrayList<>();
 		List<CustomerOrderStatus> statuses=OrderStatusDao.findAll();
@@ -25,7 +25,7 @@ public class CustomerOrderStatusService {
 					status->{
 						Map Row=new HashMap<>();
 						Row.put("id", status.getId());
-						Row.put("label", status.getLabel());
+						Row.put("label", status.getAdminLabel());
 						
 						list.add(Row);
 				}
@@ -37,15 +37,34 @@ public class CustomerOrderStatusService {
 		
 		return list;
 		
-	}
+	} 
 	
-	
-	public String findLabelById(long id) {
+	/**
+	 * @apiNote
+	 * requirementType ==1 ===>> Admin
+	 * requirementType ==2 ===>> Resturant
+	 * requirementType ==3 ===>> Customer
+	 * **/
+	public String findLabelByIdAndRequirementType(long id,int requirementType) {
 		String label="";
 		CustomerOrderStatus Status=OrderStatusDao.findById(id);
 		if(Status!=null) {
-			label=Status.getLabel();
+			if(requirementType==1) {
+				label=Status.getAdminLabel();
+			}else if(requirementType==2){
+				label=Status.getResturantLabel();
+			}else if(requirementType==3){
+				label=Status.getCustomerLabel();
+			}
+			
 		}
 		return label;
 	}
+	
+	
+	
+	
+	
+	
+	
 }

@@ -18,14 +18,14 @@ public class CommonUsersAddress {
 	
 	@Column(name = "user_id")
 	private long userId;
-	private long countryId;
-	private long provinceId;
-	private long cityId;
+	private Long countryId;
+	private Long provinceId;
+	private Long cityId;
 	private String address;
 	private String postalCode;
-	private long lat;
-	private long lng;
-	private double accuracy;
+	private Double lat;
+	private Double lng;
+	private Double accuracy;
 	
 	public long getId() {
 		return id;
@@ -72,22 +72,22 @@ public class CommonUsersAddress {
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
 	}
-	public long getLat() {
+	public Double getLat() {
 		return lat;
 	}
-	public void setLat(long lat) {
+	public void setLat(Double lat) {
 		this.lat = lat;
 	}
-	public long getLng() {
+	public Double getLng() {
 		return lng;
 	}
-	public void setLng(long lng) {
+	public void setLng(Double lng) {
 		this.lng = lng;
 	}
-	public double getAccuracy() {
+	public Double getAccuracy() {
 		return accuracy;
 	}
-	public void setAccuracy(double accuracy) {
+	public void setAccuracy(Double accuracy) {
 		this.accuracy = accuracy;
 	}
 	
@@ -95,8 +95,8 @@ public class CommonUsersAddress {
 	public CommonUsersAddress() {
 		super();
 	}
-	public CommonUsersAddress(long userId, long countryId, long provinceId, long cityId, String address,
-			String postalCode, long lat, long lng, double accuracy) {
+	public CommonUsersAddress(long userId, Long countryId, Long provinceId, Long cityId, String address,
+			String postalCode, Double Lat, Double Lng, Double accuracy) {
 		super();
 		this.userId = userId;
 		this.countryId = countryId;
@@ -109,8 +109,8 @@ public class CommonUsersAddress {
 		this.accuracy = accuracy;
 		
 	}
-	public CommonUsersAddress(long id, long userId, long countryId, long provinceId, long cityId, String address,
-			String postalCode, long lat, long lng, double accuracy) {
+	public CommonUsersAddress(long id, long userId, Long countryId, Long provinceId, Long cityId, String address,
+			String postalCode, Double lat, Double lng, Double accuracy) {
 		super();
 		this.id = id;
 		this.userId = userId;
@@ -123,6 +123,13 @@ public class CommonUsersAddress {
 		this.lng = lng;
 		this.accuracy = accuracy; 
 	
+	}
+	
+	
+	public CommonUsersAddress(long userId, String address) {
+		super();
+		this.userId = userId;
+		this.address = address;
 	}
 	@Override
 	public String toString() {

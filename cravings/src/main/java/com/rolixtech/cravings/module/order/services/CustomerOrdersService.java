@@ -54,6 +54,7 @@ import com.rolixtech.cravings.module.resturant.services.CommonResturantsCategori
 import com.rolixtech.cravings.module.resturant.services.CommonResturantsProductsAddOnService;
 import com.rolixtech.cravings.module.resturant.services.CommonResturantsProductsService;
 import com.rolixtech.cravings.module.resturant.services.CommonResturantsService;
+import com.rolixtech.cravings.module.resturant.services.CommonResturantsTimingsService;
 import com.rolixtech.cravings.module.users.dao.CommonUsersDevicesDao;
 import com.rolixtech.cravings.module.users.models.CommonUsersDevices;
 import com.rolixtech.cravings.module.users.services.CommonUsersService;
@@ -114,6 +115,9 @@ public class CustomerOrdersService {
 	
 	@Autowired
 	private CustomerOrderRemarksDao OrderRemarksDao;
+	
+	@Autowired
+	private CommonResturantsTimingsService ResturantsTimingsService;
 	
 	public String findLabelById(long categoryId) {
 		String label="";
@@ -1335,6 +1339,7 @@ public class CustomerOrdersService {
 							Row.put("isTimingEnableLable", "No");
 							Row.put("availabilityFrom", "");
 							Row.put("availabilityTo", "");
+							Row.put("isClosed","false");
 							
 						}else {
 							Row.put("isTimingEnable", Product.getIsActive());
@@ -1349,7 +1354,11 @@ public class CustomerOrdersService {
 							Row.put("availabilityToDisplay", utility.getDisplayTimeFromDate((Product.getAvailabilityTo())));
 							
 							Row.put("availabilityTo", (Product.getAvailabilityTo().getTime()));
-							Row.put("isClosed","false");
+							if(ResturantsTimingsService.checkResturantOpenStatus(Product.getResturantId()).equals("false")) {
+								Row.put("isClosed",ResturantsProductsService.getIsClosedTimingsByProductId(Product.getId()));
+							}else {
+								Row.put("isClosed","false");
+							}
 						//Row.put("isClosed", ResturantsProductsService.getIsClosedTimingsByProductId(Product.getId()));
 						}
 						

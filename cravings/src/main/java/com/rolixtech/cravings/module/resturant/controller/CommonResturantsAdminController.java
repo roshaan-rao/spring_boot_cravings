@@ -157,7 +157,7 @@ public class CommonResturantsAdminController {
    				
    				response.CODE="1";
    				response.USER_MESSAGE="";
-   				response.SYSTEM_MESSAGE="Updated";
+   				response.SYSTEM_MESSAGE="Deleted";
    				ResturantsService.deleteResturant(Long.parseLong(recordId),UserId);	
    				
    			
@@ -360,8 +360,159 @@ public class CommonResturantsAdminController {
    			return ResponseEntity.ok(response);
    	}
     
+    @PostMapping(CONTROLLER_URL+"/promotional-banner/save")
+  	public ResponseEntity<?> Save(Long recordId,Long resturantId,@DateTimeFormat(pattern="yyyy-MM-dd") Date validFrom,@DateTimeFormat(pattern="yyyy-MM-dd") Date validTo,Integer isActive, @RequestParam(name ="promotionImg") MultipartFile promotionImg,
+  			@RequestHeader("authorization") String token)  { 
+      		long AdminUserId=utility.getUserIDByToken(token);
+      	
+  			ResponseEntityOutput response=new ResponseEntityOutput();
+  			Map map=new HashMap<>();
+  			
+  			try {
+  				
+  				response.CODE="1";
+  				response.USER_MESSAGE="";
+  				response.SYSTEM_MESSAGE="Saved";
+  				ResturantsService.savePromotionalBanner(utility.parseLong(recordId),utility.parseLong(resturantId),validFrom,validTo,utility.parseInt(isActive),promotionImg,AdminUserId);	
+  				
+  			
+  			}
+
+  			catch (Exception e) {
+  				// TODO: handle exception
+  				e.printStackTrace();
+  				response.CODE="2";
+  				response.USER_MESSAGE="Error";
+  				response.SYSTEM_MESSAGE=e.toString();
+  				
+  			}
+  			
+  			
+  			return ResponseEntity.ok(response);
+  	}
     
     
+    @PostMapping(CONTROLLER_URL+"/promotional-banner/view-edit-single")
+  	public ResponseEntity<?> ViewSingle(Long recordId,@RequestHeader("authorization") String token)  { 
+      		long AdminUserId=utility.getUserIDByToken(token);
+      	
+  			ResponseEntityOutput response=new ResponseEntityOutput();
+  			Map map=new HashMap<>();
+  			
+  			try {
+  				
+  				response.CODE="1";
+  				response.USER_MESSAGE="";
+  				response.SYSTEM_MESSAGE="Success";
+  				response.DATA= ResturantsService.bannersViewRecordId(recordId);	
+  				
+  			
+  			}
+
+  			catch (Exception e) {
+  				// TODO: handle exception
+  				e.printStackTrace();
+  				response.CODE="2";
+  				response.USER_MESSAGE="Error";
+  				response.SYSTEM_MESSAGE=e.toString();
+  				
+  			}
+  			
+  			
+  			return ResponseEntity.ok(response);
+  	}
+    
+    
+    @PostMapping(CONTROLLER_URL+"/promotional-banner/view-single-resturant")
+  	public ResponseEntity<?> ViewSingleResturant(Long resturantId,@RequestHeader("authorization") String token)  { 
+      		long AdminUserId=utility.getUserIDByToken(token);
+      	
+  			ResponseEntityOutput response=new ResponseEntityOutput();
+  			Map map=new HashMap<>();
+  			
+  			try {
+  				
+  				response.CODE="1";
+  				response.USER_MESSAGE="";
+  				response.SYSTEM_MESSAGE="Success";
+  				response.DATA= ResturantsService.bannersViewSingleResturant(utility.parseLong(resturantId));	
+  				
+  			
+  			}
+
+  			catch (Exception e) {
+  				// TODO: handle exception
+  				e.printStackTrace();
+  				response.CODE="2";
+  				response.USER_MESSAGE="Error";
+  				response.SYSTEM_MESSAGE=e.toString();
+  				
+  			}
+  			
+  			
+  			return ResponseEntity.ok(response);
+  	}
+    
+    @GetMapping(CONTROLLER_URL+"/promotional-banner/view-all")
+  	public ResponseEntity<?> ViewAll(@RequestHeader("authorization") String token)  { 
+      		long AdminUserId=utility.getUserIDByToken(token);
+      	
+  			ResponseEntityOutput response=new ResponseEntityOutput();
+  			Map map=new HashMap<>();
+  			
+  			try {
+  				
+  				response.CODE="1";
+  				response.USER_MESSAGE="";
+  				response.SYSTEM_MESSAGE="Success";
+  				response.DATA= ResturantsService.bannersViewResturantWise();	
+  				
+  			
+  			}
+
+  			catch (Exception e) {
+  				// TODO: handle exception
+  				e.printStackTrace();
+  				response.CODE="2";
+  				response.USER_MESSAGE="Error";
+  				response.SYSTEM_MESSAGE=e.toString();
+  				
+  			}
+  			
+  			
+  			return ResponseEntity.ok(response);
+  	}
+      
+      
+    @DeleteMapping(CONTROLLER_URL+"/promotional-banner/delete")
+   	public ResponseEntity<?> DeleteResturantBanner(String recordId,@RequestHeader("authorization") String token)  { 
+       		long UserId=utility.getUserIDByToken(token);
+       	
+   			ResponseEntityOutput response=new ResponseEntityOutput();
+   			Map map=new HashMap<>();
+   			
+   			try {
+   				
+   				response.CODE="1";
+   				response.USER_MESSAGE="";
+   				response.SYSTEM_MESSAGE="Deleted";
+   				ResturantsService.deleteResturantBannerByDetailId(Long.parseLong(recordId));	
+   				
+   			
+   			}
+
+   			catch (Exception e) {
+   				// TODO: handle exception
+   				e.printStackTrace();
+   				response.CODE="2";
+   				response.USER_MESSAGE=e.getMessage();
+   				response.SYSTEM_MESSAGE=e.toString();
+   				
+   			}
+   			
+   			
+   			return ResponseEntity.ok(response);
+   	}
 	 
 	 
 }

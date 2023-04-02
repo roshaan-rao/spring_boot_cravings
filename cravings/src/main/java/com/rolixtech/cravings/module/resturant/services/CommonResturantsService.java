@@ -20,6 +20,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.hibernate.internal.build.AllowSysOut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +32,7 @@ import com.rolixtech.cravings.module.resturant.dao.CommonResturantsDao;
 import com.rolixtech.cravings.module.resturant.dao.CommonResturantsProductsDao;
 import com.rolixtech.cravings.module.resturant.dao.CommonResturantsPromotionalBannersDao;
 import com.rolixtech.cravings.module.resturant.dao.CommonResturantsPromotionalBannersDetailDao;
+import com.rolixtech.cravings.module.resturant.dao.CommonResturantsPromotionalBannersDetailDao.customPromotionalBanner;
 import com.rolixtech.cravings.module.resturant.model.CommonCategories;
 import com.rolixtech.cravings.module.resturant.model.CommonResturants;
 import com.rolixtech.cravings.module.resturant.model.CommonResturantsProducts;
@@ -405,6 +407,9 @@ public class CommonResturantsService {
 					Row.put("isFeatured",utility.isFeatured());
 					Row.put("deliverCharges",utility.parseDouble(Resturants.get(i).getDeliveryCharges()));
 					Row.put("isClosed", ResturantsTimingsService.checkResturantOpenStatus(Resturants.get(i).getId()));
+					
+					
+					
 					list.add(Row);
 					
 				}
@@ -501,7 +506,7 @@ public class CommonResturantsService {
 			Products.stream().forEach(
 					product->{
 						
-						   if(ResturantsTimingsService.checkResturantOpenStatus(product.getResturantId()).equals("true")) {
+						  // if(ResturantsTimingsService.checkResturantOpenStatus(product.getResturantId()).equals("true")) {
 							   
 						   
 								Map Row=new HashMap<>();
@@ -522,10 +527,20 @@ public class CommonResturantsService {
 								Row.put("productImgUrl", product.getProductImgUrl());
 								Row.put("rate", product.getRate());
 								Row.put("rating", product.getRating());
-								//Row.put("isClosed", ProductsService.getIsClosedTimingsByProductId(product.getId()));
-								Row.put("isClosed","false");
+//								Row.put("isClosed", ProductsService.getIsClosedTimingsByProductId(product.getId()));
+//								Row.put("isClosed",ResturantsTimingsService.checkResturantOpenStatus(product.getResturantId()));
+//								if(ResturantsTimingsService.checkResturantOpenStatus(product.getResturantId()).equals("false")) {
+//									Row.put("isClosed", ProductsService.getIsClosedTimingsByProductId(product.getId()));
+//										
+//								}
+								
+								if(ResturantsTimingsService.checkResturantOpenStatus(product.getResturantId()).equals("false")) {
+									Row.put("isClosed",ProductsService.getIsClosedTimingsByProductId(product.getId()));
+								}else {
+									Row.put("isClosed","false");
+								}
 								list.add(getBasicChargesDetailByResturant(Row,product.getResturantId()));
-						   }
+						  // }
 					}
 				
 			);
@@ -1020,6 +1035,7 @@ public class CommonResturantsService {
 				
 				}
 				Row.put("isClosed", ResturantsTimingsService.checkResturantOpenStatus(resturant.getId()));
+				
 				Row.put("resturant-categories",ResturantsCategoriesService.getAllCategoriesWithProducts(resturant.getId()));
 				
 				list.add(Row);	
@@ -1603,21 +1619,10 @@ public class CommonResturantsService {
 	}
 	
 	
-	public void saveResturantBanner(Date startDate, Date endDate, long resturantId, String imageUrl) throws Exception {
-	
-		CommonResturantsPromotionalBanners Banner= new CommonResturantsPromotionalBanners();
-		Banner.setStartDate(startDate);
-		Banner.setEndDate(endDate);
-		Banner.setIsActive(1);
-		ResturantsPromotionalBannersDao.save(Banner);
-		if(Banner.getId()!=0) {
-			CommonResturantsPromotionalBannersDetail BannerDeatils= new CommonResturantsPromotionalBannersDetail();
-			BannerDeatils.setResturantId(resturantId);
-			BannerDeatils.setImageUrl(imageUrl);
-			BannerDeatils.setPromotionalBannerId(Banner.getId());
-			ResturantsPromotionalBannersDetailsDao.save(BannerDeatils);
-		}	
-	}
+//	public void saveResturantBanner(long recordId,Date startDate, Date endDate, long resturantId, String imageUrl) throws Exception {
+//	
+//		
+//	}
 	
 	
 	public void deleteResturantBanner(long promotionalBannerId) throws Exception {
@@ -1634,8 +1639,141 @@ public class CommonResturantsService {
 	}
 
 
+
+	public void savePromotionalBanner(long recordId, long resturantId, Date validFrom, Date validTo, int isActive,MultipartFile promotionImg,long createdBy) throws IOException {
+		CommonResturantsPromotionalBanners Banner= new CommonResturantsPromotionalBanners();
+		if(recordId!=0) {
+			CommonResturantsPromotionalBannersDetail BannerDeatils= ResturantsPromotionalBannersDetailsDao.findById(recordId);
+			if(BannerDeatils!=null) {
+				Banner=ResturantsPromotionalBannersDao.findById(BannerDeatils.getPromotionalBannerId());
+				
+				ResturantsPromotionalBannersDetailsDao.deleteById(recordId);
+			}
+		}
+		Banner.setStartDate(validFrom);
+		Banner.setEndDate(validTo);
+		Banner.setIsActive(isActive);
+		Banner.setCreatedBy(createdBy);
+		Banner.setCreatedOn(new Date());
+		ResturantsPromotionalBannersDao.save(Banner);
+		if(Banner.getId()!=0) {
+			String TargetFileName="";
+			CommonResturantsPromotionalBannersDetail BannerDeatils= new CommonResturantsPromotionalBannersDetail();
+			BannerDeatils.setResturantId(resturantId);
+			
+			if (promotionImg != null && !promotionImg.getOriginalFilename().equals("")) {
+				
+				 TargetFileName = "promotional_banner_restr_"+resturantId+"_"+ utility.getUniqueId()
+						
+						+ promotionImg.getOriginalFilename().substring(promotionImg.getOriginalFilename().lastIndexOf("."));
+				Path copyLocation = Paths.get(StringUtils.cleanPath(utility.getOpenFileDirectoryPath()+File.separator+TargetFileName));
+				
+				Files.copy(promotionImg.getInputStream(), copyLocation);
+				
+				
+				
+				
+			} 
+			BannerDeatils.setImageUrl(TargetFileName);
+			BannerDeatils.setPromotionalBannerId(Banner.getId());
+			ResturantsPromotionalBannersDetailsDao.save(BannerDeatils);
+		}	
+		
+	}
+
+
+	public List<Map> bannersViewResturantWise() {
+		List<Map> list=new ArrayList<>();
+		List<Long> resturantIds=ResturantsPromotionalBannersDetailsDao.findDistinctResturantId();
+		if(!resturantIds.isEmpty()) {
+			for(int i=0; i<resturantIds.size(); i++) {
+				//Map Row=new HashMap<>();
+				
+				List<Map> listDetail=new ArrayList<>();
+				List<customPromotionalBanner> PromotionalBannersDetail= ResturantsPromotionalBannersDetailsDao.findAllByResturantId(resturantIds.get(i));
+				if(!PromotionalBannersDetail.isEmpty()) {
+					for(int k=0;k<PromotionalBannersDetail.size();k++) {
+						Map Row=new HashMap<>();
+						Row.put("resturantId", resturantIds.get(i));
+						Row.put("resturantLabel", findLabelById(resturantIds.get(i)));
+						Row.put("id", PromotionalBannersDetail.get(k).getPbDetailId());
+						Row.put("validFrom", PromotionalBannersDetail.get(k).getValidFrom());
+						Row.put("validTo", PromotionalBannersDetail.get(k).getValidTo());
+						Row.put("validFromToDisplay", utility.getDisplayDateddMMYYYY(PromotionalBannersDetail.get(k).getValidFrom()));
+						Row.put("validToToDisplay", utility.getDisplayDateddMMYYYY(PromotionalBannersDetail.get(k).getValidTo()));
+						Row.put("isActive", PromotionalBannersDetail.get(k).getisActive());
+						Row.put("isActiveLabel", PromotionalBannersDetail.get(k).getisActive()==1? "Active": "In-Active");
+						Row.put("fileName", PromotionalBannersDetail.get(k).getUrlImg());
+						list.add(Row);
+					}
+				}
+					
+					
+				//Row.put("detail", listDetail);
+				
+//				list.add(Row);
+			}
+		}
+		
+		return list;
+	}
 	
 	
+	public List<Map> bannersViewSingleResturant(long resturantId) {
+		List<Map> list=new ArrayList<>();
+		List<customPromotionalBanner> PromotionalBannersDetail= ResturantsPromotionalBannersDetailsDao.findAllByResturantId(resturantId);
+		if(!PromotionalBannersDetail.isEmpty()) {
+			for(int k=0;k<PromotionalBannersDetail.size();k++) {
+				Map RowDetail=new HashMap<>();
+				RowDetail.put("id", PromotionalBannersDetail.get(k).getPbDetailId());
+				RowDetail.put("validFrom", PromotionalBannersDetail.get(k).getValidFrom());
+				RowDetail.put("validTo", PromotionalBannersDetail.get(k).getValidTo());
+				RowDetail.put("validFromToDisplay", utility.getDisplayDateddMMYYYY(PromotionalBannersDetail.get(k).getValidFrom()));
+				RowDetail.put("validToToDisplay", utility.getDisplayDateddMMYYYY(PromotionalBannersDetail.get(k).getValidTo()));
+				RowDetail.put("isActive", PromotionalBannersDetail.get(k).getisActive());
+				RowDetail.put("isActiveLabel", PromotionalBannersDetail.get(k).getisActive()==1? "Active": "In-Active");
+				RowDetail.put("fileName", PromotionalBannersDetail.get(k).getUrlImg());
+				list.add(RowDetail);
+			}
+		}
+		
+		return list;
+	}
+	
+	
+	
+	public List<Map> bannersViewRecordId(long recordId) {
+		List<Map> list=new ArrayList<>();
+		List<customPromotionalBanner> PromotionalBannersDetail= ResturantsPromotionalBannersDetailsDao.findAllByRecordId(recordId);
+		if(!PromotionalBannersDetail.isEmpty()) {
+			for(int k=0;k<PromotionalBannersDetail.size();k++) {
+				Map RowDetail=new HashMap<>();
+				RowDetail.put("id", PromotionalBannersDetail.get(k).getPbDetailId());
+				RowDetail.put("validFrom", PromotionalBannersDetail.get(k).getValidFrom());
+				RowDetail.put("validTo", PromotionalBannersDetail.get(k).getValidTo());
+				RowDetail.put("validFromToDisplay", utility.getDisplayDateddMMYYYY(PromotionalBannersDetail.get(k).getValidFrom()));
+				RowDetail.put("validToToDisplay", utility.getDisplayDateddMMYYYY(PromotionalBannersDetail.get(k).getValidTo()));
+				RowDetail.put("isActive", PromotionalBannersDetail.get(k).getisActive());
+				RowDetail.put("isActiveLabel", PromotionalBannersDetail.get(k).getisActive()==1? "Active": "In-Active");
+				RowDetail.put("fileName", PromotionalBannersDetail.get(k).getUrlImg());
+				list.add(RowDetail);
+			}
+		}
+		
+		return list;
+	}
+	
+	@Transactional
+	public void deleteResturantBannerByDetailId(long recordId) throws Exception {
+		CommonResturantsPromotionalBannersDetail BannerDeatils= ResturantsPromotionalBannersDetailsDao.findById(recordId);
+		if(BannerDeatils!=null) {
+			ResturantsPromotionalBannersDetailsDao.deleteById(recordId);
+			ResturantsPromotionalBannersDao.deleteById(BannerDeatils.getPromotionalBannerId());
+		}
+		
+		
+	}
+
 	
 	/********************************************************************************************************/
 	/************************************Resturant Owner Ends**********************************************/

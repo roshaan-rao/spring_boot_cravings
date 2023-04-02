@@ -11,7 +11,7 @@ import javax.persistence.Id;
 public class CommonResturantsPromotionalBanners {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 	private Date startDate;
 	private Date endDate;

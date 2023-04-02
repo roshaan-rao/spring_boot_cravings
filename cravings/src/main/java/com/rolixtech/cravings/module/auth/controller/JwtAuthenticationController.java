@@ -107,7 +107,12 @@ public class JwtAuthenticationController {
 				device=new CommonUsersDevices();
 			}
 			device.setCreatedOn(new Date());
-			device.setDeviceId(deviceId);
+			if(deviceId!=null) {
+				device.setDeviceId(deviceId);
+			}else {
+				device.setDeviceId("");
+			}
+			
 			device.setUserId(User.getId());
 			DevicesDao.save(device);
 		}

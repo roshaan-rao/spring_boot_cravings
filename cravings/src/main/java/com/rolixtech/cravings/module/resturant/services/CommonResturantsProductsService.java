@@ -25,6 +25,7 @@ import com.rolixtech.cravings.module.resturant.dao.CommonResturantsProductsDao;
 import com.rolixtech.cravings.module.resturant.model.CommonResturants;
 import com.rolixtech.cravings.module.resturant.model.CommonResturantsProducts;
 import com.rolixtech.cravings.module.resturant.model.CommonResturantsProductsAddOnDetail;
+import com.rolixtech.cravings.module.resturant.model.CommonResturantsTimings;
 
 @Service
 public class CommonResturantsProductsService {
@@ -65,6 +66,9 @@ public class CommonResturantsProductsService {
 	
 	@Autowired
 	private CommonUsersFavProductsService FavProductsService;
+	
+	@Autowired
+	private CommonResturantsTimingsService ResturantsTimingsService;
 	
 	
 	public List<CommonResturantsProducts> findAllByLabelContaining(String keyword) {
@@ -231,7 +235,14 @@ public class CommonResturantsProductsService {
 							Row.put("availabilityTo", DateUtils.addHours(Product.getAvailabilityTo(), 5).getTime());
 							
 //							Row.put("isClosed", getIsClosedTimingsByProductId(Product.getId()));
-							Row.put("isClosed","false");
+//							Row.put("isClosed","false");
+							
+							if(ResturantsTimingsService.checkResturantOpenStatus(Product.getResturantId()).equals("false")) {
+								Row.put("isClosed",getIsClosedTimingsByProductId(Product.getId()));
+							}else {
+								Row.put("isClosed","true");
+							}
+							
 						}
 						
 						
@@ -554,6 +565,7 @@ public class CommonResturantsProductsService {
 							Row.put("isTimingEnableLable", "No");
 							Row.put("availabilityFrom", "");
 							Row.put("availabilityTo", "");
+							Row.put("isClosed","false");
 							
 						}else {
 							Row.put("isTimingEnable", Product.getIsActive());
@@ -573,7 +585,11 @@ public class CommonResturantsProductsService {
 							}
 							
 							Row.put("availabilityTo", DateUtils.addHours(Product.getAvailabilityTo(), 5).getTime());
-						
+							if(ResturantsTimingsService.checkResturantOpenStatus(Product.getResturantId()).equals("false")) {
+								Row.put("isClosed",getIsClosedTimingsByProductId(Product.getId()));
+							}else {
+								Row.put("isClosed","true");
+							}
 						}
 						
 						
@@ -599,7 +615,8 @@ public class CommonResturantsProductsService {
 							 
 							
 						}	
-						Row.put("isClosed", "false");
+						
+						
 						list.add(Row);
 				}
 				
@@ -678,6 +695,7 @@ public class CommonResturantsProductsService {
 							Row.put("isTimingEnableLable", "No");
 							Row.put("availabilityFrom", "");
 							Row.put("availabilityTo", "");
+							Row.put("isClosed","false");
 							
 						}else {
 							Row.put("isTimingEnable", Product.getIsActive());
@@ -697,7 +715,12 @@ public class CommonResturantsProductsService {
 							}
 							
 							Row.put("availabilityTo", DateUtils.addHours(Product.getAvailabilityTo(), 5).getTime());
-							Row.put("isClosed","false");
+							System.out.println(ResturantsTimingsService.checkResturantOpenStatus(Product.getResturantId()));
+							if(ResturantsTimingsService.checkResturantOpenStatus(Product.getResturantId()).equals("false")) {
+								Row.put("isClosed",getIsClosedTimingsByProductId(Product.getId()));
+							}else {
+								Row.put("isClosed","true");
+							}
 							//Row.put("isClosed", getIsClosedTimingsByProductId(Product.getId()));
 						}
 						
@@ -861,7 +884,7 @@ public class CommonResturantsProductsService {
 
 	public List<CommonResturantsProducts> findAllByLabelContainingAndIsActiveAndIsDeleted(String keyword, int i,int j) {
 		// TODO Auto-generated method stub
-		return null;
+		return ResturantsProductsDao.findAllByLabelContainingAndIsActiveAndIsDeleted(keyword, i, j);
 	}
 
 
@@ -877,10 +900,38 @@ public class CommonResturantsProductsService {
 	
 	public String getIsClosedTimingsByProductId(long productId) {
 		String isClosed="true";
-		CommonResturantsProducts ResturantsProducts=ResturantsProductsDao.findByIdAndIsAvailableAndIsDeletedAndCurrentDateBetweenAvailabilityFromAndAvailabilityTo(productId, 1, 0);
-		if(ResturantsProducts!=null) {
-			isClosed="false";
+		//CommonResturantsProducts ResturantsProducts=ResturantsProductsDao.findByIdAndIsAvailableAndIsDeletedAndCurrentDateBetweenAvailabilityFromAndAvailabilityTo(productId, 1, 0);
+		CommonResturantsProducts resturantProduct=ResturantsProductsDao.findByIdAndIsAvailableAndIsDeletedAndIsActive(productId, 1, 0,1);
+		if(resturantProduct!=null) {
+			if(resturantProduct.getIsTimingEnable()==1) {
+				String TimeScale= ResturantsProductsDao.isClosingTimeOfProductIsPMOrAM(productId);
+				if(TimeScale!=null) {
+					if(TimeScale.equals("PM")) {
+						CommonResturantsProducts ProductsTimings=ResturantsProductsDao.isOpenResturantNowWithInPMAndPM(productId);
+						if(ProductsTimings!=null) {
+							isClosed="false";
+							
+						}
+					}else if(TimeScale.equals("AM")){
+						CommonResturantsProducts ProductsTimings=ResturantsProductsDao.isOpenProductNowWithInPMAndAM(productId);
+						if(ProductsTimings!=null) {
+							isClosed="false";
+							
+						}
+					}
+				}
+			}else {
+				isClosed="true";
+			}
+			
 		}
+		
+		
+		
+		
+		
+		
+		
 		return isClosed;
 	} 
 

@@ -51,6 +51,9 @@ public class CommonUsersFavProductsService {
 	@Autowired
 	private CommonResturantsCategoriesService ResturantsCategoriesService;
 	
+	@Autowired
+	private CommonResturantsTimingsService ResturantsTimingsService;
+	
 	@Transactional
 	public void addProductToUsersFav(long productId,long userId,int actionId){
 		
@@ -98,6 +101,7 @@ public class CommonUsersFavProductsService {
 								Row.put("isTimingEnableLable", "No");
 								Row.put("availabilityFrom", "");
 								Row.put("availabilityTo", "");
+								Row.put("isClosed","false");
 								
 							}else {
 								Row.put("isTimingEnable", Product.getIsActive());
@@ -117,7 +121,11 @@ public class CommonUsersFavProductsService {
 								}
 								
 								Row.put("availabilityTo", DateUtils.addHours(Product.getAvailabilityTo(), 5).getTime());
-								Row.put("isClosed","false");
+								if(ResturantsTimingsService.checkResturantOpenStatus(Product.getResturantId()).equals("false")) {
+									Row.put("isClosed",ResturantsProductsService.getIsClosedTimingsByProductId(Product.getId()));
+								}else {
+									Row.put("isClosed","true");
+								}
 								//Row.put("isClosed",ResturantsProductsService.getIsClosedTimingsByProductId(Product.getId()));
 								
 							}

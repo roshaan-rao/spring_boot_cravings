@@ -12,7 +12,7 @@ import javax.persistence.Id;
 public class CommonResturants {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "id")
 	private long id;
 	private String label;

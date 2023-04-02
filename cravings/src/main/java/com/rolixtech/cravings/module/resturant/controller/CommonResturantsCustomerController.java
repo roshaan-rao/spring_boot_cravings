@@ -47,8 +47,6 @@ public class CommonResturantsCustomerController {
 	private CommonUsersFavProductsService FavProductsService;
 	
 	
-	
-	
 	@Autowired
 	private CommonResturantsProductsService ResturantsProductsService;
 	

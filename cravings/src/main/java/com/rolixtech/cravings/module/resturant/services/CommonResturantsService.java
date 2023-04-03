@@ -1756,6 +1756,8 @@ public class CommonResturantsService {
 				RowDetail.put("isActive", PromotionalBannersDetail.get(k).getisActive());
 				RowDetail.put("isActiveLabel", PromotionalBannersDetail.get(k).getisActive()==1? "Active": "In-Active");
 				RowDetail.put("fileName", PromotionalBannersDetail.get(k).getUrlImg());
+				RowDetail.put("resturantId", PromotionalBannersDetail.get(k).getResturantId());
+				RowDetail.put("resturantLabel", findLabelById(PromotionalBannersDetail.get(k).getResturantId()));
 				list.add(RowDetail);
 			}
 		}

@@ -25,7 +25,7 @@ public interface CommonResturantsPromotionalBannersDetailDao extends JpaReposito
 	@Query(value="SELECT pb.id as pbId,pb_detail.id as pbDetailId, pb.start_date as validFrom ,pb.end_date as validTo ,pb.is_active as isActive,pb_detail.image_url as urlImg FROM common_resturants_promotional_banners pb join common_resturants_promotional_banners_detail pb_detail on pb.id=pb_detail.promotional_banner_id and pb_detail.resturant_id=?1",nativeQuery = true)
 	List<customPromotionalBanner> findAllByResturantId(Long resturantId);
 	
-	@Query(value="SELECT pb.id as pbId,pb_detail.id as pbDetailId, pb.start_date as validFrom ,pb.end_date as validTo ,pb.is_active as isActive,pb_detail.image_url as urlImg FROM common_resturants_promotional_banners pb join common_resturants_promotional_banners_detail pb_detail on pb.id=pb_detail.promotional_banner_id and pb_detail.id=?1",nativeQuery = true)
+	@Query(value="SELECT pb.id as pbId,pb_detail.id as pbDetailId, pb.start_date as validFrom ,pb.end_date as validTo ,pb.is_active as isActive,pb_detail.image_url as urlImg,pb_detail.resturant_id as resturantId FROM common_resturants_promotional_banners pb join common_resturants_promotional_banners_detail pb_detail on pb.id=pb_detail.promotional_banner_id and pb_detail.id=?1",nativeQuery = true)
 	List<customPromotionalBanner> findAllByRecordId(Long recordId);
 	
 	public interface customPromotionalBanner{
@@ -35,6 +35,7 @@ public interface CommonResturantsPromotionalBannersDetailDao extends JpaReposito
 		public Date getValidTo();
 		public Integer getisActive();
 		public String getUrlImg();
+		public Long getResturantId();
 		
 	}
 

@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -498,6 +499,19 @@ public class GenericUtility  {
     	  String date = simpleDateFormat.format(val);
     	 return date;
       }
+
+	public static String getDisplayDatedYYYYMMDD(Date val) {
+
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		String date = simpleDateFormat.format(val);
+		return date;
+	}
+
+	public static LocalDate getDateDBFormat(String val) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDate newDate = LocalDate.parse(val+" 00:00:00", formatter);
+		return newDate;
+	}
       
       
       /***
@@ -587,7 +601,7 @@ public class GenericUtility  {
       
 	public String isFeatured() {
 		
-		return "true";
+		return "false";
 	}
       
       

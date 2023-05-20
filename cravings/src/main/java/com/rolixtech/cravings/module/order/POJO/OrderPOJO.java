@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 public class OrderPOJO {
-	
+
 
 	private long resturantId;
 	private double totalAmount;
@@ -34,10 +34,8 @@ public class OrderPOJO {
 	private double serviceFee;
 	private String instructions;
 	private long voucherId;
-	private Integer isAdmin; 
-	
-	
-	
+	private Integer isAdmin;
+
 	private OrderAddressPOJO address;
 	private ArrayList<OrderProductsPOJO> products = new ArrayList<>();
 	public long getResturantId() {
@@ -76,7 +74,7 @@ public class OrderPOJO {
 	public void setProducts(ArrayList<OrderProductsPOJO> products) {
 		this.products = products;
 	}
-	
+
 	public long getUserId() {
 		return userId;
 	}
@@ -101,8 +99,8 @@ public class OrderPOJO {
 	public void setDiscount(double discount) {
 		this.discount = discount;
 	}
-	
-	
+
+
 	public double getTotalGstPercentage() {
 		return totalGstPercentage;
 	}
@@ -127,7 +125,7 @@ public class OrderPOJO {
 	public void setInstructions(String instructions) {
 		this.instructions = instructions;
 	}
-	
+
 	public Integer getIsAdmin() {
 		return isAdmin;
 	}
@@ -149,7 +147,7 @@ public class OrderPOJO {
 				+ ", voucherId=" + voucherId + ", isAdmin=" + isAdmin + ", address=" + address + ", products="
 				+ products + "]";
 	}
-	
-	
-	
+
+
+
 }

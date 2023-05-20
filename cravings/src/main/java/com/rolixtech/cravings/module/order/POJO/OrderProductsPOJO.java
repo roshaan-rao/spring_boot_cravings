@@ -20,12 +20,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 public class OrderProductsPOJO {
-	
-	
+
+
 	private long productId;
 	private int quantity;
 	private double price;
-	
+
 	private List<OrderProductsOptionalAddOnPOJO> optionalAddOn = new ArrayList<>();
 	private List<OrderProductsRequiredAddOnPOJO> requiredAddOn = new ArrayList<>();
 	public long getProductId() {
@@ -63,6 +63,6 @@ public class OrderProductsPOJO {
 		return "OrderProductsPOJO [productId=" + productId + ", quantity=" + quantity + ", price=" + price
 				+ ", optionalAddOn=" + optionalAddOn + ", requiredAddOn=" + requiredAddOn + "]";
 	}
-	
-	
+
+
 }

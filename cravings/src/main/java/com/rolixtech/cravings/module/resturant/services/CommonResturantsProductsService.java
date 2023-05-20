@@ -90,8 +90,17 @@ public class CommonResturantsProductsService {
 		}
 		return label;
 	}
+	public String findDescriptionById(long productId) {
+		String label="";
+		CommonResturantsProducts Products=ResturantsProductsDao.findById(productId);
+		if(Products!=null) {
+			label=Products.getLabel();
+		}
+		return label;
+	}
 
-	
+
+
 	@Transactional
 	public void saveProduct(long recordId,String label,String description,long resturantId,double salesTax,double salesTaxPercentage,double grossAmount,double netAmount,double discount,
 			double rate,int isTimingEnable,Date availabilityFrom,Date availabilityTo,int isAvailable,MultipartFile productImgUrl,long resturantCategoryId,int isExtra) throws Exception {
@@ -421,7 +430,8 @@ public class CommonResturantsProductsService {
 					Map Row=new HashMap<>();
 					Row.put("id", Product.getId());
 					Row.put("label",Product.getLabel());	
-					Row.put("price",Product.getRate());	
+					Row.put("price",Product.getRate());
+					Row.put("description", Product.getDescription());
 					list.add(Row);
 				}
 				

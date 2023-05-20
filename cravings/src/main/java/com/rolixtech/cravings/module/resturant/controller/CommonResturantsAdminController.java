@@ -50,7 +50,8 @@ public class CommonResturantsAdminController {
 
 	@Autowired
 	private GenericUtility utility;
-    
+
+	//Register Resturant
     @PostMapping(CONTROLLER_URL+"/register")
 	public ResponseEntity<?> Save(String recordId,Long userId,String label,String address,Long countryId,Long provinceId,Long cityId,Double lat,Double lng,Double accuracy,@RequestParam(name ="logo_img_url") MultipartFile logoImg,
 			@RequestParam(name ="profile_img_url") MultipartFile profileImg ,@RequestParam(name ="banner_img_url") MultipartFile bannerImg,Long dayId[], @DateTimeFormat(pattern="HH:mm") Date openTimings[],@DateTimeFormat(pattern="HH:mm") Date closeTimings[],String contactNo,String email,Integer isActive,
@@ -83,7 +84,7 @@ public class CommonResturantsAdminController {
 			return ResponseEntity.ok(response);
 	}
     
-    
+    //View resturant By its id
     @PostMapping(CONTROLLER_URL+"/view")
    	public ResponseEntity<?> Save(String recordId,@RequestHeader("authorization") String token)  { 
        		long UserId=utility.getUserIDByToken(token);
@@ -115,7 +116,7 @@ public class CommonResturantsAdminController {
    	}
     
     
-    
+    // Resturant status to be declared as approved pending and declined
     @PutMapping(CONTROLLER_URL+"/changeStatus")
    	public ResponseEntity<?> changeStatus(String recordId,Integer status,@RequestHeader("authorization") String token)  { 
        		long UserId=utility.getUserIDByToken(token);
@@ -145,7 +146,8 @@ public class CommonResturantsAdminController {
    			
    			return ResponseEntity.ok(response);
    	}
-    
+
+	   //not deleting, its deactivation
     @DeleteMapping(CONTROLLER_URL+"/delete")
    	public ResponseEntity<?> DeleteResturant(String recordId,@RequestHeader("authorization") String token)  { 
        		long UserId=utility.getUserIDByToken(token);
@@ -176,7 +178,7 @@ public class CommonResturantsAdminController {
    			return ResponseEntity.ok(response);
    	}
     
-    
+    //bug for activeStatus, it can set any int value for isactive
     @PutMapping(CONTROLLER_URL+"/changeActiveStatus")
    	public ResponseEntity<?> changeActiveStatus(String recordId,Integer isActive,@RequestHeader("authorization") String token)  { 
        		long UserId=utility.getUserIDByToken(token);
@@ -208,7 +210,7 @@ public class CommonResturantsAdminController {
    	}
     
    
-    
+    //hides resturant if deleted in dropdown
     @GetMapping(CONTROLLER_URL+"/existing-resturants/drop-down")
    	public ResponseEntity<?> Save(@RequestHeader("authorization") String token)  { 
        		long UserId=utility.getUserIDByToken(token);
@@ -238,7 +240,7 @@ public class CommonResturantsAdminController {
    			
    			return ResponseEntity.ok(response);
    	}
-    
+    // difference between this and restrnt by id ?
     @PostMapping(CONTROLLER_URL+"/existing-resturants/view")
    	public ResponseEntity<?> Save(Long recordId,@RequestHeader("authorization") String token)  { 
        		long UserId=utility.getUserIDByToken(token);
@@ -269,7 +271,7 @@ public class CommonResturantsAdminController {
    			return ResponseEntity.ok(response);
    	}
     
-    
+    // products regarding resturant
     @PostMapping(CONTROLLER_URL+"/products/drop-down/view")
    	public ResponseEntity<?> View(Long resturantId,@RequestHeader("authorization") String token)  { 
        		long UserId=utility.getUserIDByToken(token);
@@ -299,7 +301,7 @@ public class CommonResturantsAdminController {
    			
    			return ResponseEntity.ok(response);
    	}
-    
+    // blank
     @PostMapping(CONTROLLER_URL+"/products/add-on/drop-down/view")
    	public ResponseEntity<?> viewProductsSpecificAddOn(Long productId,@RequestHeader("authorization") String token)  { 
        		long UserId=utility.getUserIDByToken(token);
@@ -329,7 +331,8 @@ public class CommonResturantsAdminController {
    			
    			return ResponseEntity.ok(response);
    	}
-    
+
+	   //get labels for a particular resturant i ndropdown
     @PostMapping(CONTROLLER_URL+"/add-on/drop-down/view")
    	public ResponseEntity<?> viewProductsForAddOn(Long resturantId,@RequestHeader("authorization") String token)  { 
        		long UserId=utility.getUserIDByToken(token);

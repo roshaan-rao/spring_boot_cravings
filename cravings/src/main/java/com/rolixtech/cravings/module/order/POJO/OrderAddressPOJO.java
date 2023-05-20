@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 public class OrderAddressPOJO {
-	
+
 
 	private String cityName;
 	private double lng;
@@ -27,7 +27,7 @@ public class OrderAddressPOJO {
 	private String houseNo;
 	private String streetNo;
 	private String area;
-	
+
 	public String getCityName() {
 		return cityName;
 	}
@@ -65,11 +65,11 @@ public class OrderAddressPOJO {
 		this.streetNo = streetNo;
 	}
 	public String getArea() {
-		return area; 
+		return area;
 	}
 	public void setArea(String area) {
 		this.area = area;
 	}
-	
-	
+
+
 }

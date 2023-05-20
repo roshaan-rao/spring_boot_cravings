@@ -34,7 +34,8 @@ public class CommonCategoriesAllView {
 	
 	@Autowired
 	private CommonCategoriesService CategoriesService;
-    
+
+	//Get all categories from DB
     @GetMapping(CONTROLLER_URL+"/view")
 	public ResponseEntity<?> View()  { 
 			

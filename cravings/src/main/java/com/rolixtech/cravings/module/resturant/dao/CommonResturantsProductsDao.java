@@ -49,8 +49,7 @@ public interface CommonResturantsProductsDao extends JpaRepository<CommonRestura
 	
 	@Query(value="SELECT * FROM common_resturants_products WHERE id=?1 and is_avaliable=?2 and is_deleted=?3 AND CURRENT_TIME() BETWEEN availability_from AND availability_to",nativeQuery = true)
 	CommonResturantsProducts findByIdAndIsAvailableAndIsDeletedAndCurrentDateBetweenAvailabilityFromAndAvailabilityTo(long recordId, int isAvaliable, int isDeleted);
-	
-	
+
 	
 	@Query(value="SELECT * FROM common_resturants_products WHERE id=?1 and is_available=?2 and is_deleted=?3 and is_active=?4",nativeQuery = true)
 	CommonResturantsProducts findByIdAndIsAvailableAndIsDeletedAndIsActive(long recordId, int isAvaliable, int isDeleted,int isActive);
@@ -66,6 +65,9 @@ public interface CommonResturantsProductsDao extends JpaRepository<CommonRestura
 	String isClosingTimeOfProductIsPMOrAM(long productId);
 
 	@Query(value="SELECT * FROM common_resturants_products WHERE id=?1 AND CURRENT_TIME() BETWEEN availability_from AND availability_to",nativeQuery = true)
-	CommonResturantsProducts isOpenResturantNowWithInPMAndPM(long productId); 
+	CommonResturantsProducts isOpenResturantNowWithInPMAndPM(long productId);
+
+	@Query (value = "select description from common_resturants_products where resturant_id = ?1 && label = ?2", nativeQuery = true)
+	String findDescriptionByResturantIdAndLabel(Long resturantId, String label);
 
 }

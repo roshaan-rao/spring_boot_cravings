@@ -37,11 +37,35 @@ public class CustomerOrderChangeLog {
 	private double subtotal;
 	private double deliveryFee;
 	private double discount;
+
+	private String riderStatus;
+	private String riderContactNumber;
+
+	private String riderName;
 	private Long logTypeId; 
 	private String logReason;
 	private long logCreatedBy;
 	private Date logCreatedOn;
-	
+	public String getRiderContactNumber() {
+		return riderContactNumber;
+	}
+
+	public void setRiderContactNumber(String riderContactNumber) {
+		this.riderContactNumber = riderContactNumber;
+	}
+	public String getRiderStatus() {
+		return riderStatus;
+	}
+	public String getRiderName() {
+		return riderName;
+	}
+
+	public void setRiderName(String riderName) {
+		this.riderName = riderName;
+	}
+	public void setRiderStatus(String riderStatus) {
+		this.riderStatus = riderStatus;
+	}
 	public long getId() {
 		return id;
 	}

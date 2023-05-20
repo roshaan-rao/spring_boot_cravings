@@ -20,8 +20,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 public class CustomerOrder {
 	
+//	@Id
+//	@GeneratedValue(strategy=GenerationType.IDENTITY)
+//	private long id;
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy= GenerationType.AUTO)
 	private long id;
 	private String orderNumber;
 	private long resturantId;
@@ -45,6 +49,60 @@ public class CustomerOrder {
 	private Integer isAdmin;
 	private Long orderCreatedByAdminId;
 
+	private String riderName;
+	private String riderStatus;
+	private String acknowledgedBy;
+	private String riderContactNumber;
+
+
+
+	private boolean isFirstOrder;
+
+	public boolean isFirstOrder() {
+		return isFirstOrder;
+	}
+
+	public void setFirstOrder(boolean firstOrder) {
+		isFirstOrder = firstOrder;
+	}
+	private boolean isLocked;
+	public boolean isLocked() {
+		return isLocked;
+	}
+
+	public void setLocked(boolean locked) {
+		isLocked = locked;
+	}
+
+	public String getRiderContactNumber() {
+		return riderContactNumber;
+	}
+
+	public void setRiderContactNumber(String riderContactNumber) {
+		this.riderContactNumber = riderContactNumber;
+	}
+	public String getAcknowledgedBy() {
+		return acknowledgedBy;
+	}
+
+	public void setAcknowledgedBy(String acknowledgedBy) {
+		this.acknowledgedBy = acknowledgedBy;
+	}
+
+	public String getRiderStatus() {
+		return riderStatus;
+	}
+
+	public void setRiderStatus(String riderStatus) {
+		this.riderStatus = riderStatus;
+	}
+	public String getRiderName() {
+		return riderName;
+	}
+
+	public void setRiderName(String riderName) {
+		this.riderName = riderName;
+	}
 	
 	public long getId() {
 		return id;

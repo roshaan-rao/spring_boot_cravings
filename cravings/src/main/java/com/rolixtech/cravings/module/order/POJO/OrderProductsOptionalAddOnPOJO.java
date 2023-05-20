@@ -18,8 +18,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 public class OrderProductsOptionalAddOnPOJO {
-	
-	
+
+
 	private long id;
 	private double price;
 	public long getId() {
@@ -38,7 +38,7 @@ public class OrderProductsOptionalAddOnPOJO {
 	public String toString() {
 		return "OrderProductsOptionalAddOnPOJO [id=" + id + ", price=" + price + "]";
 	}
-	
-	
-	
+
+
+
 }

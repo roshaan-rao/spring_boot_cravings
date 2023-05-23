@@ -89,10 +89,7 @@ public class CustomerOrderStatusService {
 		LocalDateTime currentTime = LocalDateTime.now();
 		String currentFormattedDate = currentTime.format(formatter);
 
-
-
 		System.out.println("currentDate "+ currentFormattedDate);
-
 
 			Map totalOrderStatusCountsRow = new HashMap();
 				totalOrderStatusCountsRow.put("allOrdersCount",customerOrderDao.countAllByOrderStatusId(idss,currentFormattedDate,currentFormattedDate));

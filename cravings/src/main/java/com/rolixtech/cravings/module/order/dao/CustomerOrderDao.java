@@ -44,6 +44,8 @@ public interface CustomerOrderDao extends JpaRepository<CustomerOrder, Long>  {
 
 	@Query(value="SELECT * FROM customer_order  where order_status_id >?1 and order_status_id not in (?2) order by id desc",nativeQuery = true)
 	List<CustomerOrder> findAllByOrderStatusIdGreaterThanOrderAndOrderStatusIdNotByIdDesc(long l,List<Long> statusIdNotIn);
+	@Query(value="SELECT * FROM customer_order  where order_status_id >?1 and order_status_id not in (?2) and created_on between ?3 ' 00:01:00' and ?4 ' 23:59:00' order by id desc",nativeQuery = true)
+	List<CustomerOrder> findTodaysAllByOrderStatusIdGreaterThanOrderAndOrderStatusIdNotByIdDesc(long l,List<Long> statusIdNotIn,String fromDate, String toDate);
 
 	List<CustomerOrder> findAllByUserIdAndOrderStatusIdIn(long userId, List<Long> statusIds);
 
@@ -55,6 +57,9 @@ public interface CustomerOrderDao extends JpaRepository<CustomerOrder, Long>  {
 
 
 	List<CustomerOrder> findAllByOrderByIdDesc();
+
+	@Query(value = "SELECT * FROM customer_order where created_on between ?1 ' 00:01:00' and ?2 ' 23:59:00'",nativeQuery = true)
+	List<CustomerOrder> findAllOrderByDateFilter (String startDate, String endDate);
 
 
 	@Query(value="SELECT datediff(?1,?2) ;",nativeQuery = true)
@@ -72,6 +77,8 @@ public interface CustomerOrderDao extends JpaRepository<CustomerOrder, Long>  {
 
 	@Query(value="SELECT * FROM customer_order  where order_status_id in (?1) order by id desc",nativeQuery = true)
 	List<CustomerOrder> findAllByOrderStatusIdInOrderByIdDesc(List<Long> orderStatusIds);
+	@Query(value="SELECT * FROM customer_order where order_status_id in (?1) and created_on between ?2 ' 00:01:00' and ?3 ' 23:59:00' order by id desc",nativeQuery = true)
+	List<CustomerOrder> findTodaysAllByOrderStatusIdInOrderByIdDesc(List<Long> orderStatusIds,String fromDate, String toDate);
 
 	@Query(value="SELECT * FROM customer_order  where order_status_id in (?1) and resturant_id=?2 and created_on between STR_TO_DATE(CONCAT(CURDATE(), '00:00:00'), '%Y-%m-%d %H:%i:%s') and STR_TO_DATE(CONCAT(CURDATE(), '23:59:00'), '%Y-%m-%d %H:%i:%s') order by id desc",nativeQuery = true)
 	List<CustomerOrder> findAllByOrderStatusIdInAndResturantIdAndCreatedOnBetween24hrsOrderByIdDesc(List<Long> orderStatuslist, long resturantId);
@@ -128,6 +135,8 @@ public interface CustomerOrderDao extends JpaRepository<CustomerOrder, Long>  {
 	long countByOrderStatusIdDelayed(long orderStatusIdDelayed,String fromDate, String toDate);
 	@Query(value = "select count(*) from customer_order where order_status_id in ?1 and created_on between ?2 ' 00:01:00' and ?3 ' 23:59:00'", nativeQuery = true)
 	long countAllByOrderStatusId(List <Long> orderStatusIds,String fromDate, String toDate);
+	@Query(value = "select * from customer_order where order_status_id in ?1 and created_on between ?2 ' 00:01:00' and ?3 ' 23:59:00'", nativeQuery = true)
+	List<CustomerOrder> countTodaysAllByOrderStatusId(List <Long> orderStatusIds,String fromDate, String toDate);
 
 
 

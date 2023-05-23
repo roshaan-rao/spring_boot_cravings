@@ -104,7 +104,7 @@ public class CommonResturantOrdersAdmin {
    	}
     
     @GetMapping(value=CONTROLLER_URL+"/all-orders/view" )
-   	public ResponseEntity<?> ActiveOrdersView(@RequestHeader("authorization") String token)  { 
+   	public ResponseEntity<?> ActiveOrdersView(@RequestHeader("authorization") String token,String startDate, String endDate)  {
        	    long UserId=utility.getUserIDByToken(token);
    			ResponseEntityOutput response=new ResponseEntityOutput();
    			Map map=new HashMap<>();
@@ -116,7 +116,7 @@ public class CommonResturantOrdersAdmin {
    				response.USER_MESSAGE="Success";
    				response.SYSTEM_MESSAGE="";
 //   				response.DATA= OrdersService.getAllOrders();
-				response.DATA= OrdersService.getAllOrders(UserId);
+				response.DATA= OrdersService.getAllOrders(UserId,startDate,endDate);
    			
    			}
 

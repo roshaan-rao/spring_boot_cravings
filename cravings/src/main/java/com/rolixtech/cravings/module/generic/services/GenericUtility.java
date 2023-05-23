@@ -601,7 +601,7 @@ public class GenericUtility  {
       
 	public String isFeatured() {
 		
-		return "false";
+		return "true";
 	}
       
       

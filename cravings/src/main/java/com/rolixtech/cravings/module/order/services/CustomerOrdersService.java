@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -128,6 +130,9 @@ public class CustomerOrdersService {
 
 	@Autowired
 	private CommonResturantsProductsDao commonResturantsProductsDao;
+
+	@Autowired
+	private CustomerOrderStatusDao customerOrderStatusDao;
 
 
 	public String findLabelById(long categoryId) {
@@ -807,20 +812,50 @@ public class CustomerOrdersService {
 		statusIdNotIn.add(9l);
 		statusIdNotIn.add(10l);
 		List<CustomerOrder> orders=new ArrayList<>();
+
+		List<CustomerOrderStatus> statuses=customerOrderStatusDao.findAll();
+		List<Map> listForCustomerStatusIds=new ArrayList<>();
+		List <Long> idss = new ArrayList<>();
+		if(!statuses.isEmpty()) {
+			statuses.stream().forEach(
+					status->{
+						Map Row=new HashMap<>();
+						Row.put("id", status.getId());
+						listForCustomerStatusIds.add(Row);
+					}
+			);
+		}
+		for (Map<String, Long> map : listForCustomerStatusIds) {
+			for (Long value : map.values()) {
+				idss.add(value);
+			}
+		}
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDateTime currentTime = LocalDateTime.now();
+		String currentFormattedDate = currentTime.format(formatter);
+
+
 		if(orderStatusIds!=null) {
 			List<Long> orderstatIdsList=Arrays.asList(orderStatusIds);
+
 			if(!orderstatIdsList.isEmpty()) {
 				if(orderstatIdsList.get(0) != 0){
-					orders=OrderDao.findAllByOrderStatusIdInOrderByIdDesc(orderstatIdsList);
+//					orders=OrderDao.findAllByOrderStatusIdInOrderByIdDesc(orderstatIdsList);
+					orders=OrderDao.findTodaysAllByOrderStatusIdInOrderByIdDesc(orderstatIdsList,currentFormattedDate,currentFormattedDate);
+
 				}
 				if (orderstatIdsList.get(0) == 0){
-					orders=OrderDao.findAll();
+//					orders=OrderDao.findAll();
+					orders = OrderDao.countTodaysAllByOrderStatusId(idss,currentFormattedDate,currentFormattedDate);
 				}
 			}
 
 
 		}else {
-			orders=OrderDao.findAllByOrderStatusIdGreaterThanOrderAndOrderStatusIdNotByIdDesc(0l,statusIdNotIn);
+			//orders=OrderDao.findAllByOrderStatusIdGreaterThanOrderAndOrderStatusIdNotByIdDesc(0l,statusIdNotIn);
+			orders=OrderDao.findTodaysAllByOrderStatusIdGreaterThanOrderAndOrderStatusIdNotByIdDesc(0l,statusIdNotIn,currentFormattedDate,currentFormattedDate);
+
 		}
 
 
@@ -951,10 +986,11 @@ public class CustomerOrdersService {
 	}
 
 
-	public List<Map> getAllOrders(Long UserId) {
+	public List<Map> getAllOrders(Long UserId,String startDate, String endDate) {
 		List<Map> list=new ArrayList<>();
 
-		List<CustomerOrder> orders=OrderDao.findAllByOrderByIdDesc();
+//		List<CustomerOrder> orders=OrderDao.findAllByOrderByIdDesc();
+		List<CustomerOrder> orders=OrderDao.findAllOrderByDateFilter(startDate,endDate);
 		if(!orders.isEmpty()) {
 			orders.stream().forEach(
 					order->{
@@ -1242,11 +1278,10 @@ public class CustomerOrdersService {
 							Rowproduct.put("productId", OrderProduct.getProductId());
 							Rowproduct.put("quantity", OrderProduct.getQuantity());
 							Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
-							Long restId = order.getResturantId();
-							String foodLabel = ResturantsProductsService.findLabelById(OrderProduct.getProductId());
-//							Rowproduct.put("foodDescription", commonResturantsProductsDao.findDescriptionByResturantIdAndLabel(order.getResturantId(),ResturantsProductsService.findLabelById(OrderProduct.getProductId())));
+//							Long restId = order.getResturantId();
+//							String foodLabel = ResturantsProductsService.findLabelById(OrderProduct.getProductId());
 
-							Rowproduct.put("foodDescription", commonResturantsProductsDao.findDescriptionByResturantIdAndLabel(restId,foodLabel));
+//							Rowproduct.put("foodDescription", commonResturantsProductsDao.findDescriptionByResturantIdAndLabel(restId,foodLabel));
 							List<Map> requiredAddOnsList=new ArrayList<>();
 							List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
 							if(!requiredAddOns.isEmpty()) {

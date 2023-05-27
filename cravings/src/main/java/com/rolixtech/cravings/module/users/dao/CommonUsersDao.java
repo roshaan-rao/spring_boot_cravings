@@ -2,6 +2,7 @@ package com.rolixtech.cravings.module.users.dao;
 
 import java.util.List;
 
+import com.rolixtech.cravings.module.order.model.CustomerOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -78,8 +79,8 @@ public interface CommonUsersDao extends JpaRepository<CommonUsers, Long>  {
 
 	@Query(value="SELECT first_name from common_users cu where cu.id = ?", nativeQuery = true)
 	String findFirstNameByRiderDetailsUserId(Long id);
-//	@Query(value="select mobile from common_users where id in (select user_id from customer_order where id = ?1)", nativeQuery = true)
-//	String findRiderContactNumberByOrderId(Long id);
+	@Query(value="SELECT email from common_users cu where cu.id = ?", nativeQuery = true)
+	String findEmailByOrderId(Long id);
 
 
 }

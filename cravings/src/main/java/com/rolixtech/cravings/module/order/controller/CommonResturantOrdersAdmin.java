@@ -295,6 +295,58 @@ public class CommonResturantOrdersAdmin {
 
 		return ResponseEntity.ok(response);
 	}
-	 
+
+	@PostMapping(value=CONTROLLER_URL+"/edit-order" )
+	public ResponseEntity<?> editOrder(@RequestParam(name="orderId",required = false)  Long orderId, @RequestHeader("authorization") String token)  {
+		long userId=utility.getUserIDByToken(token);
+		ResponseEntityOutput response=new ResponseEntityOutput();
+		Map map=new HashMap<>();
+
+		try {
+			response.CODE="1";
+			response.USER_MESSAGE="Success";
+			response.SYSTEM_MESSAGE="";
+			response.DATA= OrdersService.editOrder(orderId,userId);
+
+		}
+
+		catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			response.CODE="2";
+			response.USER_MESSAGE="Error";
+			response.SYSTEM_MESSAGE=e.toString();
+
+		}
+
+
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping(value=CONTROLLER_URL+"/previous-customer-order-details" )
+	public ResponseEntity<?> getAllPreviousOrdersForCustomer(@RequestHeader("authorization") String token, Long customerId)  {
+		long UserId=utility.getUserIDByToken(token);
+		ResponseEntityOutput response=new ResponseEntityOutput();
+		Map map=new HashMap<>();
+
+		try {
+			response.CODE="1";
+			response.USER_MESSAGE="Success";
+			response.SYSTEM_MESSAGE="";
+			response.DATA= OrdersStatusService.getAllCustomersOrderHistory(customerId);
+
+		}
+
+		catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			response.CODE="2";
+			response.USER_MESSAGE="Error";
+			response.SYSTEM_MESSAGE=e.toString();
+
+		}
+
+		return ResponseEntity.ok(response);
+	}
 	 
 }

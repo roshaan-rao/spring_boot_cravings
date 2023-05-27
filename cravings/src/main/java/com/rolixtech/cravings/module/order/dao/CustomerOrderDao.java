@@ -133,12 +133,16 @@ public interface CustomerOrderDao extends JpaRepository<CustomerOrder, Long>  {
 	long countByOrderStatusIdConfirm(long orderStatusIdConfirm,String fromDate, String toDate);
 	@Query(value = "select count(*) from customer_order where order_status_id = ?1 and created_on between ?2 ' 00:01:00' and ?3 ' 23:59:00'", nativeQuery = true)
 	long countByOrderStatusIdDelayed(long orderStatusIdDelayed,String fromDate, String toDate);
+	@Query(value = "select count(*) from customer_order where order_status_id = ?1 and created_on between ?2 ' 00:01:00' and ?3 ' 23:59:00'", nativeQuery = true)
+	long countByOrderStatusIdPickUp(long orderStatusIdPickUp,String fromDate, String toDate);
 	@Query(value = "select count(*) from customer_order where order_status_id in ?1 and created_on between ?2 ' 00:01:00' and ?3 ' 23:59:00'", nativeQuery = true)
 	long countAllByOrderStatusId(List <Long> orderStatusIds,String fromDate, String toDate);
+
 	@Query(value = "select * from customer_order where order_status_id in ?1 and created_on between ?2 ' 00:01:00' and ?3 ' 23:59:00'", nativeQuery = true)
 	List<CustomerOrder> countTodaysAllByOrderStatusId(List <Long> orderStatusIds,String fromDate, String toDate);
 
-
+	@Query(value = "select * from customer_order where user_id = ?1 and order_status_id in ?2", nativeQuery = true)
+	List<CustomerOrder> finalStatusesCustomerOrder(Long customerId, List<Long> statusIds);
 
 
 }

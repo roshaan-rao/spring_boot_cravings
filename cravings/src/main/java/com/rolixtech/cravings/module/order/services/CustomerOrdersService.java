@@ -6,21 +6,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rolixtech.cravings.module.order.dao.*;
 import com.rolixtech.cravings.module.order.model.*;
 import com.rolixtech.cravings.module.resturant.dao.CommonResturantsTimingsDao;
-import com.rolixtech.cravings.module.users.dao.CommonUsersDao;
-import com.rolixtech.cravings.module.users.dao.CommonUsersRiderStatusesDao;
-import com.rolixtech.cravings.module.users.dao.RiderAssignDetailsDao;
+import com.rolixtech.cravings.module.users.dao.*;
+import com.rolixtech.cravings.module.users.models.CommonUsersAddress;
 import com.rolixtech.cravings.module.users.models.RiderAssignDetails;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.BeanUtils;
@@ -52,7 +46,6 @@ import com.rolixtech.cravings.module.resturant.services.CommonResturantsProducts
 import com.rolixtech.cravings.module.resturant.services.CommonResturantsProductsService;
 import com.rolixtech.cravings.module.resturant.services.CommonResturantsService;
 import com.rolixtech.cravings.module.resturant.services.CommonResturantsTimingsService;
-import com.rolixtech.cravings.module.users.dao.CommonUsersDevicesDao;
 import com.rolixtech.cravings.module.users.models.CommonUsersDevices;
 import com.rolixtech.cravings.module.users.services.CommonUsersService;
 
@@ -133,6 +126,8 @@ public class CustomerOrdersService {
 
 	@Autowired
 	private CustomerOrderStatusDao customerOrderStatusDao;
+	@Autowired
+	private CommonUsersAddressDao usersAddressDao;
 
 
 	public String findLabelById(long categoryId) {
@@ -212,59 +207,53 @@ public class CustomerOrdersService {
 
 			List<OrderProductsPOJO> Products=orderr.getProducts();
 			if(!Products.isEmpty()) {
-				Products.stream().forEach(
-						product->{
+				Products.stream().forEach(product->{
 
-							OrderProductsPOJO singleProduct=product;
-							if(singleProduct!=null) {
-								double price=singleProduct.getPrice();
-								int quantity=singleProduct.getQuantity();
-								long productId=singleProduct.getProductId();
-
-
-								CustomerOrderProducts OrderProducts=new CustomerOrderProducts();
-								OrderProducts.setPrice(price);
-								OrderProducts.setProductId(productId);
-								OrderProducts.setQuantity(quantity);
-								OrderProducts.setOrderId(Order.getId());
-								OrderProductsDao.save(OrderProducts);
+					OrderProductsPOJO singleProduct=product;
+					if(singleProduct!=null) {
+						double price=singleProduct.getPrice();
+						int quantity=singleProduct.getQuantity();
+						long productId=singleProduct.getProductId();
 
 
-								List<OrderProductsRequiredAddOnPOJO> requiredAddOns= singleProduct.getRequiredAddOn();
-								if(!requiredAddOns.isEmpty()) {
-									requiredAddOns.stream().forEach(
-											requiredAddOn->{
+						CustomerOrderProducts OrderProducts=new CustomerOrderProducts();
+						OrderProducts.setPrice(price);
+						OrderProducts.setProductId(productId);
+						OrderProducts.setQuantity(quantity);
+						OrderProducts.setOrderId(Order.getId());
+						OrderProductsDao.save(OrderProducts);
 
-												OrderProductsRequiredAddOnPOJO addOn=requiredAddOn;
-												if(addOn!=null) {
-													long addOnproductId=addOn.getId();
-													double addOnPrice=addOn.getPrice();
 
-													OrderProductsRequiredAddOnDao.save(new CustomerOrderProductsRequiredAddOn(OrderProducts.getId(),addOnproductId,addOnPrice));
-												}
-											}
-									);
+						List<OrderProductsRequiredAddOnPOJO> requiredAddOns= singleProduct.getRequiredAddOn();
+						if(!requiredAddOns.isEmpty()) {
+							requiredAddOns.stream().forEach(requiredAddOn->{
+
+								OrderProductsRequiredAddOnPOJO addOn=requiredAddOn;
+								if(addOn!=null) {
+									long addOnproductId=addOn.getId();
+									double addOnPrice=addOn.getPrice();
+
+									OrderProductsRequiredAddOnDao.save(new CustomerOrderProductsRequiredAddOn(OrderProducts.getId(),addOnproductId,addOnPrice));
 								}
-
-								List<OrderProductsOptionalAddOnPOJO> optionalAddOns= singleProduct.getOptionalAddOn();
-								if(!optionalAddOns.isEmpty()) {
-									optionalAddOns.stream().forEach(
-											optionalAddOn->{
-												OrderProductsOptionalAddOnPOJO addOn=optionalAddOn;
-												if(addOn!=null) {
-													long addOnproductId=addOn.getId();
-													double addOnPrice=addOn.getPrice();
-													OrderProductsOptionalAddOnDao.save(new CustomerOrderProductsOptionalAddOn(OrderProducts.getId(),addOnproductId,addOnPrice));
-
-												}
-											}
-									);
-								}
-							}
-
-
+							});
 						}
-				);
+
+						List<OrderProductsOptionalAddOnPOJO> optionalAddOns= singleProduct.getOptionalAddOn();
+						if(!optionalAddOns.isEmpty()) {
+							optionalAddOns.stream().forEach(optionalAddOn->{
+								OrderProductsOptionalAddOnPOJO addOn=optionalAddOn;
+								if(addOn!=null) {
+									long addOnproductId=addOn.getId();
+									double addOnPrice=addOn.getPrice();
+									OrderProductsOptionalAddOnDao.save(new CustomerOrderProductsOptionalAddOn(OrderProducts.getId(),addOnproductId,addOnPrice));
+
+								}
+							});
+						}
+					}
+
+
+				});
 			}
 
 		}
@@ -277,8 +266,7 @@ public class CustomerOrdersService {
 		List<Map> list=new ArrayList<>();
 		List<CustomerOrder> orders=OrderDao.findAllById(orderIdd);
 		if(!orders.isEmpty()) {
-			orders.stream().forEach(
-					order->{
+			orders.stream().forEach(order->{
 
 						long orderId=order.getId();
 						Map Row=new HashMap<>();
@@ -327,53 +315,47 @@ public class CustomerOrdersService {
 						List<Map> orderProductsList=new ArrayList<>();
 						List<CustomerOrderProducts> OrderProducts=OrderProductsDao.findAllByOrderId(orderId);
 						if(!OrderProducts.isEmpty()) {
-							OrderProducts.stream().forEach(
-									OrderProduct->{
-										Map Rowproduct=new HashMap<>();
-										Rowproduct.put("price", OrderProduct.getPrice());
-										Rowproduct.put("productId", OrderProduct.getProductId());
-										Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
-										Rowproduct.put("quantity", OrderProduct.getQuantity());
+							OrderProducts.stream().forEach(OrderProduct->{
+								Map Rowproduct=new HashMap<>();
+								Rowproduct.put("price", OrderProduct.getPrice());
+								Rowproduct.put("productId", OrderProduct.getProductId());
+								Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
+								Rowproduct.put("quantity", OrderProduct.getQuantity());
 
 
-										List<Map> requiredAddOnsList=new ArrayList<>();
-										List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
-										if(!requiredAddOns.isEmpty()) {
-											requiredAddOns.stream().forEach(
-													requiredAddOn->{
-														Map RowproductRequiredAddon=new HashMap<>();
-														RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
-														RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
-														RowproductRequiredAddon.put("label",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
-														requiredAddOnsList.add(RowproductRequiredAddon);
+								List<Map> requiredAddOnsList=new ArrayList<>();
+								List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+								if(!requiredAddOns.isEmpty()) {
+									requiredAddOns.stream().forEach(requiredAddOn->{
+										Map RowproductRequiredAddon=new HashMap<>();
+										RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
+										RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
+										RowproductRequiredAddon.put("label",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
+										requiredAddOnsList.add(RowproductRequiredAddon);
 
 
-													}
-											);
-										}
-										Rowproduct.put("requiredAddOn", requiredAddOnsList);
+									});
+								}
+								Rowproduct.put("requiredAddOn", requiredAddOnsList);
 
-										List<Map> optionalAddOnsList=new ArrayList<>();
-										List<CustomerOrderProductsOptionalAddOn> optionalAddOns=OrderProductsOptionalAddOnDao.findAllByOrderProductId(OrderProduct.getId());
-										if(!optionalAddOns.isEmpty()) {
-											optionalAddOns.stream().forEach(
-													optionalAddOn->{
-														Map RowproductOptionalAddon=new HashMap<>();
-														RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
-														RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
-														RowproductOptionalAddon.put("label",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
-														optionalAddOnsList.add(RowproductOptionalAddon);
+								List<Map> optionalAddOnsList=new ArrayList<>();
+								List<CustomerOrderProductsOptionalAddOn> optionalAddOns=OrderProductsOptionalAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+								if(!optionalAddOns.isEmpty()) {
+									optionalAddOns.stream().forEach(optionalAddOn->{
+										Map RowproductOptionalAddon=new HashMap<>();
+										RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
+										RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
+										RowproductOptionalAddon.put("label",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
+										optionalAddOnsList.add(RowproductOptionalAddon);
 
 
-													}
-											);
-										}
-										Rowproduct.put("optionalAddOn", optionalAddOnsList);
+									});
+								}
+								Rowproduct.put("optionalAddOn", optionalAddOnsList);
 
-										orderProductsList.add(Rowproduct);
+								orderProductsList.add(Rowproduct);
 
-									}
-							);
+							});
 						}
 
 						Row.put("products",orderProductsList);
@@ -399,8 +381,7 @@ public class CustomerOrdersService {
 		statusIds.add(10L);
 		List<CustomerOrder> orders=OrderDao.findAllByUserIdAndOrderStatusIdIn(userId,statusIds);
 		if(!orders.isEmpty()) {
-			orders.stream().forEach(
-					order->{
+			orders.stream().forEach(order->{
 
 						long orderId=order.getId();
 						Map Row=new HashMap<>();
@@ -473,8 +454,7 @@ public class CustomerOrdersService {
 		//List<CustomerOrder> orders=OrderDao.findAllByUserIdAndOrderStatusId(userId,2l);
 		List<CustomerOrder> orders=OrderDao.findAllByOrderStatusIdGreaterThanOrderAndOrderStatusIdNotInAndUserIdOrderByIdDesc(0l,statusIds,userId);
 		if(!orders.isEmpty()) {
-			orders.stream().forEach(
-					order->{
+			orders.stream().forEach(order->{
 
 						long orderId=order.getId();
 						Map Row=new HashMap<>();
@@ -614,53 +594,47 @@ public class CustomerOrdersService {
 			List<Map> orderProductsList=new ArrayList<>();
 			List<CustomerOrderProducts> OrderProducts=OrderProductsDao.findAllByOrderId(orderId);
 			if(!OrderProducts.isEmpty()) {
-				OrderProducts.stream().forEach(
-						OrderProduct->{
-							Map Rowproduct=new HashMap<>();
-							Rowproduct.put("price", OrderProduct.getPrice());
-							Rowproduct.put("productId", OrderProduct.getProductId());
-							Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
-							Rowproduct.put("quantity", OrderProduct.getQuantity());
+				OrderProducts.stream().forEach(OrderProduct->{
+					Map Rowproduct=new HashMap<>();
+					Rowproduct.put("price", OrderProduct.getPrice());
+					Rowproduct.put("productId", OrderProduct.getProductId());
+					Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
+					Rowproduct.put("quantity", OrderProduct.getQuantity());
 
 
-							List<Map> requiredAddOnsList=new ArrayList<>();
-							List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
-							if(!requiredAddOns.isEmpty()) {
-								requiredAddOns.stream().forEach(
-										requiredAddOn->{
-											Map RowproductRequiredAddon=new HashMap<>();
-											RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
-											RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
-											RowproductRequiredAddon.put("label",ResturantsProductsService.findLabelById(requiredAddOn.getProductId()));
-											requiredAddOnsList.add(RowproductRequiredAddon);
+					List<Map> requiredAddOnsList=new ArrayList<>();
+					List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+					if(!requiredAddOns.isEmpty()) {
+						requiredAddOns.stream().forEach(requiredAddOn->{
+							Map RowproductRequiredAddon=new HashMap<>();
+							RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
+							RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
+							RowproductRequiredAddon.put("label",ResturantsProductsService.findLabelById(requiredAddOn.getProductId()));
+							requiredAddOnsList.add(RowproductRequiredAddon);
 
 
-										}
-								);
-							}
-							Rowproduct.put("requiredAddOn", requiredAddOnsList);
+						});
+					}
+					Rowproduct.put("requiredAddOn", requiredAddOnsList);
 
-							List<Map> optionalAddOnsList=new ArrayList<>();
-							List<CustomerOrderProductsOptionalAddOn> optionalAddOns=OrderProductsOptionalAddOnDao.findAllByOrderProductId(OrderProduct.getId());
-							if(!optionalAddOns.isEmpty()) {
-								optionalAddOns.stream().forEach(
-										optionalAddOn->{
-											Map RowproductOptionalAddon=new HashMap<>();
-											RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
-											RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
-											RowproductOptionalAddon.put("label",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
-											optionalAddOnsList.add(RowproductOptionalAddon);
+					List<Map> optionalAddOnsList=new ArrayList<>();
+					List<CustomerOrderProductsOptionalAddOn> optionalAddOns=OrderProductsOptionalAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+					if(!optionalAddOns.isEmpty()) {
+						optionalAddOns.stream().forEach(optionalAddOn->{
+							Map RowproductOptionalAddon=new HashMap<>();
+							RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
+							RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
+							RowproductOptionalAddon.put("label",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
+							optionalAddOnsList.add(RowproductOptionalAddon);
 
 
-										}
-								);
-							}
-							Rowproduct.put("optionalAddOn", optionalAddOnsList);
+						});
+					}
+					Rowproduct.put("optionalAddOn", optionalAddOnsList);
 
-							orderProductsList.add(Rowproduct);
+					orderProductsList.add(Rowproduct);
 
-						}
-				);
+				});
 			}
 
 			Row.put("products",orderProductsList);
@@ -680,8 +654,7 @@ public class CustomerOrdersService {
 		List<Map> list=new ArrayList<>();
 		List<CustomerOrder> orders=OrderDao.findAllById(orderIdd);
 		if(!orders.isEmpty()) {
-			orders.stream().forEach(
-					order->{
+			orders.stream().forEach(order->{
 
 						long orderId=order.getId();
 						Map Row=new HashMap<>();
@@ -743,52 +716,46 @@ public class CustomerOrdersService {
 						List<Map> orderProductsList=new ArrayList<>();
 						List<CustomerOrderProducts> OrderProducts=OrderProductsDao.findAllByOrderId(orderId);
 						if(!OrderProducts.isEmpty()) {
-							OrderProducts.stream().forEach(
-									OrderProduct->{
-										Map Rowproduct=new HashMap<>();
-										Rowproduct.put("price", OrderProduct.getPrice());
-										Rowproduct.put("productId", OrderProduct.getProductId());
-										Rowproduct.put("quantity", OrderProduct.getQuantity());
-										Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
+							OrderProducts.stream().forEach(OrderProduct->{
+								Map Rowproduct=new HashMap<>();
+								Rowproduct.put("price", OrderProduct.getPrice());
+								Rowproduct.put("productId", OrderProduct.getProductId());
+								Rowproduct.put("quantity", OrderProduct.getQuantity());
+								Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
 
-										List<Map> requiredAddOnsList=new ArrayList<>();
-										List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
-										if(!requiredAddOns.isEmpty()) {
-											requiredAddOns.stream().forEach(
-													requiredAddOn->{
-														Map RowproductRequiredAddon=new HashMap<>();
-														RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
-														RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
-														RowproductRequiredAddon.put("label",ResturantsProductsService.findLabelById(requiredAddOn.getProductId()));
-														requiredAddOnsList.add(RowproductRequiredAddon);
+								List<Map> requiredAddOnsList=new ArrayList<>();
+								List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+								if(!requiredAddOns.isEmpty()) {
+									requiredAddOns.stream().forEach(requiredAddOn->{
+										Map RowproductRequiredAddon=new HashMap<>();
+										RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
+										RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
+										RowproductRequiredAddon.put("label",ResturantsProductsService.findLabelById(requiredAddOn.getProductId()));
+										requiredAddOnsList.add(RowproductRequiredAddon);
 
 
-													}
-											);
-										}
-										Rowproduct.put("requiredAddOn", requiredAddOnsList);
+									});
+								}
+								Rowproduct.put("requiredAddOn", requiredAddOnsList);
 
-										List<Map> optionalAddOnsList=new ArrayList<>();
-										List<CustomerOrderProductsOptionalAddOn> optionalAddOns=OrderProductsOptionalAddOnDao.findAllByOrderProductId(OrderProduct.getId());
-										if(!optionalAddOns.isEmpty()) {
-											optionalAddOns.stream().forEach(
-													optionalAddOn->{
-														Map RowproductOptionalAddon=new HashMap<>();
-														RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
-														RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
-														RowproductOptionalAddon.put("label",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
-														optionalAddOnsList.add(RowproductOptionalAddon);
+								List<Map> optionalAddOnsList=new ArrayList<>();
+								List<CustomerOrderProductsOptionalAddOn> optionalAddOns=OrderProductsOptionalAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+								if(!optionalAddOns.isEmpty()) {
+									optionalAddOns.stream().forEach(optionalAddOn->{
+										Map RowproductOptionalAddon=new HashMap<>();
+										RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
+										RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
+										RowproductOptionalAddon.put("label",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
+										optionalAddOnsList.add(RowproductOptionalAddon);
 
 
-													}
-											);
-										}
-										Rowproduct.put("optionalAddOn", optionalAddOnsList);
+									});
+								}
+								Rowproduct.put("optionalAddOn", optionalAddOnsList);
 
-										orderProductsList.add(Rowproduct);
+								orderProductsList.add(Rowproduct);
 
-									}
-							);
+							});
 						}
 
 						Row.put("products",orderProductsList);
@@ -817,13 +784,11 @@ public class CustomerOrdersService {
 		List<Map> listForCustomerStatusIds=new ArrayList<>();
 		List <Long> idss = new ArrayList<>();
 		if(!statuses.isEmpty()) {
-			statuses.stream().forEach(
-					status->{
-						Map Row=new HashMap<>();
-						Row.put("id", status.getId());
-						listForCustomerStatusIds.add(Row);
-					}
-			);
+			statuses.stream().forEach(status->{
+				Map Row=new HashMap<>();
+				Row.put("id", status.getId());
+				listForCustomerStatusIds.add(Row);
+			});
 		}
 		for (Map<String, Long> map : listForCustomerStatusIds) {
 			for (Long value : map.values()) {
@@ -848,20 +813,20 @@ public class CustomerOrdersService {
 				if (orderstatIdsList.get(0) == 0){
 //					orders=OrderDao.findAll();
 					orders = OrderDao.countTodaysAllByOrderStatusId(idss,currentFormattedDate,currentFormattedDate);
+
 				}
 			}
 
 
 		}else {
-			//orders=OrderDao.findAllByOrderStatusIdGreaterThanOrderAndOrderStatusIdNotByIdDesc(0l,statusIdNotIn);
+//			orders=OrderDao.findAllByOrderStatusIdGreaterThanOrderAndOrderStatusIdNotByIdDesc(0l,statusIdNotIn);
 			orders=OrderDao.findTodaysAllByOrderStatusIdGreaterThanOrderAndOrderStatusIdNotByIdDesc(0l,statusIdNotIn,currentFormattedDate,currentFormattedDate);
 
 		}
 
 
 		if(!orders.isEmpty()) {
-			orders.stream().forEach(
-					order->{
+			orders.stream().forEach(order->{
 
 						long orderId=order.getId();
 						Map Row=new HashMap<>();
@@ -925,52 +890,46 @@ public class CustomerOrdersService {
 						List<Map> orderProductsList=new ArrayList<>();
 						List<CustomerOrderProducts> OrderProducts=OrderProductsDao.findAllByOrderId(orderId);
 						if(!OrderProducts.isEmpty()) {
-							OrderProducts.stream().forEach(
-									OrderProduct->{
-										Map Rowproduct=new HashMap<>();
-										Rowproduct.put("price", OrderProduct.getPrice());
-										Rowproduct.put("productId", OrderProduct.getProductId());
-										Rowproduct.put("quantity", OrderProduct.getQuantity());
-										Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
+							OrderProducts.stream().forEach(OrderProduct->{
+								Map Rowproduct=new HashMap<>();
+								Rowproduct.put("price", OrderProduct.getPrice());
+								Rowproduct.put("productId", OrderProduct.getProductId());
+								Rowproduct.put("quantity", OrderProduct.getQuantity());
+								Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
 
-										List<Map> requiredAddOnsList=new ArrayList<>();
-										List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
-										if(!requiredAddOns.isEmpty()) {
-											requiredAddOns.stream().forEach(
-													requiredAddOn->{
-														Map RowproductRequiredAddon=new HashMap<>();
-														RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
-														RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
-														RowproductRequiredAddon.put("label",ResturantsProductsService.findLabelById(requiredAddOn.getProductId()));
-														requiredAddOnsList.add(RowproductRequiredAddon);
+								List<Map> requiredAddOnsList=new ArrayList<>();
+								List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+								if(!requiredAddOns.isEmpty()) {
+									requiredAddOns.stream().forEach(requiredAddOn->{
+										Map RowproductRequiredAddon=new HashMap<>();
+										RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
+										RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
+										RowproductRequiredAddon.put("label",ResturantsProductsService.findLabelById(requiredAddOn.getProductId()));
+										requiredAddOnsList.add(RowproductRequiredAddon);
 
 
-													}
-											);
-										}
-										Rowproduct.put("requiredAddOn", requiredAddOnsList);
+									});
+								}
+								Rowproduct.put("requiredAddOn", requiredAddOnsList);
 
-										List<Map> optionalAddOnsList=new ArrayList<>();
-										List<CustomerOrderProductsOptionalAddOn> optionalAddOns=OrderProductsOptionalAddOnDao.findAllByOrderProductId(OrderProduct.getId());
-										if(!optionalAddOns.isEmpty()) {
-											optionalAddOns.stream().forEach(
-													optionalAddOn->{
-														Map RowproductOptionalAddon=new HashMap<>();
-														RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
-														RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
-														RowproductOptionalAddon.put("label",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
-														optionalAddOnsList.add(RowproductOptionalAddon);
+								List<Map> optionalAddOnsList=new ArrayList<>();
+								List<CustomerOrderProductsOptionalAddOn> optionalAddOns=OrderProductsOptionalAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+								if(!optionalAddOns.isEmpty()) {
+									optionalAddOns.stream().forEach(optionalAddOn->{
+										Map RowproductOptionalAddon=new HashMap<>();
+										RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
+										RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
+										RowproductOptionalAddon.put("label",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
+										optionalAddOnsList.add(RowproductOptionalAddon);
 
 
-													}
-											);
-										}
-										Rowproduct.put("optionalAddOn", optionalAddOnsList);
+									});
+								}
+								Rowproduct.put("optionalAddOn", optionalAddOnsList);
 
-										orderProductsList.add(Rowproduct);
+								orderProductsList.add(Rowproduct);
 
-									}
-							);
+							});
 						}
 
 						Row.put("products",orderProductsList);
@@ -992,8 +951,7 @@ public class CustomerOrdersService {
 //		List<CustomerOrder> orders=OrderDao.findAllByOrderByIdDesc();
 		List<CustomerOrder> orders=OrderDao.findAllOrderByDateFilter(startDate,endDate);
 		if(!orders.isEmpty()) {
-			orders.stream().forEach(
-					order->{
+			orders.stream().forEach(order->{
 
 						long orderId=order.getId();
 						Map Row=new HashMap<>();
@@ -1066,52 +1024,46 @@ public class CustomerOrdersService {
 						List<Map> orderProductsList=new ArrayList<>();
 						List<CustomerOrderProducts> OrderProducts=OrderProductsDao.findAllByOrderId(orderId);
 						if(!OrderProducts.isEmpty()) {
-							OrderProducts.stream().forEach(
-									OrderProduct->{
-										Map Rowproduct=new HashMap<>();
-										Rowproduct.put("price", OrderProduct.getPrice());
-										Rowproduct.put("productId", OrderProduct.getProductId());
-										Rowproduct.put("quantity", OrderProduct.getQuantity());
-										Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
+							OrderProducts.stream().forEach(OrderProduct->{
+								Map Rowproduct=new HashMap<>();
+								Rowproduct.put("price", OrderProduct.getPrice());
+								Rowproduct.put("productId", OrderProduct.getProductId());
+								Rowproduct.put("quantity", OrderProduct.getQuantity());
+								Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
 
-										List<Map> requiredAddOnsList=new ArrayList<>();
-										List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
-										if(!requiredAddOns.isEmpty()) {
-											requiredAddOns.stream().forEach(
-													requiredAddOn->{
-														Map RowproductRequiredAddon=new HashMap<>();
-														RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
-														RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
-														RowproductRequiredAddon.put("label",ResturantsProductsService.findLabelById(requiredAddOn.getProductId()));
-														requiredAddOnsList.add(RowproductRequiredAddon);
+								List<Map> requiredAddOnsList=new ArrayList<>();
+								List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+								if(!requiredAddOns.isEmpty()) {
+									requiredAddOns.stream().forEach(requiredAddOn->{
+										Map RowproductRequiredAddon=new HashMap<>();
+										RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
+										RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
+										RowproductRequiredAddon.put("label",ResturantsProductsService.findLabelById(requiredAddOn.getProductId()));
+										requiredAddOnsList.add(RowproductRequiredAddon);
 
 
-													}
-											);
-										}
-										Rowproduct.put("requiredAddOn", requiredAddOnsList);
+									});
+								}
+								Rowproduct.put("requiredAddOn", requiredAddOnsList);
 
-										List<Map> optionalAddOnsList=new ArrayList<>();
-										List<CustomerOrderProductsOptionalAddOn> optionalAddOns=OrderProductsOptionalAddOnDao.findAllByOrderProductId(OrderProduct.getId());
-										if(!optionalAddOns.isEmpty()) {
-											optionalAddOns.stream().forEach(
-													optionalAddOn->{
-														Map RowproductOptionalAddon=new HashMap<>();
-														RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
-														RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
-														RowproductOptionalAddon.put("label",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
-														optionalAddOnsList.add(RowproductOptionalAddon);
+								List<Map> optionalAddOnsList=new ArrayList<>();
+								List<CustomerOrderProductsOptionalAddOn> optionalAddOns=OrderProductsOptionalAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+								if(!optionalAddOns.isEmpty()) {
+									optionalAddOns.stream().forEach(optionalAddOn->{
+										Map RowproductOptionalAddon=new HashMap<>();
+										RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
+										RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
+										RowproductOptionalAddon.put("label",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
+										optionalAddOnsList.add(RowproductOptionalAddon);
 
 
-													}
-											);
-										}
-										Rowproduct.put("optionalAddOn", optionalAddOnsList);
+									});
+								}
+								Rowproduct.put("optionalAddOn", optionalAddOnsList);
 
-										orderProductsList.add(Rowproduct);
+								orderProductsList.add(Rowproduct);
 
-									}
-							);
+							});
 						}
 
 						Row.put("products",orderProductsList);
@@ -1154,6 +1106,8 @@ public class CustomerOrdersService {
 			Row.put("totalGst", order.getTotalGst());
 			Row.put("orderType", order.getOrderType());
 			Row.put("createdOn", order.getCreatedOn());
+			Row.put("customerEmail", commonUsersDao.findEmailByOrderId(order.getUserId()));
+
 			Row.put("orderStatusLabel", OrderStatusService.findLabelByIdAndRequirementType(order.getOrderStatusId(),1));
 			// deleivered, cancelled, failed, rejected, test
 			//lock all statuses for above status
@@ -1271,55 +1225,49 @@ public class CustomerOrdersService {
 			List<Map> orderProductsList=new ArrayList<>();
 			List<CustomerOrderProducts> OrderProducts=OrderProductsDao.findAllByOrderId(orderId);
 			if(!OrderProducts.isEmpty()) {
-				OrderProducts.stream().forEach(
-						OrderProduct->{
-							Map Rowproduct=new HashMap<>();
-							Rowproduct.put("price", OrderProduct.getPrice());
-							Rowproduct.put("productId", OrderProduct.getProductId());
-							Rowproduct.put("quantity", OrderProduct.getQuantity());
-							Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
+				OrderProducts.stream().forEach(OrderProduct->{
+					Map Rowproduct=new HashMap<>();
+					Rowproduct.put("price", OrderProduct.getPrice());
+					Rowproduct.put("productId", OrderProduct.getProductId());
+					Rowproduct.put("quantity", OrderProduct.getQuantity());
+					Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
 //							Long restId = order.getResturantId();
 //							String foodLabel = ResturantsProductsService.findLabelById(OrderProduct.getProductId());
 
 //							Rowproduct.put("foodDescription", commonResturantsProductsDao.findDescriptionByResturantIdAndLabel(restId,foodLabel));
-							List<Map> requiredAddOnsList=new ArrayList<>();
-							List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
-							if(!requiredAddOns.isEmpty()) {
-								requiredAddOns.stream().forEach(
-										requiredAddOn->{
-											Map RowproductRequiredAddon=new HashMap<>();
-											RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
-											RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
-											RowproductRequiredAddon.put("productLabel",ResturantsProductsService.findLabelById(requiredAddOn.getProductId()));
-											requiredAddOnsList.add(RowproductRequiredAddon);
+					List<Map> requiredAddOnsList=new ArrayList<>();
+					List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+					if(!requiredAddOns.isEmpty()) {
+						requiredAddOns.stream().forEach(requiredAddOn->{
+							Map RowproductRequiredAddon=new HashMap<>();
+							RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
+							RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
+							RowproductRequiredAddon.put("productLabel",ResturantsProductsService.findLabelById(requiredAddOn.getProductId()));
+							requiredAddOnsList.add(RowproductRequiredAddon);
 
 
-										}
-								);
-							}
-							Rowproduct.put("requiredAddOn", requiredAddOnsList);
+						});
+					}
+					Rowproduct.put("requiredAddOn", requiredAddOnsList);
 
-							List<Map> optionalAddOnsList=new ArrayList<>();
-							List<CustomerOrderProductsOptionalAddOn> optionalAddOns=OrderProductsOptionalAddOnDao.findAllByOrderProductId(OrderProduct.getId());
-							if(!optionalAddOns.isEmpty()) {
-								optionalAddOns.stream().forEach(
-										optionalAddOn->{
-											Map RowproductOptionalAddon=new HashMap<>();
-											RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
-											RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
-											RowproductOptionalAddon.put("productLabel",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
-											optionalAddOnsList.add(RowproductOptionalAddon);
+					List<Map> optionalAddOnsList=new ArrayList<>();
+					List<CustomerOrderProductsOptionalAddOn> optionalAddOns=OrderProductsOptionalAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+					if(!optionalAddOns.isEmpty()) {
+						optionalAddOns.stream().forEach(optionalAddOn->{
+							Map RowproductOptionalAddon=new HashMap<>();
+							RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
+							RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
+							RowproductOptionalAddon.put("productLabel",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
+							optionalAddOnsList.add(RowproductOptionalAddon);
 
 
-										}
-								);
-							}
-							Rowproduct.put("optionalAddOn", optionalAddOnsList);
+						});
+					}
+					Rowproduct.put("optionalAddOn", optionalAddOnsList);
 
-							orderProductsList.add(Rowproduct);
+					orderProductsList.add(Rowproduct);
 
-						}
-				);
+				});
 			}
 
 			Row.put("products",orderProductsList);
@@ -1341,9 +1289,7 @@ public class CustomerOrdersService {
 
 		double latDistance = Math.toRadians(restaurantLattitude - customerLatitude);
 		double lonDistance = Math.toRadians(restaurantLongitude - customerLongitude);
-		double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-				+ Math.cos(Math.toRadians(customerLatitude)) * Math.cos(Math.toRadians(restaurantLattitude))
-				* Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+		double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) + Math.cos(Math.toRadians(customerLatitude)) * Math.cos(Math.toRadians(restaurantLattitude)) * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 		double distance = R * c; // in KM
 
@@ -1378,6 +1324,8 @@ public class CustomerOrdersService {
 			}
 
 		}
+
+
 
 		return purposeList;
 	}
@@ -1452,80 +1400,78 @@ public class CustomerOrdersService {
 
 		if(!mostOrderedProducts.isEmpty()) {
 
-			mostOrderedProducts.stream().forEach(
-					mostOrderedProduct->{
-						CommonResturantsProducts Product=ResturantsProductsDao.findById(utility.parseLong(mostOrderedProduct));
-						if(Product!=null) {
-							Map Row=new HashMap<>();
-							Row.put("id", Product.getId());
+			mostOrderedProducts.stream().forEach(mostOrderedProduct->{
+				CommonResturantsProducts Product=ResturantsProductsDao.findById(utility.parseLong(mostOrderedProduct));
+				if(Product!=null) {
+					Map Row=new HashMap<>();
+					Row.put("id", Product.getId());
 
-							Row.put("label",Product.getLabel());
-							Row.put("description", Product.getDescription());
-							Row.put("resturantId", Product.getResturantId());
-							Row.put("salesTax", Product.getSalesTax());
-							Row.put("salesTaxPercentage", Product.getSalesTaxPercentage());
-							Row.put("grossAmount", Product.getGrossAmount());
-							Row.put("netAmount", Product.getNetAmount());
-							Row.put("discount", Product.getDiscount());
-							Row.put("rate", Product.getRate());
-
-
-							if(Product.getIsTimingEnable()==0) {
-								Row.put("isTimingEnable", Product.getIsActive());
-								Row.put("isTimingEnableLable", "No");
-								Row.put("availabilityFrom", "");
-								Row.put("availabilityTo", "");
-								Row.put("isClosed","false");
-
-							}else {
-								Row.put("isTimingEnable", Product.getIsActive());
-								Row.put("isTimingEnableLable", "Yes");
+					Row.put("label",Product.getLabel());
+					Row.put("description", Product.getDescription());
+					Row.put("resturantId", Product.getResturantId());
+					Row.put("salesTax", Product.getSalesTax());
+					Row.put("salesTaxPercentage", Product.getSalesTaxPercentage());
+					Row.put("grossAmount", Product.getGrossAmount());
+					Row.put("netAmount", Product.getNetAmount());
+					Row.put("discount", Product.getDiscount());
+					Row.put("rate", Product.getRate());
 
 
-								Row.put("availabilityFrom", Product.getAvailabilityFrom().getTime());
-								Row.put("availabilityFromDisplay", utility.getDisplayTimeFromDate((Product.getAvailabilityFrom())));
+					if(Product.getIsTimingEnable()==0) {
+						Row.put("isTimingEnable", Product.getIsActive());
+						Row.put("isTimingEnableLable", "No");
+						Row.put("availabilityFrom", "");
+						Row.put("availabilityTo", "");
+						Row.put("isClosed","false");
+
+					}else {
+						Row.put("isTimingEnable", Product.getIsActive());
+						Row.put("isTimingEnableLable", "Yes");
 
 
-								Row.put("availabilityToDisplay", utility.getDisplayTimeFromDate((Product.getAvailabilityTo())));
-
-								Row.put("availabilityTo", (Product.getAvailabilityTo().getTime()));
-								if(ResturantsTimingsService.checkResturantOpenStatus(Product.getResturantId()).equals("false")) {
-									Row.put("isClosed",ResturantsProductsService.getIsClosedTimingsByProductId(Product.getId()));
-								}else {
-									Row.put("isClosed","false");
-								}
-								//Row.put("isClosed", ResturantsProductsService.getIsClosedTimingsByProductId(Product.getId()));
-							}
+						Row.put("availabilityFrom", Product.getAvailabilityFrom().getTime());
+						Row.put("availabilityFromDisplay", utility.getDisplayTimeFromDate((Product.getAvailabilityFrom())));
 
 
-							Row.put("isAvailable", Product.getIsAvailable());
-							if(Product.getIsActive()==0) {
-								Row.put("isActive", Product.getIsActive());
-								Row.put("isActiveLabel", "In-Active");
-							}else {
-								Row.put("isActive", Product.getIsActive());
-								Row.put("isActiveLabel", "Active");
-							}
-							Row.put("productImgUrl", Product.getProductImgUrl());
-							Row.put("rating", Product.getRating());
-							Row.put("resturantCategoryId", Product.getResturantCategoryId());
-							Row.put("resturantCategoryLabel", ResturantsCategoriesService.findLabelById(Product.getResturantCategoryId()));
-							if(Product.getIsExtra()==0) {
-								Row.put("isExtraLabel","No");
-								Row.put("isExtra",Product.getIsExtra());
-							}else {
-								Row.put("isExtraLabel","Yes");
-								Row.put("isExtra",Product.getIsExtra());
+						Row.put("availabilityToDisplay", utility.getDisplayTimeFromDate((Product.getAvailabilityTo())));
 
-
-							}
-
-							list.add(ResturantsService.getBasicChargesDetailByResturant(Row,Product.getResturantId()));
+						Row.put("availabilityTo", (Product.getAvailabilityTo().getTime()));
+						if(ResturantsTimingsService.checkResturantOpenStatus(Product.getResturantId()).equals("false")) {
+							Row.put("isClosed",ResturantsProductsService.getIsClosedTimingsByProductId(Product.getId()));
+						}else {
+							Row.put("isClosed","false");
 						}
+						//Row.put("isClosed", ResturantsProductsService.getIsClosedTimingsByProductId(Product.getId()));
+					}
+
+
+					Row.put("isAvailable", Product.getIsAvailable());
+					if(Product.getIsActive()==0) {
+						Row.put("isActive", Product.getIsActive());
+						Row.put("isActiveLabel", "In-Active");
+					}else {
+						Row.put("isActive", Product.getIsActive());
+						Row.put("isActiveLabel", "Active");
+					}
+					Row.put("productImgUrl", Product.getProductImgUrl());
+					Row.put("rating", Product.getRating());
+					Row.put("resturantCategoryId", Product.getResturantCategoryId());
+					Row.put("resturantCategoryLabel", ResturantsCategoriesService.findLabelById(Product.getResturantCategoryId()));
+					if(Product.getIsExtra()==0) {
+						Row.put("isExtraLabel","No");
+						Row.put("isExtra",Product.getIsExtra());
+					}else {
+						Row.put("isExtraLabel","Yes");
+						Row.put("isExtra",Product.getIsExtra());
 
 
 					}
-			);
+
+					list.add(ResturantsService.getBasicChargesDetailByResturant(Row,Product.getResturantId()));
+				}
+
+
+			});
 
 
 		}
@@ -1610,8 +1556,7 @@ public class CustomerOrdersService {
 			orders=OrderDao.findAllByOrderStatusIdAndResturantIdOrderByIdDesc(orderStatusId,resturantId);
 		}
 		if(!orders.isEmpty()) {
-			orders.stream().forEach(
-					order->{
+			orders.stream().forEach(order->{
 
 						long orderId=order.getId();
 						Map Row=new HashMap<>();
@@ -1665,52 +1610,46 @@ public class CustomerOrdersService {
 						List<Map> orderProductsList=new ArrayList<>();
 						List<CustomerOrderProducts> OrderProducts=OrderProductsDao.findAllByOrderId(orderId);
 						if(!OrderProducts.isEmpty()) {
-							OrderProducts.stream().forEach(
-									OrderProduct->{
-										Map Rowproduct=new HashMap<>();
-										Rowproduct.put("price", OrderProduct.getPrice());
-										Rowproduct.put("productId", OrderProduct.getProductId());
-										Rowproduct.put("quantity", OrderProduct.getQuantity());
-										Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
+							OrderProducts.stream().forEach(OrderProduct->{
+								Map Rowproduct=new HashMap<>();
+								Rowproduct.put("price", OrderProduct.getPrice());
+								Rowproduct.put("productId", OrderProduct.getProductId());
+								Rowproduct.put("quantity", OrderProduct.getQuantity());
+								Rowproduct.put("productLabel",ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
 
-										List<Map> requiredAddOnsList=new ArrayList<>();
-										List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
-										if(!requiredAddOns.isEmpty()) {
-											requiredAddOns.stream().forEach(
-													requiredAddOn->{
-														Map RowproductRequiredAddon=new HashMap<>();
-														RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
-														RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
-														RowproductRequiredAddon.put("label",ResturantsProductsService.findLabelById(requiredAddOn.getProductId()));
-														requiredAddOnsList.add(RowproductRequiredAddon);
+								List<Map> requiredAddOnsList=new ArrayList<>();
+								List<CustomerOrderProductsRequiredAddOn> requiredAddOns=OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+								if(!requiredAddOns.isEmpty()) {
+									requiredAddOns.stream().forEach(requiredAddOn->{
+										Map RowproductRequiredAddon=new HashMap<>();
+										RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
+										RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
+										RowproductRequiredAddon.put("label",ResturantsProductsService.findLabelById(requiredAddOn.getProductId()));
+										requiredAddOnsList.add(RowproductRequiredAddon);
 
 
-													}
-											);
-										}
-										Rowproduct.put("requiredAddOn", requiredAddOnsList);
+									});
+								}
+								Rowproduct.put("requiredAddOn", requiredAddOnsList);
 
-										List<Map> optionalAddOnsList=new ArrayList<>();
-										List<CustomerOrderProductsOptionalAddOn> optionalAddOns=OrderProductsOptionalAddOnDao.findAllByOrderProductId(OrderProduct.getId());
-										if(!optionalAddOns.isEmpty()) {
-											optionalAddOns.stream().forEach(
-													optionalAddOn->{
-														Map RowproductOptionalAddon=new HashMap<>();
-														RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
-														RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
-														RowproductOptionalAddon.put("label",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
-														optionalAddOnsList.add(RowproductOptionalAddon);
+								List<Map> optionalAddOnsList=new ArrayList<>();
+								List<CustomerOrderProductsOptionalAddOn> optionalAddOns=OrderProductsOptionalAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+								if(!optionalAddOns.isEmpty()) {
+									optionalAddOns.stream().forEach(optionalAddOn->{
+										Map RowproductOptionalAddon=new HashMap<>();
+										RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
+										RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
+										RowproductOptionalAddon.put("label",ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
+										optionalAddOnsList.add(RowproductOptionalAddon);
 
 
-													}
-											);
-										}
-										Rowproduct.put("optionalAddOn", optionalAddOnsList);
+									});
+								}
+								Rowproduct.put("optionalAddOn", optionalAddOnsList);
 
-										orderProductsList.add(Rowproduct);
+								orderProductsList.add(Rowproduct);
 
-									}
-							);
+							});
 						}
 
 						Row.put("products",orderProductsList);
@@ -1837,59 +1776,53 @@ public class CustomerOrdersService {
 
 			List<OrderProductsPOJO> Products=orderr.getProducts();
 			if(!Products.isEmpty()) {
-				Products.stream().forEach(
-						product->{
+				Products.stream().forEach(product->{
 
-							OrderProductsPOJO singleProduct=product;
-							if(singleProduct!=null) {
-								double price=singleProduct.getPrice();
-								int quantity=singleProduct.getQuantity();
-								long productId=singleProduct.getProductId();
-
-
-								CustomerOrderProducts OrderProducts=new CustomerOrderProducts();
-								OrderProducts.setPrice(price);
-								OrderProducts.setProductId(productId);
-								OrderProducts.setQuantity(quantity);
-								OrderProducts.setOrderId(Order.getId());
-								OrderProductsDao.save(OrderProducts);
+					OrderProductsPOJO singleProduct=product;
+					if(singleProduct!=null) {
+						double price=singleProduct.getPrice();
+						int quantity=singleProduct.getQuantity();
+						long productId=singleProduct.getProductId();
 
 
-								List<OrderProductsRequiredAddOnPOJO> requiredAddOns= singleProduct.getRequiredAddOn();
-								if(!requiredAddOns.isEmpty()) {
-									requiredAddOns.stream().forEach(
-											requiredAddOn->{
+						CustomerOrderProducts OrderProducts=new CustomerOrderProducts();
+						OrderProducts.setPrice(price);
+						OrderProducts.setProductId(productId);
+						OrderProducts.setQuantity(quantity);
+						OrderProducts.setOrderId(Order.getId());
+						OrderProductsDao.save(OrderProducts);
 
-												OrderProductsRequiredAddOnPOJO addOn=requiredAddOn;
-												if(addOn!=null) {
-													long addOnproductId=addOn.getId();
-													double addOnPrice=addOn.getPrice();
 
-													OrderProductsRequiredAddOnDao.save(new CustomerOrderProductsRequiredAddOn(OrderProducts.getId(),addOnproductId,addOnPrice));
-												}
-											}
-									);
+						List<OrderProductsRequiredAddOnPOJO> requiredAddOns= singleProduct.getRequiredAddOn();
+						if(!requiredAddOns.isEmpty()) {
+							requiredAddOns.stream().forEach(requiredAddOn->{
+
+								OrderProductsRequiredAddOnPOJO addOn=requiredAddOn;
+								if(addOn!=null) {
+									long addOnproductId=addOn.getId();
+									double addOnPrice=addOn.getPrice();
+
+									OrderProductsRequiredAddOnDao.save(new CustomerOrderProductsRequiredAddOn(OrderProducts.getId(),addOnproductId,addOnPrice));
 								}
-
-								List<OrderProductsOptionalAddOnPOJO> optionalAddOns= singleProduct.getOptionalAddOn();
-								if(!optionalAddOns.isEmpty()) {
-									optionalAddOns.stream().forEach(
-											optionalAddOn->{
-												OrderProductsOptionalAddOnPOJO addOn=optionalAddOn;
-												if(addOn!=null) {
-													long addOnproductId=addOn.getId();
-													double addOnPrice=addOn.getPrice();
-													OrderProductsOptionalAddOnDao.save(new CustomerOrderProductsOptionalAddOn(OrderProducts.getId(),addOnproductId,addOnPrice));
-
-												}
-											}
-									);
-								}
-							}
-
-
+							});
 						}
-				);
+
+						List<OrderProductsOptionalAddOnPOJO> optionalAddOns= singleProduct.getOptionalAddOn();
+						if(!optionalAddOns.isEmpty()) {
+							optionalAddOns.stream().forEach(optionalAddOn->{
+								OrderProductsOptionalAddOnPOJO addOn=optionalAddOn;
+								if(addOn!=null) {
+									long addOnproductId=addOn.getId();
+									double addOnPrice=addOn.getPrice();
+									OrderProductsOptionalAddOnDao.save(new CustomerOrderProductsOptionalAddOn(OrderProducts.getId(),addOnproductId,addOnPrice));
+
+								}
+							});
+						}
+					}
+
+
+				});
 			}
 
 		}
@@ -1927,6 +1860,103 @@ public class CustomerOrdersService {
 			}
 			list.add(Row);
 		}
+		return list;
+	}
+
+	public List<Map> editOrder(Long orderId, Long UserId) {
+		List<Map> list = new ArrayList<>();
+		Optional<CustomerOrder> customerOrder = OrderDao.findById(orderId);
+		CustomerOrder order = new CustomerOrder();
+
+		if (orderId != 0 || orderId != null) {
+			Map row = new HashMap();
+			row.put("totalAmount", customerOrder.get().getTotalAmount());
+			row.put("userId", customerOrder.get().getUserId());
+			row.put("resturantId", customerOrder.get().getResturantId());
+			row.put("deliveryFee", customerOrder.get().getDeliveryFee());
+			row.put("discount", customerOrder.get().getDiscount());
+			row.put("orderType", customerOrder.get().getOrderType());
+			row.put("voucherId", customerOrder.get().getVoucherId());
+			row.put("isAdmin", customerOrder.get().getIsAdmin());
+			row.put("subtotal", customerOrder.get().getSubtotal());
+			row.put("instructions", customerOrder.get().getInstructions());
+			row.put("serviceFee", customerOrder.get().getServiceFee());
+			row.put("resturantAddress",ResturantsService.findResturantAddressById(customerOrder.get().getResturantId()));
+			row.put("resturantLabel",ResturantsService.findLabelById(customerOrder.get().getResturantId()));
+			row.put("resturantBanner",ResturantsService.findBannerImgById(customerOrder.get().getResturantId()));
+			row.put("resturantAddress",ResturantsService.findResturantAddressById(customerOrder.get().getResturantId()));
+			row.put("resturantContact",ResturantsService.findResturantContactById(customerOrder.get().getResturantId()) );
+			row.put("resturantContact2",ResturantsService.findResturantContact2ById(customerOrder.get().getResturantId()) );
+			row.put("resturantContact3",ResturantsService.findResturantContact3ById(customerOrder.get().getResturantId()) );
+			row.put("resturantContact4",ResturantsService.findResturantContact4ById(customerOrder.get().getResturantId()) );
+			Double restaurantsLatitude = ResturantsService.findResturantLatById(customerOrder.get().getResturantId());
+			Double restaurantsLongitude = ResturantsService.findResturantLngById(customerOrder.get().getResturantId());
+			row.put("resturantLng",restaurantsLongitude);
+			row.put("resturantLat",restaurantsLatitude);
+			row.put("customerFirstName", commonUsersDao.findFirstNameById(customerOrder.get().getUserId()));
+			row.put("customerLastName", commonUsersDao.findLastNameById(customerOrder.get().getUserId()));
+			row.put("customerNumber", commonUsersDao.findMobileNumberById(customerOrder.get().getUserId()));
+			row.put("customerEmail", commonUsersDao.findEmailByOrderId(customerOrder.get().getUserId()));
+			row.put("totalGst", customerOrder.get().getTotalGst());
+			row.put("totalGstPercentage", customerOrder.get().getTotalGstPercentage());
+
+			CustomerOrderAddress userAddress=OrderAddressDao.findByOrderId(orderId);
+			row.put("lat", userAddress.getLat());
+			row.put("lng", userAddress.getLng());
+			row.put("cityName", userAddress.getCityName());
+			row.put("houseNo", userAddress.getHouseNo());
+			row.put("streetNo", userAddress.getStreetNo());
+			row.put("area", userAddress.getArea());
+
+			List<Map> orderProductsList = new ArrayList<>();
+			List<CustomerOrderProducts> OrderProducts = OrderProductsDao.findAllByOrderId(orderId);
+
+			if (!OrderProducts.isEmpty()) {
+				OrderProducts.stream().forEach(OrderProduct -> {
+					Map Rowproduct = new HashMap<>();
+					Rowproduct.put("price", OrderProduct.getPrice());
+					Rowproduct.put("productId", OrderProduct.getProductId());
+					Rowproduct.put("quantity", OrderProduct.getQuantity());
+					Rowproduct.put("productLabel", ResturantsProductsService.findLabelById(OrderProduct.getProductId()));
+
+					List<Map> requiredAddOnsList = new ArrayList<>();
+					List<CustomerOrderProductsRequiredAddOn> requiredAddOns = OrderProductsRequiredAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+					if (!requiredAddOns.isEmpty()) {
+						requiredAddOns.stream().forEach(requiredAddOn -> {
+							Map RowproductRequiredAddon = new HashMap<>();
+							RowproductRequiredAddon.put("price", requiredAddOn.getPrice());
+							RowproductRequiredAddon.put("id", requiredAddOn.getProductId());
+							RowproductRequiredAddon.put("label", ResturantsProductsService.findLabelById(requiredAddOn.getProductId()));
+							requiredAddOnsList.add(RowproductRequiredAddon);
+
+						});
+					}
+					Rowproduct.put("requiredAddOn", requiredAddOnsList);
+
+					List<Map> optionalAddOnsList = new ArrayList<>();
+					List<CustomerOrderProductsOptionalAddOn> optionalAddOns = OrderProductsOptionalAddOnDao.findAllByOrderProductId(OrderProduct.getId());
+					if (!optionalAddOns.isEmpty()) {
+						optionalAddOns.stream().forEach(optionalAddOn -> {
+							Map RowproductOptionalAddon = new HashMap<>();
+							RowproductOptionalAddon.put("price", optionalAddOn.getPrice());
+							RowproductOptionalAddon.put("id", optionalAddOn.getProductId());
+							RowproductOptionalAddon.put("label", ResturantsProductsService.findLabelById(optionalAddOn.getProductId()));
+							optionalAddOnsList.add(RowproductOptionalAddon);
+
+						});
+					}
+					Rowproduct.put("optionalAddOn", optionalAddOnsList);
+
+					orderProductsList.add(Rowproduct);
+
+				});
+				row.put("products",orderProductsList);
+
+				list.add(row);
+			}
+
+		}
+
 		return list;
 	}
 

@@ -9,6 +9,10 @@ import java.util.*;
 
 import com.rolixtech.cravings.module.generic.services.GenericUtility;
 import com.rolixtech.cravings.module.order.dao.CustomerOrderDao;
+import com.rolixtech.cravings.module.order.model.CustomerOrder;
+import com.rolixtech.cravings.module.resturant.services.CommonResturantsService;
+import com.rolixtech.cravings.module.users.dao.CommonUsersDao;
+import com.rolixtech.cravings.module.users.services.CommonUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Date;
@@ -21,6 +25,12 @@ public class CustomerOrderStatusService {
 
 	@Autowired
 	private CustomerOrderDao customerOrderDao;
+	@Autowired
+	private CommonUsersService usersService;
+	@Autowired
+	private CommonResturantsService resturantsService;
+	@Autowired
+	private CustomerOrderStatusService orderStatusService;
 
 	public List<Map> getAllAdmin(){
 
@@ -97,6 +107,7 @@ public class CustomerOrderStatusService {
 				totalOrderStatusCountsRow.put("processingCount",customerOrderDao.countByOrderStatusIdInProcessing(2l,currentFormattedDate,currentFormattedDate));
 				totalOrderStatusCountsRow.put("confirmCount",customerOrderDao.countByOrderStatusIdConfirm(3l,currentFormattedDate,currentFormattedDate));
 				totalOrderStatusCountsRow.put("placedAtResturantCount",customerOrderDao.countByOrderStatusIdPlacedAtResturant(4l,currentFormattedDate,currentFormattedDate));
+				totalOrderStatusCountsRow.put("pickUp", customerOrderDao.countByOrderStatusIdPickUp(5l, currentFormattedDate,currentFormattedDate));
 				totalOrderStatusCountsRow.put("readyForPickupCount",customerOrderDao.countByOrderStatusIdReadyForPickup(5l,currentFormattedDate,currentFormattedDate));
 				totalOrderStatusCountsRow.put("deliveredCount",customerOrderDao.countByOrderStatusIdDelivered(7l,currentFormattedDate, currentFormattedDate));
 				totalOrderStatusCountsRow.put("cancelledCount", customerOrderDao.countByOrderStatusIdCancelled(8l,currentFormattedDate,currentFormattedDate));
@@ -108,6 +119,47 @@ public class CustomerOrderStatusService {
 			totalOrderStatusCountsMap.add(totalOrderStatusCountsRow);
 
 		return totalOrderStatusCountsMap;
+
+	}
+
+	public List<Map> getAllCustomersOrderHistory(Long customerId){
+		List<Long> orderStatusIds=new ArrayList<>();
+		List<Map> list = new ArrayList<>();
+
+		orderStatusIds.add(7l);
+		orderStatusIds.add(8l);
+		orderStatusIds.add(9l);
+		orderStatusIds.add(10l);
+
+		List<CustomerOrder> customerOrdersList = new ArrayList<>();
+		customerOrdersList = customerOrderDao.finalStatusesCustomerOrder(customerId, orderStatusIds);
+
+
+		if (!customerOrdersList.isEmpty() || customerOrdersList != null){
+			for (int i = 0; i < customerOrdersList.size(); i++){
+				Map row = new HashMap();
+	//			row.put("previousRecords", customerOrdersList);
+				row.put("resturantId", customerOrdersList.get(i).getResturantId());
+				row.put("resturantLabel",resturantsService.findLabelById(customerOrdersList.get(i).getResturantId()));
+				row.put("resturantBanner",resturantsService.findBannerImgById(customerOrdersList.get(i).getResturantId()));
+				row.put("customerId", customerId);
+				row.put("customerName", usersService.getUserName(customerId));
+				row.put("customerNumber", usersService.getUserContactNumber(customerId));
+				row.put("totalAmount",customerOrdersList.get(i).getTotalAmount());
+				row.put("paymentType",customerOrdersList.get(i).getOrderType());
+				row.put("orderStatusLabel", orderStatusService.findLabelByIdAndRequirementType(customerOrdersList.get(i).getOrderStatusId(),1));
+				row.put("grossAmount",customerOrdersList.get(i).getSubtotal());
+				row.put("orderTime",customerOrdersList.get(i).getCreatedOn());
+				row.put("orderId",customerOrdersList.get(i).getId());
+
+				list.add(row);
+			}
+
+
+
+		}
+
+		return list;
 
 	}
 

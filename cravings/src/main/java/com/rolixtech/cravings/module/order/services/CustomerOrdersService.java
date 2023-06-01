@@ -836,6 +836,7 @@ public class CustomerOrdersService {
 						Row.put("resturantBanner",ResturantsService.findBannerImgById(order.getResturantId()));
 						Row.put("orderNumber", order.getOrderNumber());
 						Row.put("customerId", order.getUserId());
+						Row.put("customerEmail", commonUsersDao.findEmailByOrderId(order.getUserId()));
 						Row.put("customerName", commonUsersDao.findFirstNameById(order.getUserId())+" "+commonUsersDao.findLastNameById(order.getUserId()));
 						Row.put("customerNumber", commonUsersDao.findMobileNumberById(order.getUserId()));
 						Row.put("riderStatus" ,OrderDao.findRiderStatusByOrderId(order.getId()));
